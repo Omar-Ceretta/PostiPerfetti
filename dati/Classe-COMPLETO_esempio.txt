@@ -1,0 +1,31 @@
+# Classe: Classe-COMPLETO_esempio (24 studenti)
+# Formato: Cognome;Nome;Genere;Posizione;Incompatibilità;Affinità
+# Genere: M/F (in caso di attivazione del flag "Genere misto" l'abbinamento [maschio][femmina] diventa un vincolo FORTE)
+# Posizione: PRIMA (= VINCOLO OBBLIGATORIO) / ULTIMA (= vincolo soft) / NORMALE (= vincolo neutro)
+# Vincoli "Incompatibilità": Cognome Nome:livello (1-3, dove 1= vincolo neutro, 2 = vincolo soft, 3 = VINCOLO OBBLIGATORIO)
+# Vincoli "Affinità": Cognome Nome:livello (1-3, dove 1 = vincolo neutro, 2 = vincolo soft, 3 = vincolo FORTE)
+
+Alighieri;Dante;M;NORMALE;Merini Alda:2;Petrarca Francesco:2
+Austen;Jane;F;NORMALE;;Brontë Charlotte:3
+Boccaccio;Giovanni;M;NORMALE;Manzoni Alessandro:2;Petrarca Francesco:3
+Brontë;Charlotte;F;NORMALE;;Austen Jane:3
+Calvino;Italo;M;NORMALE;Pasolini Pier Paolo:1;
+Čechov;Anton;M;NORMALE;;Dostoevskij Fëdor:2
+D'Annunzio;Gabriele;M;ULTIMA;Manzoni Alessandro:1,De André Fabrizio:3,Deledda Grazia:3;Negri Ada:2
+De André;Fabrizio;M;NORMALE;D'Annunzio Gabriele:3;Merini Alda:2,Ortese Anna Maria:2
+Deledda;Grazia;F;NORMALE;D'Annunzio Gabriele:3,Serao Matilde:3;Dostoevskij Fëdor:2
+Dostoevskij;Fëdor;M;NORMALE;;Čechov Anton:2,Deledda Grazia:2
+García Márquez;Gabriel;M;NORMALE;;Pasolini Pier Paolo:1
+Ginzburg;Natalia;F;NORMALE;;Morante Elsa:1
+Leopardi;Giacomo;M;PRIMA;Manzoni Alessandro:2;
+Manzoni;Alessandro;M;NORMALE;Leopardi Giacomo:2,D'Annunzio Gabriele:1,Plath Sylvia:1,Boccaccio Giovanni:2;
+Merini;Alda;F;ULTIMA;Alighieri Dante:2;De André Fabrizio:2,Szymborska Wisława:2
+Morante;Elsa;F;NORMALE;;Pasolini Pier Paolo:3,Ginzburg Natalia:1
+Negri;Ada;F;PRIMA;;D'Annunzio Gabriele:2
+Ortese;Anna Maria;F;NORMALE;Pasolini Pier Paolo:1;De André Fabrizio:2
+Pasolini;Pier Paolo;M;NORMALE;Calvino Italo:1,Ortese Anna Maria:1;Morante Elsa:3,García Márquez Gabriel:1,Rosselli Amelia:3
+Petrarca;Francesco;M;NORMALE;Rosselli Amelia:2;Alighieri Dante:2,Boccaccio Giovanni:3
+Plath;Sylvia;F;PRIMA;Manzoni Alessandro:1;
+Rosselli;Amelia;F;NORMALE;Petrarca Francesco:2;Pasolini Pier Paolo:3
+Serao;Matilde;F;NORMALE;Deledda Grazia:3;
+Szymborska;Wisława;F;ULTIMA;;Merini Alda:2
