@@ -1,16 +1,28 @@
 ![](modelli/postiperfetti_logo.png)
 
-# 📖 «PostiPerfetti» - Guida all'uso 📖
+# 📖 «PostiPerfetti» - Guida all'uso
 
 > [!IMPORTANT]
 >
-> ✅ **«PostiPerfetti» è un programma che utilizza uno speciale algoritmo per aiutare il docente Coordinatore (o qualsiasi insegnante ne abbia la necessità) ad assegnare agli studenti il proprio posto in classe.** Gli allievi vengono distribuiti "a due a due", in un numero di coppie e di file di banchi personalizzabile secondo le esigenze.
+> ✅ **«PostiPerfetti» è un programma che utilizza uno speciale algoritmo per aiutare il docente Coordinatore (o qualsiasi insegnante ne abbia la necessità) ad assegnare agli studenti il proprio posto in classe.** 
 >
-> ✅ Per funzionare, esso richiede solamente la creazione di **un file .txt** con i dati essenziali degli alunni. Tramite alcune funzioni molto intuitive sarà poi possibile aggiungere una serie di informazioni e vincoli per ottenere **una distribuzione degli allievi quanto più in linea con i desiderata dell'insegnante**.
+> ✅ Gli allievi vengono distribuiti "a due a due" in modo automatizzato, in un numero di coppie e di file di banchi personalizzabile secondo le esigenze. **Le assegnazioni richiedono in genere da qualche secondo a pochi minuti**.
+>
+> ✅ Per funzionare, il programma richiede solamente la creazione di un file ".txt" con i dati essenziali degli alunni (*cognome*, *nome*, *genere*). Tramite alcune funzioni molto intuitive sarà poi possibile aggiungere una serie di informazioni e vincoli per ottenere **UNA DISTRIBUZIONE DEGLI ALLIEVI QUANTO PIÙ IN LINEA CON I DESIDERATA DELL'INSEGNANTE**.
 >
 > ✅ **«PostiPerfetti» non ha alcun accesso alla rete, pertanto non invia nessun dato a terzi**: lavorando esclusivamente in locale, ogni informazione è mantenuta al sicuro all'interno del pc del docente.
 
+☀️ & 🌙
+
+> [!NOTE]
+>
+> A seconda delle tue preferenze, puoi selezionare un **tema scuro** o un **tema chiaro** per usare il programma.
+
 ------
+
+![](modelli/000_editor-scuro.png)
+
+![](modelli/000_editor-chiaro.png)
 
 ## 1️⃣ PREPARAZIONE DEL FILE STUDENTI TRAMITE "✏️ Editor studenti"
 
@@ -45,9 +57,9 @@ Clicca sulla tab **"✏️ Editor studenti"** e poi sul pulsante **"📂 Carica 
 
 Per ogni studente, usa il **menu a tendina** per selezionarne la posizione:
 
-- `NORMALE` (= nessuna preferenza).
-- **`PRIMA`** (= **OBBLIGO di stare in prima fila**: utile per gli allievi più propensi a distrarsi, con difficoltà di vista o altri bisogni particolari).
-- `ULTIMA` (= preferenza per l'ultima fila: utile ad es. per allievi di alta statura o per altre esigenze).
+- `NORMALE` = nessuna preferenza.
+- **`PRIMA`** = **OBBLIGO di stare in prima fila** (utile ad es. per gli allievi più propensi a distrarsi, con difficoltà di vista o altri bisogni particolari).
+- `ULTIMA` = preferenza per l'ultima fila (utile ad es. per allievi di alta statura o per altre esigenze).
 
 🔻
 
@@ -108,12 +120,15 @@ Clicca il bottone **"Rimuovi"** accanto al vincolo da eliminare. Il vincolo spec
 >
 > ### ⑧ Verifica e salva
 
-- Clicca **"👁️ Preview file generato"** per vedere un'anteprima del file .txt che verrà creato.
+- Clicca su **"👁️ Preview file generato"** per vedere un'anteprima del file .txt che verrà creato.
 
-- Clicca **"💾 Esporta file completo"** per salvare il file .txt definitivo della classe.
+- Clicca su **"💾 Esporta file completo"** per salvare il file .txt definitivo della classe.
 
-- È consigliabile **dare a questo file il NOME DELLA CLASSE** (ad es. 'Classe1A.txt', oppure "Classe1A_2026-27.txt').
+- È consigliabile **dare a questo file il NOME DELLA CLASSE** 
 
+```
+ad esempio = "Classe1A.txt", oppure "Classe1A_2026-27.txt"
+```
 
 ------
 
@@ -121,17 +136,19 @@ Clicca il bottone **"Rimuovi"** accanto al vincolo da eliminare. Il vincolo spec
 >
 > ### 💡 Modifica dei vincoli in corso d'anno
 >
-> Se in futuro vorrai rimuovere, aggiungere o cambiare dei vincoli, basterà ricaricare nell'Editor il file .txt completo della classe. Le schede verranno popolate automaticamente con tutti i dati esistenti di ciascun allievo, pronte per essere modificate. Se invece dovrai aggiungere o rimuovere un allievo, dovrai aprire il file .txt della classe e cancellarne la riga, oppure aggiungerlo (con `Cognome;Nome;Genere`) nella posizione alfabeticamente corretta.
+> Se in futuro vorrai rimuovere, aggiungere o cambiare dei vincoli, basterà ricaricare nell'Editor il file .txt completo della classe. Le schede verranno popolate automaticamente con tutti i dati esistenti di ciascun allievo, pronte per essere modificate. 
+>
+> Se invece dovrai aggiungere o rimuovere un allievo, dovrai aprire il file .txt della classe e cancellarne la riga, oppure aggiungerlo (con `Cognome;Nome;Genere`) nella posizione alfabeticamente corretta.
 
 ------
 
 ## 2️⃣ CARICAMENTO E CONFIGURAZIONE
 
-### **Passo 1 — Carica il file:** 
+### 🔹**Passo 1 — Carica il file:** 
 
 - Clicca sul pulsante **"📂 Seleziona file classe (.txt)"** presente nel pannello a sinistra e seleziona il file completo preparato con l'Editor studenti. Il programma mostrerà il numero di studenti caricati.
 
-### **Passo 2 — Configura le opzioni:** 
+### 🔹**Passo 2 — Configura le opzioni:** 
 
 - **"Gestione numero dispari"**: se gli studenti sono in numero dispari, scegli in quale fila andrà posizionato il trio (3 studenti allo stesso banco): 'prima', 'ultima' o 'centrale'.
 
@@ -145,7 +162,9 @@ Clicca il bottone **"Rimuovi"** accanto al vincolo da eliminare. Il vincolo spec
 
 [Inserire qui lo screenshot del popup di assegnazione e dei tentativi dell'algoritmo]
 
-Clicca su **"🚀 Avvia assegnazione automatica"**. L'algoritmo lavorerà in 4 tentativi progressivi, rispettando SEMPRE i vincoli "ASSOLUTI" (= 'posizione PRIMA' e 'incompatibilità 3') e facendo il possibile per NON RIPETERE COPPIE GIÀ FORMATE.
+Quando il file della classe sarà pronto e caricato, clicca su **"🚀 Avvia assegnazione automatica"**. 
+
+💥 **L'algoritmo lavorerà in 4 tentativi progressivi, rispettando SEMPRE i vincoli "ASSOLUTI" (= 'posizione PRIMA' e 'incompatibilità 3') e facendo il possibile per NON RIPETERE COPPIE GIÀ FORMATE**.
 
 | **Tentativo** | **Strategia**                                                |
 | ------------- | ------------------------------------------------------------ |
@@ -154,8 +173,8 @@ Clicca su **"🚀 Avvia assegnazione automatica"**. L'algoritmo lavorerà in 4 t
 | 3             | Vincoli medi (livello 2) rilassati                           |
 | 4             | Solo vincoli ASSOLUTI, coppie ripetute ammesse con penalità progressiva |
 
-- Al termine dell'elaborazione apparirà un **POPUP di riepilogo** con le statistiche degli abbinamenti creati. 
-- Eventuali **coppie riutilizzate** saranno evidenziate in **colore ocra**.
+- 💬 Al termine dell'elaborazione apparirà un **POPUP di riepilogo con le statistiche degli abbinamenti** creati. 
+- ❗ Eventuali **coppie riutilizzate** saranno evidenziate in **colore ocra**.
 
 ------
 
@@ -169,6 +188,10 @@ Clicca su **"🚀 Avvia assegnazione automatica"**. L'algoritmo lavorerà in 4 t
 
 ## 4️⃣ VISUALIZZAZIONE DEI RISULTATI
 
+![](modelli/001_aula-scuro.png)
+
+![](modelli/001_aula-chiaro.png)
+
 ### 🍀 La Tab "🏫 AULA"
 
 Mostrerà la disposizione grafica dell'aula. Gli arredi (LIM, cattedra, lavagna) sono in basso, le file di banchi salgono verso l'alto. Da qui potrai agire sui pulsanti:
@@ -179,9 +202,17 @@ Mostrerà la disposizione grafica dell'aula. Gli arredi (LIM, cattedra, lavagna)
 
 [Inserire qui lo screenshot della disposizione dell'aula]
 
+![](modelli/002_report-scuro.png)
+
+![](modelli/002_report-chiaro.png)
+
 ### 🍀 La Tab "📊 REPORT"
 
 Mostra il report testuale dettagliato con tutte le coppie formate, i punteggi, le note sui vincoli e il layout dell'aula in formato testo. Le coppie riutilizzate sono evidenziate in **colore ocra**.
+
+![](modelli/003_storico-scuro.png)
+
+![](modelli/003_storico-chiaro.png)
 
 ### 🍀 La Tab "📚 STORICO"
 
@@ -191,6 +222,10 @@ Elenca tutte le assegnazioni salvate. Per ciascuna potrai agire sui pulsanti:
 - **🔍 Layout**: apre il layout grafico con la possibilità di esportare in Excel.
 - **🗑️ Elimina**: rimuove l'assegnazione dallo Storico (consentendo di 'ri-abbinare' in futuro gli studenti che erano stati messi assieme in quella assegnazione).
 
+![](modelli/004_statistiche-scuro.png)
+
+![](modelli/004_statistiche-chiaro.png)
+
 ### 🍀 La Tab "📊 STATISTICHE"
 
 Analizza l'intero Storico della classe (o di più classi) mostrando le coppie più frequenti, gli studenti più spesso in prima fila e le coppie mai formate. Utile per verificare l'equità e le caratteristiche delle rotazioni succedutesi nel tempo.
@@ -199,7 +234,7 @@ Analizza l'intero Storico della classe (o di più classi) mostrando le coppie pi
 
 ## 5️⃣ FLUSSO DI LAVORO CONSIGLIATO
 
-### Prima assegnazione dell'anno (settembre)
+### 🔹Prima assegnazione dell'anno (settembre)
 
 1. **Prepara tramite "✏️ Editor studenti" il file .txt della classe** con tutti i dati necessari.
 
@@ -214,7 +249,7 @@ Analizza l'intero Storico della classe (o di più classi) mostrando le coppie pi
 6. Apri e modifica se necessario il foglio Excel, stampalo e posizionalo in classe.
 
 
-### Assegnazioni successive (ottobre → giugno)
+### 🔹Assegnazioni successive (ottobre → giugno)
 
 1. Mantieni lo stesso file .txt della classe (o ricaricalo se hai iniziato una nuova sessione del programma).
 2. «PostiPerfetti» attiverà in automatico il flag della "Rotazione mensile".
@@ -230,6 +265,8 @@ Nel caso tu non abbia salvato in tempo i file Excel delle varie assegnazioni, po
 
 ------
 
+------
+
 ## ⚠️ RISOLUZIONE DEI PROBLEMI
 
 | **Problema**                                              | **Soluzione**                                                |
@@ -237,11 +274,13 @@ Nel caso tu non abbia salvato in tempo i file Excel delle varie assegnazioni, po
 | Popup di segnalazione errore al caricamento del file .txt | Il programma verifica che la sintassi di ogni riga sia corretta e propone in automatico gli aggiustamenti necessari, avvisando con un 'popup'. È consigliabile, in questi casi, rivedere la correttezza dei dati degli allievi nella tab "✏️ Editor studenti". |
 | Studente "non trovato" nei vincoli                        | Il nome nei vincoli deve corrispondere **esattamente** a Cognome + Nome (es: `Pasolini Pier Paolo`, non `Pasolini Pier`). |
 | ❗ TROPPE COPPIE RIUTILIZZATE                              | Con molti vincoli di incompatibilità (livello 3), le combinazioni possibili si riducono. **Valuta se qualche vincolo di livello 3 può diventare livello 2.** |
-| ❗ L'ASSEGNAZIONE FALLISCE IN TUTTI I TENTATIVI            | I vincoli assoluti creano una situazione matematicamente impossibile da risolvere. **Riduci il numero di incompatibilità di 'livello 3', di posizione 'PRIMA' oppure rimuovi il vincolo di 'genere misto'.** |
-
-
+| ‼️ L'ASSEGNAZIONE FALLISCE IN TUTTI I TENTATIVI            | I vincoli assoluti creano una situazione matematicamente impossibile da risolvere. **Riduci il numero di incompatibilità di 'livello 3', di posizione 'PRIMA' oppure rimuovi il vincolo di 'genere misto'.** |
 
 ------
+
+------
+
+![](modelli/postiperfetti_icon.png)
 
 «PostiPerfetti» — Sviluppato in Python dal prof. Omar Ceretta
 
