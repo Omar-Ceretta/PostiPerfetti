@@ -160,8 +160,6 @@ ad esempio = "Classe1A.txt", oppure "Classe1A_2026-27.txt"
 
 ## 3️⃣ AVVIO DELL'ASSEGNAZIONE
 
-[Inserire qui lo screenshot del popup di assegnazione e dei tentativi dell'algoritmo]
-
 Quando il file della classe sarà pronto e caricato, clicca su **"🚀 Avvia assegnazione automatica"**. 
 
 💥 **L'algoritmo lavorerà in 4 tentativi progressivi, rispettando SEMPRE i vincoli "ASSOLUTI" (= 'posizione PRIMA' e 'incompatibilità 3') e facendo il possibile per NON RIPETERE COPPIE GIÀ FORMATE**.
@@ -206,7 +204,7 @@ La Tab "🏫 AULA" mostrerà la disposizione grafica dell'aula. Gli arredi (LIM,
 
 ![](modelli/002_report-chiaro.png)
 
-La Tab "📊 REPORT" mostra il report testuale dettagliato con tutte le coppie formate, i punteggi, le note sui vincoli e il layout dell'aula in formato testo. Le coppie riutilizzate sono evidenziate in **colore ocra**.
+La Tab "📊 REPORT" mostra il report testuale dettagliato con tutte le coppie formate, i punteggi, le note sui vincoli e il layout dell'aula in formato testo. Le coppie eventualmente riutilizzate saranno evidenziate in **colore ocra**.
 
 ### 🍀 La Tab "📚 STORICO"
 
