@@ -29,11 +29,15 @@ Con un qualsiasi editor di testo del tuo pc, crea un nuovo file .txt (denominand
 | `Calvino;Italo;M`        |
 | eccetera...              |
 
+🔻
+
 > [!TIP]
 >
 > ### ② Carica il file nell'Editor
 
 Clicca sulla tab **"✏️ Editor studenti"** e poi sul pulsante **"📂 Carica lista studenti (.txt)"**. L'applicazione riconoscerà automaticamente il formato base e creerà una scheda per ogni allievo che hai inserito.
+
+🔻
 
 > [!TIP]
 >
@@ -42,11 +46,10 @@ Clicca sulla tab **"✏️ Editor studenti"** e poi sul pulsante **"📂 Carica 
 Per ogni studente, usa il **menu a tendina** per selezionarne la posizione:
 
 - `NORMALE` (= nessuna preferenza).
-
 - **`PRIMA`** (= **OBBLIGO di stare in prima fila**: utile per gli allievi più propensi a distrarsi, con difficoltà di vista o altri bisogni particolari).
-
 - `ULTIMA` (= preferenza per l'ultima fila: utile ad es. per allievi di alta statura o per altre esigenze).
 
+🔻
 
 > [!TIP]
 >
@@ -65,6 +68,8 @@ Se è il caso di tenere separati alcuni allievi (che in banco assieme rischiereb
 
 > 💡 **NOTA:** Puoi aggiungere più incompatibilità per lo stesso studente, cliccando di nuovo il bottone ➕.
 
+🔻
+
 > [!TIP]
 >
 > ### ⑤ Aggiungi le AFFINITÀ
@@ -81,17 +86,23 @@ I livelli indicano quanto è desiderabile che i due studenti stiano vicini:
 
 > 💡 **NOTA:** Puoi aggiungere più affinità per lo stesso studente, cliccando di nuovo il bottone ➕.
 
+🔻
+
 > [!TIP]
 >
 > ### ⑥ BIDIREZIONALITÀ automatica
 
 **Non devi preoccuparti di ripetere i vincoli.** Se imposti "D'Annunzio Gabriele incompatibile con Deledda Grazia (livello 3)", l'Editor aggiungerà **automaticamente** "Deledda Grazia incompatibile con D'Annunzio Gabriele (livello 3)". Lo stesso vale per le affinità, per le modifiche di livello e per le rimozioni.
 
+🔻
+
 > [!TIP]
 >
 > ### ⑦ Rimuovere un vincolo
 
 Clicca il bottone **"Rimuovi"** accanto al vincolo da eliminare. Il vincolo speculare sull'altro studente verrà rimosso automaticamente.
+
+🔻
 
 > [!TIP]
 >
