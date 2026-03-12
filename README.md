@@ -1,14 +1,14 @@
-![](/home/omar/PostiPerfetti/modelli/postiperfetti_logo.png)
+![](modelli/postiperfetti_logo.png)
 
 # 📖 «PostiPerfetti» - Guida all'uso 📖
 
 > [!IMPORTANT]
 >
-> **«PostiPerfetti» è un programma che utilizza uno speciale algoritmo per aiutare il docente Coordinatore (o qualsiasi insegnante ne abbia la necessità) ad assegnare agli studenti il proprio posto in classe. Gli allievi vengono distribuiti "a due a due", in un numero di coppie e di file di banchi completamente personalizzabili.**
-
-Per funzionare, esso richiede solamente la creazione di **un file .txt** con i dati essenziali degli alunni. Tramite alcune funzioni molto intuitive sarà poi possibile aggiungere una serie di informazioni e vincoli per ottenere **una distribuzione degli allievi quanto più in linea con i desiderata dell'insegnante**.
-
-**«PostiPerfetti» non ha alcun accesso alla rete, pertanto non invia nessun dato a terzi**: lavorando esclusivamente in locale, ogni informazione è mantenuta al sicuro all'interno del pc del docente.
+> **«PostiPerfetti» è un programma che utilizza uno speciale algoritmo per aiutare il docente Coordinatore (o qualsiasi insegnante ne abbia la necessità) ad assegnare agli studenti il proprio posto in classe.** Gli allievi vengono distribuiti "a due a due", in un numero di coppie e di file di banchi completamente personalizzabili.
+>
+> Per funzionare, esso richiede solamente la creazione di **un file .txt** con i dati essenziali degli alunni. Tramite alcune funzioni molto intuitive sarà poi possibile aggiungere una serie di informazioni e vincoli per ottenere **una distribuzione degli allievi quanto più in linea con i desiderata dell'insegnante**.
+>
+> **«PostiPerfetti» non ha alcun accesso alla rete, pertanto non invia nessun dato a terzi**: lavorando esclusivamente in locale, ogni informazione è mantenuta al sicuro all'interno del pc del docente.
 
 
 
