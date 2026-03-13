@@ -1,7 +1,6 @@
 """
 Algoritmo principale per l'assegnazione automatica dei posti.
 Combina vincoli sociali, preferenze di posizione e layout aula.
-VERSIONE CORRETTA: Risolve problemi trio e assegnazione banchi.
 """
 
 from typing import List, Tuple, Optional
