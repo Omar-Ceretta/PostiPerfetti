@@ -4,19 +4,19 @@
 
 > [!IMPORTANT]
 >
-> ✅ **«PostiPerfetti» è un programma che utilizza uno speciale algoritmo per aiutare il docente Coordinatore (o qualsiasi insegnante ne abbia la necessità) ad assegnare agli studenti il proprio posto in classe.** 
->
-> ✅ Gli allievi vengono distribuiti "a due a due" in modo automatizzato, in un numero di coppie e di file di banchi personalizzabile secondo le esigenze. **Le assegnazioni richiedono in genere da qualche secondo a pochi minuti**.
+> ✅ **«PostiPerfetti» è un programma gratuito e *open source* che utilizza uno speciale algoritmo per aiutare il docente Coordinatore (o qualsiasi insegnante ne abbia la necessità) ad assegnare agli studenti il proprio posto in classe.** 
 >
 > ✅ Per funzionare, il programma richiede solamente la creazione di un file ".txt" con i dati essenziali degli alunni (*cognome*, *nome*, *genere*). Tramite alcune funzioni molto intuitive sarà poi possibile aggiungere una serie di informazioni e vincoli per ottenere **UNA DISTRIBUZIONE DEGLI ALLIEVI QUANTO PIÙ IN LINEA CON I DESIDERATA DELL'INSEGNANTE**.
 >
-> ✅ **«PostiPerfetti» non ha alcun accesso alla rete, pertanto non invia nessun dato a terzi**: lavorando esclusivamente in locale, ogni informazione è mantenuta al sicuro all'interno del pc del docente.
+> ✅ Gli allievi verranno distribuiti "a due a due" in modo automatizzato, in un numero di coppie e di file di banchi personalizzabile secondo le esigenze. **Le assegnazioni richiedono in genere da qualche secondo a pochi minuti** (a seconda del numero e della rigidità dei "vincoli" che si sono predisposti).
+>
+> ✅ **«PostiPerfetti» non ha alcun accesso alla rete, pertanto non invia nessun dato a terzi**. Lavorando esclusivamente in locale, ogni informazione è quindi mantenuta al sicuro all'interno del pc del docente.
 
 ☀️ & 🌙
 
 > [!NOTE]
 >
-> A seconda delle tue preferenze, puoi selezionare un **tema scuro** o un **tema chiaro** per usare il programma.
+> A seconda delle tue preferenze, puoi selezionare un **tema scuro** o un **tema chiaro** per usare l'interfaccia.
 
 ------
 
@@ -134,7 +134,7 @@ Clicca il bottone **"Rimuovi"** accanto al vincolo da eliminare. Il vincolo spec
 >
 > ### 💡 Modifica dei vincoli in corso d'anno
 >
-> Se in futuro vorrai rimuovere, aggiungere o cambiare dei vincoli, basterà ricaricare nell'Editor il file .txt completo della classe. Le schede verranno popolate automaticamente con tutti i dati esistenti di ciascun allievo, pronte per essere modificate. 
+> Se in futuro vorrai rimuovere, aggiungere o cambiare dei vincoli, basterà ricaricare nell'Editor il file .txt della classe. Le schede verranno popolate automaticamente con tutti i dati esistenti di ciascun allievo, pronte per essere modificate. 
 >
 > Se invece dovrai aggiungere o rimuovere un allievo, dovrai aprire il file .txt della classe e cancellarne la riga, oppure aggiungerlo (con `Cognome;Nome;Genere`) nella posizione alfabeticamente corretta.
 
@@ -147,6 +147,8 @@ Clicca il bottone **"Rimuovi"** accanto al vincolo da eliminare. Il vincolo spec
 - Clicca sul pulsante **"📂 Seleziona file classe (.txt)"** presente nel pannello a sinistra. Se fai questa operazione con un file già caricato nell'Editor, un 'popup' ti chiederà se vuoi utilizzare quel file (scegli "Sì") oppure se desideri caricarne uno diverso (scegli "No"). Dopo il caricamento, il programma mostrerà il numero di studenti caricati.
 
 ### 🔷 **Passo 2 — Configura le opzioni:** 
+
+- **"Configurazione aula"**: verrai avvertito in caso di 'posti insufficienti', e ti basterà aumentare il numero di 'File di banchi' o di 'Posti per fila'.
 
 - **"Gestione numero dispari"**: se gli studenti sono in numero dispari, **scegli in quale fila andrà posizionato il trio** (3 studenti allo stesso banco): 'prima', 'ultima' o 'centrale'.
 
