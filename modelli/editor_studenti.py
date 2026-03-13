@@ -1,14 +1,11 @@
 """
-Editor Grafico per Lista studenti (.txt)
+Editor Grafico per classe da modificare (.txt)
 ========================================
 Modulo PySide6 che fornisce un widget per creare e modificare
 i file .txt degli studenti con i relativi vincoli.
 
-Può essere integrato come tab nell'applicazione principale
-oppure usato come finestra standalone.
+Integrato come tab nell'applicazione principale.
 
-Autore: Generato con Claude
-Versione: 1.0
 """
 
 from PySide6.QtWidgets import (
@@ -33,7 +30,7 @@ PLACEHOLDER_VINCOLO = "⬇️ Seleziona studente..."
 # Placeholder per il ComboBox del livello: appare quando il docente
 # aggiunge un nuovo vincolo, così è COSTRETTO a scegliere consapevolmente
 # il livello di incompatibilità/affinità invece di accettare un default.
-PLACEHOLDER_LIVELLO = "⬇️ Seleziona livello..."
+PLACEHOLDER_LIVELLO = "⬇️ Seleziona intensità del vincolo..."
 
 # Placeholder per il ComboBox del genere: appare quando il genere
 # NON è stato ancora selezionato (es: caricamento formato base).
@@ -161,7 +158,7 @@ class RigaVincolo(QWidget):
 
         # Etichette differenziate per tipo di vincolo
         if tipo_vincolo == "incompatibilita":
-            self._etichette_livello = ["1 — Leggera", "2 — Media", "3 — Assoluta/Forte"]
+            self._etichette_livello = ["1 — Leggera", "2 — Media", "3 — ASSOLUTA"]
         else:
             self._etichette_livello = ["1 — Leggera", "2 — Media", "3 — Forte"]
 
@@ -408,8 +405,9 @@ class RigaVincolo(QWidget):
         QMessageBox.information(
             self,
             "Seleziona il livello",
-            "Hai scelto lo studente, ora seleziona anche il livello\n"
-            "del vincolo (1 — Leggera, 2 — Media, 3 — ASSOLUTA).\n\n"
+            "Hai scelto lo studente\n"
+            "Ora seleziona anche l'intensità del livello del vincolo\n"
+            "~ 1 = Leggera,   ~ 2 = Media,   ~ 3 = ASSOLUTA/Forte.\n\n"
             "Il livello determina quanto l'algoritmo rispetterà\n"
             "questo vincolo durante l'assegnazione dei posti."
         )
@@ -1222,7 +1220,7 @@ class EditorStudentiWidget(QWidget):
         header.addSpacing(10)
 
         # Bottone carica file
-        self.btn_carica = QPushButton("📂 Carica lista studenti (.txt)")
+        self.btn_carica = QPushButton("📝 Carica classe da modificare (.txt)")
         self.btn_carica.setMinimumHeight(40)
         self.btn_carica.setStyleSheet("""
             QPushButton {
@@ -1235,14 +1233,14 @@ class EditorStudentiWidget(QWidget):
             }
             QPushButton:hover { background-color: #0d47a1; }
         """)
-        self.btn_carica.setToolTip("Apri un file .txt per modificare posizione e vincoli degli studenti")
+        self.btn_carica.setToolTip("Carica un file .txt per modificare posizione e vincoli degli studenti")
         self.btn_carica.clicked.connect(self._carica_file)
         header.addWidget(self.btn_carica)
 
         layout_principale.addLayout(header)
 
         # Label informativa (mostra nome file caricato e numero studenti)
-        self.label_info = QLabel("Nessun file caricato. Clicca  '📂 Carica lista studenti (.txt)' per iniziare.")
+        self.label_info = QLabel("Nessun file caricato. Clicca  '📝 Carica classe da modificare (.txt)' per iniziare.")
         self.label_info.setStyleSheet(f"color: {C('editor_info_txt')}; font-style: italic; font-size: 14px;")
         layout_principale.addWidget(self.label_info)
 
@@ -1267,7 +1265,7 @@ class EditorStudentiWidget(QWidget):
 
         # Messaggio iniziale (placeholder)
         self._label_placeholder = QLabel(
-            "📝 Carica un file .txt per iniziare a modificare gli studenti.\n\n"
+            "📝 Carica un file .txt per iniziare a modificare posizione e vincoli degli studenti.\n\n"
             "Formati supportati:\n"
             "• File BASE: 'Cognome;Nome;M/F' (uno per riga)\n"
             "• File COMPLETO: 'Cognome;Nome;Genere;Posizione;Incompatibilità;Affinità'"
@@ -1376,7 +1374,7 @@ class EditorStudentiWidget(QWidget):
 
         percorso, _ = QFileDialog.getOpenFileName(
             self,
-            "Seleziona lista studenti (.txt)",
+            "Carica classe da modificare (.txt)",
             cartella_dati,
             "File di testo (*.txt);;Tutti i file (*)"
         )
@@ -1384,9 +1382,21 @@ class EditorStudentiWidget(QWidget):
         if not percorso:
             return  # L'utente ha annullato
 
+        # Lettura file con fallback encoding: prova UTF-8, poi Latin-1.
+        # Su Windows, il Blocco Note salva in ANSI (= Latin-1) per default,
+        # quindi è fondamentale avere il fallback per i docenti che
+        # creano i file .txt con strumenti non configurati per UTF-8.
+        # Stessa logica già presente in carica_file_da_percorso().
         try:
             with open(percorso, 'r', encoding='utf-8') as f:
                 righe = f.readlines()
+        except UnicodeDecodeError:
+            try:
+                with open(percorso, 'r', encoding='latin-1') as f:
+                    righe = f.readlines()
+            except Exception as e:
+                QMessageBox.critical(self, "Errore", f"Impossibile leggere il file:\n{e}")
+                return
         except Exception as e:
             QMessageBox.critical(self, "Errore", f"Impossibile leggere il file:\n{e}")
             return
@@ -2020,13 +2030,17 @@ class EditorStudentiWidget(QWidget):
             "annulla" → l'utente vuole restare nell'editor
         """
         dialog = QMessageBox(self)
-        dialog.setWindowTitle("Modifiche non salvate")
+        dialog.setWindowTitle("⚠️ Modifiche non salvate")
         dialog.setIcon(QMessageBox.Warning)
         # Mostra il nome del file per chiarezza
         nome_file = self._nome_file_caricato or "sconosciuto"
         dialog.setText(
-            f"⚠️ Ci sono modifiche non salvate in '{nome_file}'.\n\n"
-            f"Vuoi salvare il file '{nome_file}.txt' prima di chiudere?"
+            f"⚠️ Hai modificato i dati di '{nome_file}' nell'Editor\n"
+            f"(vincoli, genere, posizione...) ma NON hai ancora\n"
+            f"salvato il file '{nome_file}.txt' su disco.\n\n"
+            f"Se prosegui senza salvare, tutte le modifiche\n"
+            f"fatte nell'Editor andranno PERSE.\n\n"
+            f"Cosa vuoi fare?"
         )
 
         # Crea i 3 bottoni personalizzati
@@ -2035,6 +2049,8 @@ class EditorStudentiWidget(QWidget):
         btn_annulla = dialog.addButton("↩️ Annulla", QMessageBox.RejectRole)
 
         dialog.setDefaultButton(btn_annulla)
+        # Se il docente chiude con la X, equivale ad "Annulla" (nessuna azione)
+        dialog.setEscapeButton(btn_annulla)
         dialog.exec()
 
         bottone_cliccato = dialog.clickedButton()
@@ -2089,11 +2105,11 @@ class EditorStudentiWidget(QWidget):
         self.btn_chiudi.setEnabled(False)
 
         # Aggiorna la label informativa
-        self.label_info.setText("Nessun file caricato. Clicca '📂 Carica lista studenti (.txt)' per iniziare.")
+        self.label_info.setText("Nessun file caricato. Clicca '📝 Carica classe da modificare (.txt)' per iniziare.")
         self.label_info.setStyleSheet("color: #757575; font-style: italic; font-size: 12px;")
 
         # Notifica il pannello principale che l'Editor ha chiuso il file,
-        # così la label "Nuova classe nell'Editor..." torna allo stato iniziale
+        # così la label "Nuova classe caricata nell'Editor..." torna allo stato iniziale
         self.file_chiuso_signal.emit()
 
     def richiedi_conferma_chiusura(self):
@@ -2122,7 +2138,7 @@ class EditorStudentiWidget(QWidget):
     # =========================================================================
     # METODI PUBBLICI PER INTEGRAZIONE CON IL PANNELLO PRINCIPALE
     # =========================================================================
-    # Questi metodi vengono chiamati dal pulsante "Carica lista studenti (.txt)"
+    # Questi metodi vengono chiamati dal pulsante "Carica classe da modificare (.txt)"
     # del pannello sinistro, per usare l'Editor come unico punto
     # di caricamento e validazione dei dati.
 
