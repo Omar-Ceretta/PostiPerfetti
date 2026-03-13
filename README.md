@@ -20,9 +20,9 @@
 
 ------
 
-![](modelli/000_editor-scuro.png)
+![](screens/000_editor-scuro.png)
 
-![](modelli/000_editor-chiaro.png)
+![](screens/000_editor-chiaro.png)
 
 ## 1️⃣ PREPARAZIONE DEL FILE STUDENTI TRAMITE "✏️ Editor studenti"
 
@@ -30,7 +30,9 @@
 >
 > ### **① Prepara un file base**
 
-Con un qualsiasi editor di testo del tuo pc, crea un nuovo file .txt (denominandolo ad es. "Lista studenti 1A.txt") inserendo solo `"Cognome;Nome;Genere"` (= M/F) di ogni studente, **uno per riga, in ordine alfabetico**:
+Vai all'interno della cartella "dati" del programma e, con un qualsiasi editor di testo, **crea un nuovo file .txt con il nome della tua classe** (ad es. "Classe1A.txt" oppure "Classe1A_2026-27.txt").
+
+All'interno inserisci solo `"Cognome;Nome;Genere"` (= M/F) di ogni studente, **uno per riga, in ordine alfabetico**. Separa i tre elementi con due punti e virgola (";") e non usare spazi:
 
 | **Esempio di file base** |
 | ------------------------ |
@@ -47,7 +49,7 @@ Con un qualsiasi editor di testo del tuo pc, crea un nuovo file .txt (denominand
 >
 > ### ② Carica il file nell'Editor
 
-Clicca sulla tab **"✏️ Editor studenti"** e poi sul pulsante **"📂 Carica lista studenti (.txt)"**. L'applicazione riconoscerà automaticamente il formato base e creerà una scheda per ogni allievo che hai inserito.
+Clicca sulla tab **"✏️ Editor studenti"** e poi sul pulsante **"📝 Carica classe da modificare (.txt)"**, scegliendo il file che hai creato. L'applicazione riconoscerà automaticamente il formato base e creerà una scheda per ogni allievo che hai inserito.
 
 ✔️ ✔️ ✔️
 
@@ -72,11 +74,11 @@ Se è il caso di tenere separati alcuni allievi (che in banco assieme rischiereb
 - Un **menu a tendina** con tutti gli altri studenti della classe — seleziona il compagno.
 - Un **menu livello** — scegli il grado di incompatibilità:
 
-| **Livello** | **Significato** | **Quando usarlo**                                  |
-| ----------- | --------------- | -------------------------------------------------- |
-| **1**       | Leggera         | Meglio se non vicini, ma accettabile se necessario |
-| **2**       | Media           | Evitare se possibile, penalità significativa       |
-| **3**       | **Assoluta**    | **MAI vicini — vincolo inviolabile**               |
+| **Livello** | **Significato**              | **Quando usarlo**                                  |
+| ----------- | ---------------------------- | -------------------------------------------------- |
+| **1**       | Incompatibilità leggera      | Meglio se non vicini, ma accettabile se necessario |
+| **2**       | Incompatibilità media        | Evitare se possibile, penalità significativa       |
+| **3**       | **Incompatibilità ASSOLUTA** | **MAI vicini — vincolo inviolabile**               |
 
 > 💡 **NOTA:** Puoi aggiungere più incompatibilità per lo stesso studente, cliccando di nuovo il bottone ➕.
 
@@ -90,11 +92,11 @@ Se è il caso di tenere uniti certi allievi (per promuoverne la collaborazione, 
 
 I livelli indicano quanto è desiderabile che i due studenti stiano vicini:
 
-| **Livello** | **Significato**                                              |
-| ----------- | ------------------------------------------------------------ |
-| **1**       | Affinità leggera (piccolo bonus)                             |
-| **2**       | Affinità buona (bonus significativo)                         |
-| **3**       | **Affinità forte — l'algoritmo cercherà di metterli vicini** |
+| **Livello** | **Significato**    | **Quando usarlo**                                        |
+| ----------- | ------------------ | -------------------------------------------------------- |
+| **1**       | Affinità leggera   | Per dare un piccolo bonus alla vicinanza                 |
+| **2**       | Affinità buona     | Per dare un bonus più significativo alla vicinanza       |
+| **3**       | **Affinità forte** | **Per far sì che l'algoritmo cerchi di metterli vicini** |
 
 > 💡 **NOTA:** Puoi aggiungere più affinità per lo stesso studente, cliccando di nuovo il bottone ➕.
 
@@ -124,11 +126,7 @@ Clicca il bottone **"Rimuovi"** accanto al vincolo da eliminare. Il vincolo spec
 
 - Clicca su **"💾 Esporta file completo"** per salvare il file .txt definitivo della classe.
 
-- È consigliabile **dare a questo file il NOME DELLA CLASSE** 
-
-```
-ad esempio = "Classe1A.txt", oppure "Classe1A_2026-27.txt"
-```
+- Puoi **sovrascrivere il file .txt della classe**, oppure dargli un altro nome (ad es. "Classe1A_09-2026.txt", oppure "Classe1A_definitivo.txt")
 
 ------
 
@@ -146,15 +144,15 @@ ad esempio = "Classe1A.txt", oppure "Classe1A_2026-27.txt"
 
 ### 🔷 **Passo 1 — Carica il file:** 
 
-- Clicca sul pulsante **"📂 Seleziona file classe (.txt)"** presente nel pannello a sinistra e seleziona il file completo preparato con l'Editor studenti. Il programma mostrerà il numero di studenti caricati.
+- Clicca sul pulsante **"📂 Seleziona file classe (.txt)"** presente nel pannello a sinistra. Se fai questa operazione con un file già caricato nell'Editor, un 'popup' ti chiederà se vuoi utilizzare quel file (scegli "Sì") oppure se desideri caricarne uno diverso (scegli "No"). Dopo il caricamento, il programma mostrerà il numero di studenti caricati.
 
 ### 🔷 **Passo 2 — Configura le opzioni:** 
 
-- **"Gestione numero dispari"**: se gli studenti sono in numero dispari, scegli in quale fila andrà posizionato il trio (3 studenti allo stesso banco): 'prima', 'ultima' o 'centrale'.
+- **"Gestione numero dispari"**: se gli studenti sono in numero dispari, **scegli in quale fila andrà posizionato il trio** (3 studenti allo stesso banco): 'prima', 'ultima' o 'centrale'.
 
-- **"Preferisci coppie miste (M+F)"**: se questo flag è attivato, l'algoritmo preferirà coppie maschio-femmina (non è un obbligo assoluto, ma un bonus forte).
+- **"Preferisci coppie miste (M+F)": se attivi questo flag, l'algoritmo preferirà coppie maschio-femmina** (non è un obbligo assoluto, ma un bonus forte).
 
-- **"Rotazione mensile"**: quando si salva la prima assegnazione, questo flag si attiverà in automatico dalla seconda assegnazione in poi. L'algoritmo eviterà il più possibile di ripetere coppie già formate nelle assegnazioni precedenti.
+- **"Rotazione mensile"**: quando si salva la prima assegnazione, questo flag **si attiverà in automatico dalla seconda assegnazione in poi**. L'algoritmo eviterà il più possibile di ripetere coppie già formate nelle assegnazioni precedenti.
 
 ------
 
@@ -188,9 +186,9 @@ Quando il file della classe sarà pronto e caricato, clicca su **"🚀 Avvia ass
 
 ### 🍀 La Tab "🏫 AULA"
 
-![](modelli/001_aula-scuro.png)
+![](screens/001_aula-scuro.png)
 
-![](modelli/001_aula-chiaro.png)
+![](screens/001_aula-chiaro.png)
 
 La Tab "🏫 AULA" mostrerà la disposizione grafica dell'aula. Gli arredi (LIM, cattedra, lavagna) sono in basso, le file di banchi salgono verso l'alto. Da qui potrai agire sui pulsanti:
 
@@ -200,19 +198,19 @@ La Tab "🏫 AULA" mostrerà la disposizione grafica dell'aula. Gli arredi (LIM,
 
 ### 🍀 La Tab "📊 REPORT"
 
-![](modelli/002_report-scuro.png)
+![](screens/002_report-scuro.png)
 
-![](modelli/002_report-chiaro.png)
+![](screens/002_report-chiaro.png)
 
 La Tab "📊 REPORT" mostra il report testuale dettagliato con tutte le coppie formate, i punteggi, le note sui vincoli e il layout dell'aula in formato testo. Le coppie eventualmente riutilizzate saranno evidenziate in **colore ocra**.
 
 ### 🍀 La Tab "📚 STORICO"
 
-![](modelli/003_storico-scuro.png)
+![](screens/003_storico-scuro.png)
 
-![](modelli/003_storico-chiaro.png)
+![](screens/003_storico-chiaro.png)
 
-La Tab "📚 STORICO" elenca tutte le assegnazioni salvate. Per ciascuna potrai agire sui pulsanti:
+La Tab "📚 STORICO" elenca tutte le assegnazioni salvate. Volendo, puoi **modificare il 'Nome' di ogni assegnazione** facendo doppio clic su di essa. Per ciascuna inoltre potrai agire sui pulsanti:
 
 - **📋 Dettagli**: visualizza il report completo dell'assegnazione. Facendo 'doppio clic' sul nome puoi se necessario modificarlo.
 - **🔍 Layout**: apre il layout grafico con la possibilità di esportare in Excel.
@@ -220,9 +218,9 @@ La Tab "📚 STORICO" elenca tutte le assegnazioni salvate. Per ciascuna potrai 
 
 ### 🍀 La Tab "📊 STATISTICHE"
 
-![](modelli/004_statistiche-scuro.png)
+![](screens/004_statistiche-scuro.png)
 
-![](modelli/004_statistiche-chiaro.png)
+![](screens/004_statistiche-chiaro.png)
 
 La Tab "📊 STATISTICHE" analizza l'intero Storico della classe (o di più classi) mostrando le coppie più frequenti, gli studenti più spesso in prima fila e le coppie mai formate. Utile per verificare l'equità e le caratteristiche delle rotazioni succedutesi nel tempo.
 
@@ -242,16 +240,16 @@ La Tab "📊 STATISTICHE" analizza l'intero Storico della classe (o di più clas
 
 5. **Avvia l'assegnazione, salvala nello Storico ed esportala in Excel**.
 
-6. Apri e modifica se necessario il foglio Excel, stampalo e posizionalo in classe.
+6. **Apri e modifica se necessario il foglio Excel, stampalo e posizionalo in classe.**
 
 
 ### 🔷 Assegnazioni successive (ottobre → giugno)
 
-1. Mantieni lo stesso file .txt della classe (o ricaricalo se hai iniziato una nuova sessione del programma).
+1. Mantieni lo stesso file .txt della classe (o ricaricalo se hai aperto una nuova sessione del programma).
 2. «PostiPerfetti» attiverà in automatico il flag della "Rotazione mensile".
 3. **Avvia tutte le assegnazioni necessarie, RICORDANDOTI DI SALVARE OGNUNA NELLO STORICO**, ed esportale di volta in volta in Excel per la stampa.
 
-Nel caso tu non abbia salvato in tempo i file Excel delle varie assegnazioni, potrai sempre farlo in un secondo momento, accedendo alla tab "📚 STORICO" e cliccando sul pulsante "🔍 Layout".
+**NOTA**: nel caso tu non abbia salvato in tempo i file Excel delle varie assegnazioni, potrai sempre farlo in un secondo momento, accedendo alla tab "📚 STORICO" e cliccando sul pulsante "🔍 Layout".
 
 > [!NOTE]
 >
