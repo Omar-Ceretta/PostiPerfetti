@@ -2256,7 +2256,7 @@ class FinestraPostiPerfetti(QMainWindow):
 
         <p><b>① Prepara un file base:</b><br>
         Vai all'interno della cartella "dati" del programma e, con un qualsiasi editor di testo, <b>crea un nuovo file .txt con il nome della tua classe</b> (ad es. "Classe1A.txt", oppure "Classe1A_2026-27.txt").</p>
-        <p>All'interno inserisci solo <code>"Cognome;Nome;Genere"</code> (= M/F) di ogni studente, <b>uno per riga, in ordine alfabetico</b>. Separa i tre elementi con due punti e virgola (";") e non usare spazi:</p>
+        <p>Dentro inserisci solo <code>"Cognome;Nome;Genere"</code> (= M/F) di ogni studente, <b>uno per riga, in ordine alfabetico</b>. Separa i tre elementi con due punti e virgola (";") e non usare spazi:</p>
 
         <table border="1" cellpadding="6" cellspacing="0" style="border-collapse: collapse; margin: 8px 0; width: 50%;">
         <tr style="background-color: #404040; color: #ffffff;"><td><b>Esempio di file base</b></td></tr>
