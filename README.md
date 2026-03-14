@@ -30,7 +30,7 @@
 >
 > ### **① Prepara un file base**
 
-**Vai all'interno della cartella "dati"** del programma e, con un qualsiasi editor di testo, **crea un nuovo file .txt con il nome della tua classe** (ad es. `"Classe1A.txt"` oppure `"Classe1A_2026-27.txt"`).
+**Dopo aver installato il programma, vai all'interno della cartella "dati"** e, con un qualsiasi editor di testo, **crea un nuovo file .txt con il nome della tua classe** (ad es. `"Classe1A.txt"` oppure `"Classe1A_2026-27.txt"`).
 
 All'interno inserisci solo `"Cognome;Nome;Genere"` (= M/F) di ogni studente, **uno per riga, in ordine alfabetico**. Separa i tre elementi con due punti e virgola (";") e non usare spazi, come nel seguente esempio:
 
