@@ -16,13 +16,13 @@
 
 > [!NOTE]
 >
-> A seconda delle tue preferenze, puoi selezionare un **🌙 Tema scuro** o un **☀️ Tema chiaro** per usare l'interfaccia.
+> A seconda delle tue preferenze, puoi selezionare un **🌙 Tema scuro** o un **☀️ Tema chiaro** per usare l'interfaccia, che apparirà come nei seguenti screenshot:
+
+[![Schermata "Editor" con 'Tema scuro'](screens/000_editor-scuro.png)](https://raw.githubusercontent.com/Omar-Ceretta/PostiPerfetti/refs/heads/main/screens/000_editor-scuro.png)
+
+[![Schermata "Editor" con 'Tema chiaro'](screens/000_editor-chiaro.png)](https://github.com/Omar-Ceretta/PostiPerfetti/blob/main/screens/000_editor-chiaro.png?raw=true)
 
 ------
-
-[![Schermata "Editor" con 'Tema scuro'](screens/000_editor-scuro.png)](https://raw.githubusercontent.com/Omar-Ceretta/PostiPerfetti/refs/heads/main/screens/000_editor-chiaro.png)
-
-![Schermata "Editor" con 'Tema chiaro'](screens/000_editor-chiaro.png)
 
 ## 1️⃣ PREPARAZIONE DEL FILE STUDENTI TRAMITE "✏️ Editor studenti"
 
@@ -43,15 +43,11 @@ All'interno inserisci solo `"Cognome;Nome;Genere"` (= M/F) di ogni studente, **u
 | `Calvino;Italo;M`        |
 | eccetera...              |
 
-✔️ ✔️ ✔️
-
 > [!TIP]
 >
 > ### ② Carica il file nell'Editor
 
 Clicca sulla tab **"✏️ Editor studenti"** e poi sul pulsante **"📝 Carica classe da modificare (.txt)"**, scegliendo il file che hai creato. L'applicazione riconoscerà automaticamente il formato base e creerà una scheda per ogni allievo che hai inserito.
-
-✔️ ✔️ ✔️
 
 > [!TIP]
 >
@@ -62,8 +58,6 @@ Per ogni studente, usa il **menu a tendina** per selezionarne la posizione:
 - `NORMALE` = nessuna preferenza.
 - **`PRIMA`** = **OBBLIGO di stare in prima fila** (utile ad es. per gli allievi più propensi a distrarsi, con difficoltà di vista o altri bisogni particolari).
 - `ULTIMA` = preferenza per l'ultima fila (utile ad es. per allievi di alta statura o per altre esigenze).
-
-✔️ ✔️ ✔️
 
 > [!TIP]
 >
@@ -82,8 +76,6 @@ Se è il caso di tenere separati alcuni allievi (che in banco assieme rischiereb
 
 > 💡 **NOTA:** Puoi aggiungere più incompatibilità per lo stesso studente, cliccando di nuovo il bottone ➕.
 
-✔️ ✔️ ✔️
-
 > [!TIP]
 >
 > ### ⑤ Aggiungi le AFFINITÀ
@@ -100,23 +92,17 @@ I livelli indicano quanto è desiderabile che i due studenti stiano vicini:
 
 > 💡 **NOTA:** Puoi aggiungere più affinità per lo stesso studente, cliccando di nuovo il bottone ➕.
 
-✔️ ✔️ ✔️
-
 > [!TIP]
 >
 > ### ⑥ BIDIREZIONALITÀ automatica
 
 **Non devi preoccuparti di ripetere i vincoli.** Se imposti "D'Annunzio Gabriele incompatibile con Deledda Grazia (livello 3)", l'Editor aggiungerà **automaticamente** "Deledda Grazia incompatibile con D'Annunzio Gabriele (livello 3)". Lo stesso vale per le affinità, per le modifiche di livello e per le rimozioni.
 
-✔️ ✔️ ✔️
-
 > [!TIP]
 >
 > ### ⑦ Rimuovere un vincolo
 
 Clicca il bottone **"Rimuovi"** accanto al vincolo da eliminare. Il vincolo speculare sull'altro studente verrà rimosso automaticamente.
-
-✔️ ✔️ ✔️
 
 > [!TIP]
 >
@@ -188,9 +174,9 @@ Quando il file della classe sarà pronto e caricato, clicca su **"🚀 Avvia ass
 
 ### 🍀 La Tab "🏫 AULA"
 
-![](screens/001_aula-scuro.png)
+[![Schermata "Aula" con 'Tema scuro'](screens/001_aula-scuro.png)](https://github.com/Omar-Ceretta/PostiPerfetti/blob/main/screens/001_aula-scuro.png?raw=true)
 
-![](screens/001_aula-chiaro.png)
+[![Schermata "Aula" con 'Tema chiaro'](screens/001_aula-chiaro.png)](https://github.com/Omar-Ceretta/PostiPerfetti/blob/main/screens/001_aula-chiaro.png?raw=true)
 
 La Tab "🏫 AULA" mostrerà la disposizione grafica dell'aula. Gli arredi (LIM, cattedra, lavagna) sono in basso, le file di banchi salgono verso l'alto. Da qui potrai agire sui pulsanti:
 
@@ -200,17 +186,17 @@ La Tab "🏫 AULA" mostrerà la disposizione grafica dell'aula. Gli arredi (LIM,
 
 ### 🍀 La Tab "📊 REPORT"
 
-![](screens/002_report-scuro.png)
+[![Schermata "Report" con 'Tema scuro'](screens/002_report-scuro.png)](https://github.com/Omar-Ceretta/PostiPerfetti/blob/main/screens/002_report-scuro.png?raw=true)
 
-![](screens/002_report-chiaro.png)
+[![Schermata "Report" con 'Tema chiaro'](screens/002_report-chiaro.png)](https://github.com/Omar-Ceretta/PostiPerfetti/blob/main/screens/002_report-chiaro.png?raw=true)
 
 La Tab "📊 REPORT" mostra il report testuale dettagliato con tutte le coppie formate, i punteggi, le note sui vincoli e il layout dell'aula in formato testo. Le coppie eventualmente riutilizzate saranno evidenziate in **colore ocra**.
 
 ### 🍀 La Tab "📚 STORICO"
 
-![](screens/003_storico-scuro.png)
+[![Schermata "Storico" con 'Tema scuro'](screens/003_storico-scuro.png)](https://github.com/Omar-Ceretta/PostiPerfetti/blob/main/screens/003_storico-scuro.png?raw=true)
 
-![](screens/003_storico-chiaro.png)
+[![Schermata "Storico" con 'Tema chiaro'](screens/003_storico-chiaro.png)](https://github.com/Omar-Ceretta/PostiPerfetti/blob/main/screens/003_storico-chiaro.png?raw=true)
 
 La Tab "📚 STORICO" elenca tutte le assegnazioni salvate. Volendo, puoi **modificare il 'Nome' di ogni assegnazione** facendo doppio clic su di essa. Per ciascuna inoltre potrai agire sui pulsanti:
 
@@ -220,9 +206,9 @@ La Tab "📚 STORICO" elenca tutte le assegnazioni salvate. Volendo, puoi **modi
 
 ### 🍀 La Tab "📊 STATISTICHE"
 
-![](screens/004_statistiche-scuro.png)
+[![Schermata "Statistiche" con 'Tema scuro'](screens/004_statistiche-scuro.png)](https://github.com/Omar-Ceretta/PostiPerfetti/blob/main/screens/004_statistiche-scuro.png?raw=true)
 
-![](screens/004_statistiche-chiaro.png)
+[![Schermata "Statistiche" con 'Tema chiaro'](screens/004_statistiche-chiaro.png)](https://github.com/Omar-Ceretta/PostiPerfetti/blob/main/screens/004_statistiche-chiaro.png?raw=true)
 
 La Tab "📊 STATISTICHE" analizza l'intero Storico della classe (o di più classi) mostrando le coppie più frequenti, gli studenti più spesso in prima fila e le coppie mai formate. Utile per verificare l'equità e le caratteristiche delle rotazioni succedutesi nel tempo.
 
