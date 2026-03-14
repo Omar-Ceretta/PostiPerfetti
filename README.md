@@ -136,7 +136,7 @@ Clicca il bottone **"Rimuovi"** accanto al vincolo da eliminare. Il vincolo spec
 
 ### 🔷 **Passo 1 — Carica il file:** 
 
-- Clicca sul pulsante **"📂 Seleziona file classe (.txt)"** presente nel pannello a sinistra. Se fai questa operazione con un file già caricato nell'Editor, un 'popup' ti chiederà se vuoi utilizzare quel file (scegli "Sì") oppure se desideri caricarne uno diverso (scegli "No"). Dopo il caricamento, il programma mostrerà il numero di studenti caricati.
+- Clicca sul pulsante **"📂 Seleziona file classe (.txt)"** presente nel pannello a sinistra. Se fai questa operazione con un file già caricato nell'Editor, un 'popup' ti chiederà se vuoi utilizzare quel file (scegli **"Usa i dati dall'Editor"**) oppure se desideri caricarne uno diverso (scegli **"Carica un nuovo file"**). Dopo il caricamento, il programma mostrerà il numero di studenti caricati.
 
 ### 🔷 **Passo 2 — Configura le opzioni:** 
 
