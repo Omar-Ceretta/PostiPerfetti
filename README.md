@@ -24,6 +24,12 @@
 
 ------
 
+## 📥 Download
+
+**[Scarica PostiPerfetti per Windows](https://github.com/Omar-Ceretta/PostiPerfetti/releases/latest)**
+
+------
+
 ## 1️⃣ PREPARAZIONE DEL FILE STUDENTI TRAMITE "✏️ Editor studenti"
 
 > [!TIP]
