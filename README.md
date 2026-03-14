@@ -1,6 +1,6 @@
 ![«PostiPerfetti»](modelli/postiperfetti_logo.png)
 
-# 📖 «PostiPerfetti» - Guida all'uso
+# 📖 «PostiPerfetti»
 
 > [!IMPORTANT]
 >
@@ -30,7 +30,7 @@
 
 ------
 
-## 1️⃣ PREPARAZIONE DEL FILE STUDENTI TRAMITE "✏️ Editor studenti"
+## 1️⃣ GUIDA ALL'USO: L' "✏️ Editor studenti"
 
 > [!TIP]
 >
