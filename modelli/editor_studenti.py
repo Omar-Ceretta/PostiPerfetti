@@ -2035,12 +2035,12 @@ class EditorStudentiWidget(QWidget):
         # Mostra il nome del file per chiarezza
         nome_file = self._nome_file_caricato or "sconosciuto"
         dialog.setText(
-            f"⚠️ Hai modificato i dati di '{nome_file}' nell'Editor\n"
-            f"(vincoli, genere, posizione...) ma NON hai ancora\n"
-            f"salvato il file '{nome_file}.txt' su disco.\n\n"
+            f"⚠️ Hai modificato i dati di '{nome_file}.txt' nell'Editor\n"
+            f"(vincoli, genere, posizione...) ma NON hai ancora salvato\n"
+            f"il file '{nome_file}.txt' su disco.\n\n"
             f"Se prosegui senza salvare, tutte le modifiche\n"
             f"fatte nell'Editor andranno PERSE.\n\n"
-            f"Cosa vuoi fare?"
+            f"Che cosa vuoi fare?"
         )
 
         # Crea i 3 bottoni personalizzati
