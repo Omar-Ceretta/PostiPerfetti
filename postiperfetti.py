@@ -2250,7 +2250,7 @@ class FinestraPostiPerfetti(QMainWindow):
         <h3 style="color: #64B5F6;">1️⃣ PREPARAZIONE DEL FILE STUDENTI TRAMITE "✏️ Editor studenti"</h3>
         <p style="background-color: #2E3B2E; color: #ffffff; padding: 10px; border-radius: 6px; border-left: 4px solid #4CAF50;"><br>Questo programma utilizza uno speciale algoritmo per aiutare il docente Coordinatore di classe (o qualsiasi insegnante ne abbia la necessità) ad assegnare agli studenti il proprio posto in classe.<br><br>
         Per funzionare, esso richiede solamente un file <b>.txt</b> con i dati essenziali degli alunni. All'interno del programma sarà poi possibile, in modo intuitivo, arricchire il file con una serie di informazioni utili perché la distribuzione degli allievi risulti quanto più in linea con i desiderata dell'insegnante.<br><br>
-        È importante precisare che <b>«PostiPerfetti» non ha alcun accesso alla rete, pertanto non invia nessun dato a terzi</b>: lavorando esclusivamente in locale, ogni informazione è mantenuta al sicuro all'interno del pc del docente.<br></p>
+        <b>«PostiPerfetti» non ha alcun accesso alla rete, pertanto non invia nessun dato a terzi</b>. Lavorando esclusivamente in locale, ogni informazione è mantenuta al sicuro all'interno del pc del docente.<br></p>
 
         <p><b>COME USARE L'EDITOR, passo per passo:</b></p>
 
