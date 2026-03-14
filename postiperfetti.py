@@ -826,7 +826,7 @@ class PopupLayoutStorico(QDialog):
         data_assegnazione = self.dati_assegnazione.get('data', 'N/A')
 
         self.setWindowTitle(f"🔍 Layout Assegnazione - {nome_assegnazione} - {data_assegnazione}")
-        self.setMinimumSize(1200, 750)
+        self.setMinimumSize(1250, 750)
         self.resize(1150, 750)  # Imposta anche dimensione iniziale
 
         # Layout principale verticale
