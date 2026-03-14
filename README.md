@@ -26,7 +26,7 @@
 
 ## 📥 Download
 
-**[Scarica PostiPerfetti per Windows](https://github.com/Omar-Ceretta/PostiPerfetti/releases/latest)**
+**[Scarica «PostiPerfetti» per Windows](https://github.com/Omar-Ceretta/PostiPerfetti/releases/latest)**
 
 ------
 
