@@ -6,7 +6,7 @@
 >
 > ✅ **«PostiPerfetti» è un programma gratuito e *open source* che utilizza uno speciale algoritmo per aiutare il docente Coordinatore (o qualsiasi insegnante ne abbia la necessità) ad assegnare agli studenti il proprio posto in classe.** 
 >
-> ✅ Per funzionare, il programma richiede solamente la creazione di un file ".txt" con i dati essenziali degli alunni (*cognome*, *nome*, *genere*). Tramite alcune funzioni molto intuitive sarà poi possibile aggiungere una serie di informazioni e vincoli ('affinità' e 'incompatibilità' fra allievi, loro 'posizione' rispetto alla cattedra, eventuale preferenza per 'coppie miste (M+F)') per ottenere **UNA DISTRIBUZIONE DEGLI ALLIEVI QUANTO PIÙ IN LINEA CON I DESIDERATA DELL'INSEGNANTE**.
+> ✅ Per funzionare, esso richiede solamente la creazione di un file ".txt" con i dati essenziali degli alunni (*cognome*, *nome*, *genere*). Tramite alcune funzioni molto intuitive sarà poi possibile aggiungere una serie di informazioni e vincoli ('affinità' e 'incompatibilità' fra allievi, loro 'posizione' rispetto alla cattedra, eventuale preferenza per 'coppie miste (M+F)') per ottenere **UNA DISTRIBUZIONE DEGLI ALLIEVI QUANTO PIÙ IN LINEA CON I DESIDERATA DELL'INSEGNANTE**.
 >
 > ✅ Gli allievi verranno distribuiti "a due a due" in modo automatizzato, in un numero di coppie e di file di banchi personalizzabile secondo le esigenze. **Le assegnazioni richiedono in genere da qualche secondo a pochi minuti** (a seconda del numero e della rigidità dei "vincoli" che si sono predisposti).
 >
