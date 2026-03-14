@@ -16,7 +16,7 @@
 
 > [!NOTE]
 >
-> A seconda delle tue preferenze, puoi selezionare un **🌙 Tema scuro** o un **☀️ Tema chiaro** per usare l'interfaccia, che apparirà come nei seguenti screenshot:
+> A seconda delle tue preferenze, per usare l'interfaccia puoi selezionare un **🌙 Tema scuro** o un **☀️ Tema chiaro**, che apparirà come nei seguenti screenshot (clicca per allargare le immagini):
 > 
 > [![Schermata "Editor" con 'Tema scuro'](screens/000_editor-scuro.png)](https://raw.githubusercontent.com/Omar-Ceretta/PostiPerfetti/refs/heads/main/screens/000_editor-scuro.png)
 > 
@@ -30,9 +30,9 @@
 >
 > ### **① Prepara un file base**
 
-Vai all'interno della cartella "dati" del programma e, con un qualsiasi editor di testo, **crea un nuovo file .txt con il nome della tua classe** (ad es. "Classe1A.txt" oppure "Classe1A_2026-27.txt").
+**Vai all'interno della cartella "dati"** del programma e, con un qualsiasi editor di testo, **crea un nuovo file .txt con il nome della tua classe** (ad es. `"Classe1A.txt"` oppure `"Classe1A_2026-27.txt"`).
 
-All'interno inserisci solo `"Cognome;Nome;Genere"` (= M/F) di ogni studente, **uno per riga, in ordine alfabetico**. Separa i tre elementi con due punti e virgola (";") e non usare spazi:
+All'interno inserisci solo `"Cognome;Nome;Genere"` (= M/F) di ogni studente, **uno per riga, in ordine alfabetico**. Separa i tre elementi con due punti e virgola (";") e non usare spazi, come nel seguente esempio:
 
 | **Esempio di file base** |
 | ------------------------ |
@@ -112,13 +112,13 @@ Clicca il bottone **"Rimuovi"** accanto al vincolo da eliminare. Il vincolo spec
 
 - Clicca su **"💾 Esporta file completo"** per salvare il file .txt definitivo della classe.
 
-- Puoi **sovrascrivere il file .txt della classe**, oppure dargli un altro nome (ad es. "Classe1A_09-2026.txt", oppure "Classe1A_definitivo.txt")
+- Puoi **sovrascrivere il file .txt della classe**, oppure dargli un altro nome (ad es. `"Classe1A_09-2026.txt"`, oppure `"Classe1A_definitivo.txt"`)
 
 ------
 
 > [!NOTE]
 >
-> ### 💡 Modifica dei vincoli in corso d'anno
+> ### ⚙️ Modifica dei vincoli in corso d'anno
 >
 > Se in futuro vorrai rimuovere, aggiungere o cambiare dei vincoli, basterà ricaricare nell'Editor il file .txt della classe. Le schede verranno popolate automaticamente con tutti i dati esistenti di ciascun allievo, pronte per essere modificate. 
 >
@@ -164,7 +164,7 @@ Quando il file della classe sarà pronto e caricato, clicca su **"🚀 Avvia ass
 
 > [!NOTE]
 >
-> ### 💡 File di configurazione
+> ### ⚙️ File di configurazione
 >
 > Tutte le modifiche ai file e ogni assegnazione salvata vengono memorizzate all'interno del file "postiperfetti_configurazione.json". Questo file non deve essere aperto o modificato direttamente. Solo nel caso in cui si desideri cancellare l'intero Storico delle assegnazioni può essere eliminato, e verrà ricreato "da zero" dal programma in occasione della prima nuova assegnazione.
 
@@ -241,7 +241,7 @@ La Tab "📊 STATISTICHE" analizza l'intero Storico della classe (o di più clas
 
 > [!NOTE]
 >
-> ### 💡 Modifica dei vincoli in corso d'anno
+> ### ⚙️ Modifica dei vincoli in corso d'anno
 >
 > Se le dinamiche della classe dovessero cambiare, modifica con "✏️ Editor studenti" il file .txt della classe - aggiornando 'posizione', 'incompatibilità' e 'affinità' - e poi salvalo.
 
@@ -251,12 +251,12 @@ La Tab "📊 STATISTICHE" analizza l'intero Storico della classe (o di più clas
 
 ## ⚠️ RISOLUZIONE DEI PROBLEMI
 
-| **Problema**                                              | **Soluzione**                                                |
-| --------------------------------------------------------- | ------------------------------------------------------------ |
-| Popup di segnalazione errore al caricamento del file .txt | Il programma verifica che la sintassi di ogni riga sia corretta e propone in automatico gli aggiustamenti necessari, avvisando con un 'popup'. È consigliabile, in questi casi, rivedere la correttezza dei dati degli allievi nella tab "✏️ Editor studenti". |
-| Studente "non trovato" nei vincoli                        | Il nome nei vincoli deve corrispondere **esattamente** a Cognome + Nome (es: `Pasolini Pier Paolo`, non `Pasolini Pier`). |
-| ❗ TROPPE COPPIE RIUTILIZZATE                              | Con molti vincoli di incompatibilità (livello 3), le combinazioni possibili si riducono. **Valuta se qualche vincolo di livello 3 può diventare livello 2.** |
-| ‼️ L'ASSEGNAZIONE FALLISCE IN TUTTI I TENTATIVI            | I vincoli assoluti creano una situazione matematicamente impossibile da risolvere. **Riduci il numero di incompatibilità di 'livello 3', di posizione 'PRIMA' oppure rimuovi il vincolo di 'genere misto'.** |
+| **Problema**                                            | **Soluzione**                                                |
+| ------------------------------------------------------- | ------------------------------------------------------------ |
+| 💬 Popup che segnala errore al caricamento del file .txt | Il programma verifica che la sintassi di ogni riga sia corretta e propone in automatico gli aggiustamenti necessari, avvisando con un 'popup'. È consigliabile, in questi casi, rivedere la correttezza dei dati degli allievi nella tab "✏️ Editor studenti". |
+| 🚫 Studente "non trovato" nei vincoli                    | Il nome nei vincoli deve corrispondere **esattamente** a Cognome + Nome (es: `Pasolini Pier Paolo`, non `Pasolini Pier`). |
+| ❗ TROPPE COPPIE RIUTILIZZATE                            | Con molti vincoli di incompatibilità (livello 3), le combinazioni possibili si riducono. **Valuta se qualche vincolo di livello 3 può diventare livello 2.** |
+| ‼️ L'ASSEGNAZIONE FALLISCE IN TUTTI I TENTATIVI          | I vincoli assoluti creano una situazione matematicamente impossibile da risolvere. **Riduci il numero di incompatibilità di 'livello 3', di posizione 'PRIMA' oppure rimuovi il vincolo di 'genere misto'.** |
 
 ------
 
