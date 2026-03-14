@@ -4445,7 +4445,7 @@ class FinestraPostiPerfetti(QMainWindow):
                 f"dei posti per gli allievi di '{nome_file_editor}'\n\n"
                 f"👉 Se scegli di caricare un NUOVO file, le modifiche eventualmente\n"
                 f"effettuate nell'Editor per questa classe (vincoli, genere, posizione)\n"
-                f"andranno PERSE se non le hai salvate.\n\n"
+                f"andranno PERSE se non le hai salvate con 'Salva file CLASSE completo (.txt)'.\n\n"
                 f"Che cosa vuoi fare?"
             )
 
