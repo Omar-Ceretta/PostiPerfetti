@@ -1613,7 +1613,7 @@ class FinestraPostiPerfetti(QMainWindow):
         layout.addSpacing(SPAZIO_TRA_BOX)
 
         # === SEZIONE 1: CARICAMENTO DATI ===
-        group_dati = QGroupBox("📂 CARICAMENTO DATI")
+        group_dati = QGroupBox("📋 CARICAMENTO DATI")
         layout_dati = QVBoxLayout(group_dati)
 
         # Nome classe (read-only: si popola automaticamente dal nome del file .txt)
@@ -1913,7 +1913,7 @@ class FinestraPostiPerfetti(QMainWindow):
 
         # Info sui vincoli fissi
         self.label_info_vincoli = QLabel("""
-        🎯 IL PROGRAMMA OBBEDISCE A QUESTI VINCOLI AUTOMATICI:
+        🎯 IL PROGRAMMA OBBEDISCE A QUESTI VINCOLI:
         
           - Incompatibilità "livello 3": ASSOLUTA (alunni mai in coppia)
           - Posizione "PRIMA": OBBLIGATORIA (se posti disponibili)
