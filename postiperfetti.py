@@ -3049,8 +3049,12 @@ class FinestraPostiPerfetti(QMainWindow):
             self.tabella_storico.setCellWidget(row, 3, widget_azioni)
 
         self.tabella_storico.resizeColumnsToContents()
-        # Aumenta l'altezza delle righe per vedere i bottoni
-        self.tabella_storico.verticalHeader().setDefaultSectionSize(50)
+        # Altezza righe calcolata automaticamente in base al contenuto.
+        # Usiamo setMinimumSectionSize (non setDefaultSectionSize) per
+        # garantire un minimo leggibile, ma lasciando a Qt la libertà
+        # di espandere la riga se il DPI scaling lo richiede.
+        self.tabella_storico.verticalHeader().setMinimumSectionSize(50)
+        self.tabella_storico.resizeRowsToContents()
 
         # Sblocca il segnale cellChanged (popolamento completato)
         self.tabella_storico.blockSignals(False)
