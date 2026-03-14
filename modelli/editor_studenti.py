@@ -407,7 +407,7 @@ class RigaVincolo(QWidget):
             "Seleziona il livello",
             "Hai scelto lo studente\n"
             "Ora seleziona anche l'intensità del livello del vincolo\n"
-            "~ 1 = Leggera     ~ 2 = Media     ~ 3 = ASSOLUTA/Forte\n\n"
+            "~ 1 = Leggera   ~ 2 = Media   ~ 3 = ASSOLUTA/Forte\n\n"
             "Il livello determina quanto l'algoritmo rispetterà\n"
             "questo vincolo durante l'assegnazione dei posti."
         )
