@@ -5995,7 +5995,7 @@ class FinestraPostiPerfetti(QMainWindow):
                     posti_salvati = config_aula_salvata.get("posti_per_fila")
                     if num_file_salvato is not None:
                         self.input_num_file.setText(str(num_file_salvato))
-                        if posti_salvati is not None:
+                    if posti_salvati is not None:
                         self.input_posti_fila.setText(str(posti_salvati))
                     # Aggiorna il conteggio posti totali nella label
                     self._aggiorna_posti_totali()
