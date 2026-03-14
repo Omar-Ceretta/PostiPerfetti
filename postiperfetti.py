@@ -5399,27 +5399,77 @@ class FinestraPostiPerfetti(QMainWindow):
     def _crea_file_excel(self, file_path: str, assegnatore: AssegnatorePosti):
         """
         Crea il file Excel con il layout dell'aula.
-        VERSIONE CORRETTA: Usa nomi completi invece di abbreviazioni.
+        Usa xlsxwriter per compatibilità nativa con Excel 2019+
+        (openpyxl genera XML privo degli attributi applyFill/applyBorder
+        che Excel richiede, causando bordi e colori invisibili).
+
+        NOTA: xlsxwriter usa indici 0-based (riga 0 = prima riga, colonna 0 = A).
         """
+        import xlsxwriter
 
-        import openpyxl
-        from openpyxl.styles import Font, PatternFill, Border, Side, Alignment
+        wb = xlsxwriter.Workbook(file_path)
+        ws = wb.add_worksheet("PostiPerfetti")
 
-        wb = openpyxl.Workbook()
-        ws = wb.active
-        ws.title = "PostiPerfetti"
+        # === DEFINIZIONE FORMATI (vanno creati una volta, poi riusati) ===
 
-        # Header (spostato in B2-B3 per margini stampa)
-        ws['B2'] = f"«PostiPerfetti» - {self.input_nome_classe.text()}"
-        ws['B2'].font = Font(size=16, bold=True)
-        ws['B3'] = f"Data: {datetime.now().strftime('%d/%m/%Y %H:%M')}"
+        # Header titolo e data
+        fmt_titolo = wb.add_format({"bold": True, "font_size": 16})
+        fmt_data = wb.add_format({"font_size": 11})
 
-        # LAYOUT AULA IN EXCEL
+        # Banco occupato: sfondo verde chiaro + bordo medio + grassetto
+        fmt_banco_occupato = wb.add_format({
+            "bold": True,
+            "font_size": 9,
+            "bg_color": "#C8E6C9",
+            "border": 2,  # 2 = medium (compatibile con tutte le versioni Excel)
+            "align": "center",
+            "valign": "vcenter",
+            "text_wrap": True,  # A capo automatico per nomi lunghi
+        })
+
+        # Banco libero: sfondo grigio chiaro + bordo medio
+        fmt_banco_libero = wb.add_format({
+            "bg_color": "#F5F5F5",
+            "border": 2,
+            "align": "center",
+            "valign": "vcenter",
+        })
+
+        # Arredi: sfondo colorato + grassetto + centrato (uno per tipo)
+        fmt_lim = wb.add_format({
+            "bold": True,
+            "bg_color": "#BBDEFB",
+            "align": "center",
+            "valign": "vcenter",
+        })
+        fmt_cattedra = wb.add_format({
+            "bold": True,
+            "bg_color": "#FFE0B2",
+            "align": "center",
+            "valign": "vcenter",
+        })
+        fmt_lavagna = wb.add_format({
+            "bold": True,
+            "bg_color": "#D7CCC8",
+            "align": "center",
+            "valign": "vcenter",
+        })
+
+        # Mappa tipo arredo → (formato, etichetta)
+        mappa_arredi = {
+            "lim": (fmt_lim, "LIM"),
+            "cattedra": (fmt_cattedra, "CATTEDRA"),
+            "lavagna": (fmt_lavagna, "LAVAGNA"),
+        }
+
+        # === HEADER (B2, B3 in notazione umana → riga 1, col 1 in 0-based) ===
+        ws.write(1, 1, f"«PostiPerfetti» - {self.input_nome_classe.text()}", fmt_titolo)
+        ws.write(2, 1, f"Data: {datetime.now().strftime('%d/%m/%Y %H:%M')}", fmt_data)
+
+        # === LAYOUT AULA ===
         configurazione = assegnatore.configurazione_aula
-        start_row = 5  # Inizia direttamente con la griglia (margine stampa superiore)
 
-        # Crea griglia aula - ORDINE INVERTITO
-        # Arredi (LIM, CAT, LAV) in basso, ultima fila banchi in alto
+        # Griglia invertita: arredi in basso, ultima fila banchi in alto
         griglia_invertita = list(reversed(configurazione.griglia))
 
         # Filtra solo le righe con contenuto (banchi o arredi, no righe vuote)
@@ -5428,127 +5478,84 @@ class FinestraPostiPerfetti(QMainWindow):
             if any(p.tipo != 'corridoio' for p in riga)
         ]
 
-        # Calcola riga Excel per ogni riga con contenuto
-        # Ogni fila di banchi è separata da una riga vuota (corridoio visivo)
-        excel_row = start_row
+        # Traccia le colonne con contenuto per ottimizzare le larghezze
+        colonne_con_contenuto = set()
+        # Traccia la riga degli arredi per l'unione celle
+        riga_excel_arredi = None
+
+        # start_row = 4 (0-based, equivale alla riga 5 in Excel)
+        excel_row = 4
+
         for riga in righe_con_contenuto:
+            # Imposta altezza riga (35 pixel) per tutti i banchi e arredi
+            ws.set_row(excel_row, 35)
+
             for col_idx, posto in enumerate(riga):
-                excel_col = col_idx + 2  # +2 per lasciare colonna A vuota (margine stampa)
-                cell = ws.cell(row=excel_row, column=excel_col)
+                # +1 per lasciare colonna A vuota (margine stampa, 0-based)
+                excel_col = col_idx + 1
 
                 if posto.tipo == 'banco':
+                    # --- BANCHI ---
                     if posto.occupato_da:
-                        # Banco occupato - usa nome completo
                         nome_completo = self._estrai_nome_completo_da_id(posto.occupato_da)
-                        cell.value = nome_completo
-                        # fgColor con formato ARGB a 8 caratteri (FF = opacità piena)
-                        # per massima compatibilità con Excel 2019+
-                        cell.fill = PatternFill(patternType="solid", fgColor="FFC8E6C9")  # Verde chiaro
-                        cell.font = Font(bold=True, size=9)
+                        ws.write(excel_row, excel_col, nome_completo, fmt_banco_occupato)
                     else:
-                        # Banco libero
-                        cell.value = "🪑"
-                        cell.fill = PatternFill(patternType="solid", fgColor="FFF5F5F5")  # Grigio chiaro
+                        ws.write(excel_row, excel_col, "🪑", fmt_banco_libero)
 
-                    # Bordo per tutti i banchi — "medium" è il più compatibile
-                    # cross-application ("thick" non viene reso da tutte le
-                    # versioni di Excel). Colore esplicito in formato ARGB.
-                    bordo_banco = Side(border_style="medium", color="FF000000")
-                    cell.border = Border(
-                        left=bordo_banco,
-                        right=bordo_banco,
-                        top=bordo_banco,
-                        bottom=bordo_banco
-                    )
+                    colonne_con_contenuto.add(excel_col)
 
                 elif posto.tipo in ('cattedra', 'lim', 'lavagna'):
-                    # Arredi: scrive il nome SOLO nella prima cella della coppia
-                    # Le coppie arredi sono alle posizioni griglia [0,1], [3,4], [6,7]
-                    # La prima cella di ogni coppia è alla posizione 0, 3 o 6
+                    # --- ARREDI ---
+                    # Gli arredi vengono gestiti a coppie: le posizioni nella
+                    # griglia sono [0,1], [3,4], [6,7]. Scriviamo il merge
+                    # SOLO quando incontriamo la prima cella della coppia
+                    # (col_idx 0, 3, 6). La seconda cella è coperta dal merge.
                     is_prima_cella = col_idx in (0, 3, 6)
 
-                    # Imposta sfondo appropriato per entrambe le celle
-                    # Formato ARGB (8 caratteri) per compatibilità Excel 2019
-                    if posto.tipo == 'lim':
-                        cell.fill = PatternFill(patternType="solid", fgColor="FFBBDEFB")
-                        if is_prima_cella:
-                            cell.value = "LIM"
-                    elif posto.tipo == 'cattedra':
-                        cell.fill = PatternFill(patternType="solid", fgColor="FFFFE0B2")
-                        if is_prima_cella:
-                            cell.value = "CATTEDRA"
-                    elif posto.tipo == 'lavagna':
-                        cell.fill = PatternFill(patternType="solid", fgColor="FFD7CCC8")
-                        if is_prima_cella:
-                            cell.value = "LAVAGNA"
+                    if is_prima_cella:
+                        fmt_arredo, etichetta = mappa_arredi[posto.tipo]
+                        # merge_range(riga_inizio, col_inizio, riga_fine, col_fine, testo, formato)
+                        ws.merge_range(
+                            excel_row, excel_col,
+                            excel_row, excel_col + 1,
+                            etichetta, fmt_arredo
+                        )
 
-                    cell.font = Font(bold=True)
-
-                    # Traccia la riga Excel degli arredi per l'unione celle successiva
                     riga_excel_arredi = excel_row
-
-                # Allineamento centrale per tutte le celle
-                cell.alignment = Alignment(horizontal="center", vertical="center")
-
-                # Dimensioni celle - aumentate per nomi completi
-                ws.column_dimensions[openpyxl.utils.get_column_letter(excel_col)].width = 18
-                ws.row_dimensions[excel_row].height = 35
+                    colonne_con_contenuto.add(excel_col)
 
             # Dopo ogni riga con contenuto, salta una riga per il corridoio visivo
             excel_row += 2
 
-        # === UNIONE CELLE ARREDI ===
-        # Unisce le coppie di celle per LIM, CATTEDRA e LAVAGNA
-        # così ogni arredo appare UNA SOLA VOLTA in una cella larga il doppio
-        if riga_excel_arredi:
-            # Posizioni arredi nella griglia: [0,1], [3,4], [6,7]
-            # In colonne Excel (col_idx + 2): [2,3], [5,6], [8,9]
-            coppie_arredi_excel = [(2, 3), (5, 6), (8, 9)]
-            for col_inizio, col_fine in coppie_arredi_excel:
-                ws.merge_cells(
-                    start_row=riga_excel_arredi, start_column=col_inizio,
-                    end_row=riga_excel_arredi, end_column=col_fine
-                )
-
         # === OTTIMIZZAZIONE LARGHEZZA COLONNE ===
-        # Identifica quali colonne contengono banchi/arredi e quali sono corridoi
-        colonne_con_contenuto = set()
-        for riga in righe_con_contenuto:
-            for col_idx, posto in enumerate(riga):
-                if posto.tipo != 'corridoio':
-                    excel_col = col_idx + 2  # +2 per margine colonna A
-                    colonne_con_contenuto.add(excel_col)
 
-        # Colonna A: margine stretto per stampa
-        ws.column_dimensions['A'].width = 2
+        # Colonna A (indice 0): margine stretto per stampa
+        ws.set_column(0, 0, 2)
 
         # Imposta larghezze: colonne con contenuto = 18, corridoi = 3
-        max_colonna_usata = max(colonne_con_contenuto) if colonne_con_contenuto else 2
-        for col_num in range(2, max_colonna_usata + 2):  # +2 per sicurezza
-            col_letter = openpyxl.utils.get_column_letter(col_num)
-            if col_num in colonne_con_contenuto:
-                ws.column_dimensions[col_letter].width = 18  # Colonne banchi/arredi
-            else:
-                ws.column_dimensions[col_letter].width = 3   # Corridoi stretti
+        if colonne_con_contenuto:
+            max_col = max(colonne_con_contenuto)
+            for col_num in range(1, max_col + 2):  # +2 per sicurezza
+                if col_num in colonne_con_contenuto:
+                    ws.set_column(col_num, col_num, 18)
+                else:
+                    ws.set_column(col_num, col_num, 3)
 
         # === CONFIGURAZIONE STAMPA A4 ===
         # Orientamento orizzontale per sfruttare la larghezza del foglio
-        ws.page_setup.orientation = 'landscape'
-        ws.page_setup.paperSize = ws.PAPERSIZE_A4
+        ws.set_landscape()
+        ws.set_paper(9)  # 9 = A4
+
         # Adatta tutto il contenuto a una singola pagina
-        ws.page_setup.fitToPage = True
-        ws.page_setup.fitToWidth = 1   # Adatta alla larghezza di 1 pagina
-        ws.page_setup.fitToHeight = 1  # Adatta all'altezza di 1 pagina
+        ws.fit_to_pages(1, 1)  # (larghezza, altezza) in numero di pagine
+
         # Margini ridotti per massimizzare lo spazio utile (in pollici)
-        from openpyxl.worksheet.page import PageMargins
-        ws.page_margins = PageMargins(
-            left=0.4, right=0.4,
-            top=0.4, bottom=0.4,
-            header=0.2, footer=0.2
-        )
+        ws.set_margins(left=0.4, right=0.4, top=0.4, bottom=0.4)
+        ws.set_header("", {"margin": 0.2})
+        ws.set_footer("", {"margin": 0.2})
 
         # Fine generazione Excel
-        wb.save(file_path)
+        wb.close()
 
     def salva_assegnazione(self):
         """Salva l'assegnazione corrente nello storico."""
@@ -5738,7 +5745,7 @@ class FinestraPostiPerfetti(QMainWindow):
 
         <p style="font-size: 13px;">
             <b>Tecnologie:</b><br>
-            Python 3 · PySide6 (Qt) · openpyxl
+            Python 3 · PySide6 (Qt) · XlsxWriter
         </p>
 
         <hr style="border: 1px solid #555;">
