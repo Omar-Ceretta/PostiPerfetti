@@ -826,7 +826,7 @@ class PopupLayoutStorico(QDialog):
         data_assegnazione = self.dati_assegnazione.get('data', 'N/A')
 
         self.setWindowTitle(f"🔍 Layout Assegnazione - {nome_assegnazione} - {data_assegnazione}")
-        self.setMinimumSize(1150, 750)
+        self.setMinimumSize(1200, 750)
         self.resize(1150, 750)  # Imposta anche dimensione iniziale
 
         # Layout principale verticale
@@ -4010,7 +4010,7 @@ class FinestraPostiPerfetti(QMainWindow):
                 # Crea dialog custom ridimensionabile
                 dialog = QDialog(self)
                 dialog.setWindowTitle(f"📋 Dettagli assegnazione - {assegnazione.get('nome', 'Senza nome')}")
-                dialog.setMinimumSize(1150, 800)  # Larghezza maggiore per titolo completo
+                dialog.setMinimumSize(1100, 800)  # Larghezza maggiore per titolo completo
                 dialog.resize(1150, 800)  # Dimensione iniziale
 
                 # Layout verticale
