@@ -17,10 +17,10 @@
 > [!NOTE]
 >
 > A seconda delle tue preferenze, puoi selezionare un **🌙 Tema scuro** o un **☀️ Tema chiaro** per usare l'interfaccia, che apparirà come nei seguenti screenshot:
-
-[![Schermata "Editor" con 'Tema scuro'](screens/000_editor-scuro.png)](https://raw.githubusercontent.com/Omar-Ceretta/PostiPerfetti/refs/heads/main/screens/000_editor-scuro.png)
-
-[![Schermata "Editor" con 'Tema chiaro'](screens/000_editor-chiaro.png)](https://github.com/Omar-Ceretta/PostiPerfetti/blob/main/screens/000_editor-chiaro.png?raw=true)
+> 
+> [![Schermata "Editor" con 'Tema scuro'](screens/000_editor-scuro.png)](https://raw.githubusercontent.com/Omar-Ceretta/PostiPerfetti/refs/heads/main/screens/000_editor-scuro.png)
+> 
+> [![Schermata "Editor" con 'Tema chiaro'](screens/000_editor-chiaro.png)](https://github.com/Omar-Ceretta/PostiPerfetti/blob/main/screens/000_editor-chiaro.png?raw=true)
 
 ------
 
