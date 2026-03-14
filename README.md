@@ -1,4 +1,4 @@
-![](modelli/postiperfetti_logo.png)
+![«PostiPerfetti»](modelli/postiperfetti_logo.png)
 
 # 📖 «PostiPerfetti» - Guida all'uso
 
@@ -20,9 +20,9 @@
 
 ------
 
-![](screens/000_editor-scuro.png)
+[![Schermata "Editor" con 'Tema scuro'](screens/000_editor-scuro.png)](https://raw.githubusercontent.com/Omar-Ceretta/PostiPerfetti/refs/heads/main/screens/000_editor-chiaro.png)
 
-![](screens/000_editor-chiaro.png)
+![Schermata "Editor" con 'Tema chiaro'](screens/000_editor-chiaro.png)
 
 ## 1️⃣ PREPARAZIONE DEL FILE STUDENTI TRAMITE "✏️ Editor studenti"
 
