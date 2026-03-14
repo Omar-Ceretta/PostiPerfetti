@@ -2997,7 +2997,7 @@ class FinestraPostiPerfetti(QMainWindow):
                     color: white;
                     font-weight: bold;
                     border-radius: 4px;
-                    padding: 6px 10px;
+                    padding: 4px 10px;
                 }
                 QPushButton:hover {
                     background-color: #b71c1c;
@@ -3017,7 +3017,7 @@ class FinestraPostiPerfetti(QMainWindow):
                     color: white;
                     font-weight: bold;
                     border-radius: 4px;
-                    padding: 6px 10px;
+                    padding: 4px 10px;
                 }
                 QPushButton:hover {
                     background-color: #0d47a1;
@@ -3037,7 +3037,7 @@ class FinestraPostiPerfetti(QMainWindow):
                     color: white;
                     font-weight: bold;
                     border-radius: 4px;
-                    padding: 6px 10px;
+                    padding: 4px 10px;
                 }
                 QPushButton:hover {
                     background-color: #45a049;
