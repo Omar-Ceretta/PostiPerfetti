@@ -118,7 +118,7 @@ Clicca il bottone **"Rimuovi"** accanto al vincolo da eliminare. Il vincolo spec
 
 - Clicca su **"💾 Esporta file completo"** per salvare il file .txt definitivo della classe.
 
-- Puoi **sovrascrivere il file .txt della classe**, oppure dargli un altro nome (ad es. `"Classe1A_09-2026.txt"`, oppure `"Classe1A_definitivo.txt"`)
+- Puoi **sovrascrivere il file .txt della classe**, oppure dargli un altro nome (ad es. `"Classe1A_09-2026.txt"`, `"Classe1A_settembre-26.txt"` oppure `"Classe1A_definitivo.txt"`)
 
 ------
 
