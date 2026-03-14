@@ -1914,6 +1914,7 @@ class FinestraPostiPerfetti(QMainWindow):
         # Info sui vincoli fissi
         self.label_info_vincoli = QLabel("""
         🎯 IL PROGRAMMA OBBEDISCE A QUESTI VINCOLI AUTOMATICI:
+        
           - Incompatibilità "livello 3": ASSOLUTA (alunni mai in coppia)
           - Posizione "PRIMA": OBBLIGATORIA (se posti disponibili)
           - "Coppie miste": vincolo FORTE ma NON assoluto
