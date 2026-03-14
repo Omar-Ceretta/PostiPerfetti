@@ -12,11 +12,11 @@
 >
 > ✅ **«PostiPerfetti» non ha alcun accesso alla rete, pertanto non invia nessun dato a terzi**. Lavorando esclusivamente in locale, ogni informazione è quindi mantenuta al sicuro all'interno del pc del docente.
 
-☀️ & 🌙
+
 
 > [!NOTE]
 >
-> A seconda delle tue preferenze, puoi selezionare un **tema scuro** o un **tema chiaro** per usare l'interfaccia.
+> A seconda delle tue preferenze, puoi selezionare un **🌙 Tema scuro** o un **☀️ Tema chiaro** per usare l'interfaccia.
 
 ------
 
@@ -136,7 +136,7 @@ Clicca il bottone **"Rimuovi"** accanto al vincolo da eliminare. Il vincolo spec
 >
 > Se in futuro vorrai rimuovere, aggiungere o cambiare dei vincoli, basterà ricaricare nell'Editor il file .txt della classe. Le schede verranno popolate automaticamente con tutti i dati esistenti di ciascun allievo, pronte per essere modificate. 
 >
-> Se invece dovrai aggiungere o rimuovere un allievo, dovrai aprire il file .txt della classe e cancellarne la riga, oppure aggiungerlo (con `Cognome;Nome;Genere`) nella posizione alfabeticamente corretta.
+> Se invece bisognasse aggiungere o rimuovere un allievo, dovrai aprire il file .txt della classe e cancellarne la riga, oppure aggiungerlo (con `Cognome;Nome;Genere`) nella posizione alfabeticamente corretta.
 
 ------
 
