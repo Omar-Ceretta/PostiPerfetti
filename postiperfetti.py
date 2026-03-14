@@ -2822,6 +2822,11 @@ class FinestraPostiPerfetti(QMainWindow):
         self._popola_filtro_classi()
         self._aggiorna_statistiche()
 
+        # Popola la tabella dello Storico con le assegnazioni precedenti.
+        # Il docente potrebbe voler consultare o esportare assegnazioni
+        # già fatte senza dover prima ricaricare una classe.
+        self._aggiorna_tabella_storico()
+
     def _aggiorna_posti_totali(self):
         """Aggiorna il calcolo dei posti totali."""
         num_file = int(self.input_num_file.text())
@@ -5436,19 +5441,24 @@ class FinestraPostiPerfetti(QMainWindow):
                         # Banco occupato - usa nome completo
                         nome_completo = self._estrai_nome_completo_da_id(posto.occupato_da)
                         cell.value = nome_completo
-                        cell.fill = PatternFill(start_color="C8E6C9", end_color="C8E6C9", fill_type="solid")  # Verde chiaro
+                        # fgColor con formato ARGB a 8 caratteri (FF = opacità piena)
+                        # per massima compatibilità con Excel 2019+
+                        cell.fill = PatternFill(patternType="solid", fgColor="FFC8E6C9")  # Verde chiaro
                         cell.font = Font(bold=True, size=9)
                     else:
                         # Banco libero
                         cell.value = "🪑"
-                        cell.fill = PatternFill(start_color="F5F5F5", end_color="F5F5F5", fill_type="solid")  # Grigio chiaro
+                        cell.fill = PatternFill(patternType="solid", fgColor="FFF5F5F5")  # Grigio chiaro
 
-                    # Bordo per tutti i banchi
+                    # Bordo per tutti i banchi — "medium" è il più compatibile
+                    # cross-application ("thick" non viene reso da tutte le
+                    # versioni di Excel). Colore esplicito in formato ARGB.
+                    bordo_banco = Side(border_style="medium", color="FF000000")
                     cell.border = Border(
-                        left=Side(border_style="thick"),
-                        right=Side(border_style="thick"),
-                        top=Side(border_style="thick"),
-                        bottom=Side(border_style="thick")
+                        left=bordo_banco,
+                        right=bordo_banco,
+                        top=bordo_banco,
+                        bottom=bordo_banco
                     )
 
                 elif posto.tipo in ('cattedra', 'lim', 'lavagna'):
@@ -5458,16 +5468,17 @@ class FinestraPostiPerfetti(QMainWindow):
                     is_prima_cella = col_idx in (0, 3, 6)
 
                     # Imposta sfondo appropriato per entrambe le celle
+                    # Formato ARGB (8 caratteri) per compatibilità Excel 2019
                     if posto.tipo == 'lim':
-                        cell.fill = PatternFill(start_color="BBDEFB", end_color="BBDEFB", fill_type="solid")
+                        cell.fill = PatternFill(patternType="solid", fgColor="FFBBDEFB")
                         if is_prima_cella:
                             cell.value = "LIM"
                     elif posto.tipo == 'cattedra':
-                        cell.fill = PatternFill(start_color="FFE0B2", end_color="FFE0B2", fill_type="solid")
+                        cell.fill = PatternFill(patternType="solid", fgColor="FFFFE0B2")
                         if is_prima_cella:
                             cell.value = "CATTEDRA"
                     elif posto.tipo == 'lavagna':
-                        cell.fill = PatternFill(start_color="D7CCC8", end_color="D7CCC8", fill_type="solid")
+                        cell.fill = PatternFill(patternType="solid", fgColor="FFD7CCC8")
                         if is_prima_cella:
                             cell.value = "LAVAGNA"
 
