@@ -1,7 +1,7 @@
 # Classe: Classe-COMPLETO_esempio (24 studenti)
 # Formato: Cognome;Nome;Genere;Posizione;Incompatibilità;Affinità
 # Genere: M/F (in caso di attivazione del flag "Genere misto" l'abbinamento [maschio][femmina] diventa un vincolo FORTE)
-# Posizione: PRIMA (= VINCOLO OBBLIGATORIO) / ULTIMA (= vincolo soft) / NORMALE (= vincolo neutro)
+# Posizione: NORMALE (= vincolo neutro) / PRIMA (= VINCOLO OBBLIGATORIO) / ULTIMA (= vincolo soft) / FISSO (= posizione fissa primo banco)
 # Vincoli "Incompatibilità": Cognome Nome:livello (1-3, dove 1= vincolo neutro, 2 = vincolo soft, 3 = VINCOLO OBBLIGATORIO)
 # Vincoli "Affinità": Cognome Nome:livello (1-3, dove 1 = vincolo neutro, 2 = vincolo soft, 3 = vincolo FORTE)
 
