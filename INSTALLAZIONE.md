@@ -34,7 +34,7 @@ Spostati nella cartella del progetto e lancia:
 
 ```bash
 cd ~/PostiPerfetti
-python3 modelli/postiperfetti_launcher.py
+python3 moduli/postiperfetti_launcher.py
 ```
 
 Al primo avvio il launcher:
@@ -48,7 +48,7 @@ Le volte successive il launcher rileverà che tutto è già installato e avvier�
 
 
 > **Suggerimento:** su molti Desktop Environmentpuoi puoi creare un collegamento sul Desktop per avviare il programma con un doppio clic. Fai clic destro sul Desktop → "Crea nuovo" → "Collegamento ad applicazione", e nel campo "Comando" inserisci:
-> `python3 /home/TUO_UTENTE/PostiPerfetti/modelli/postiperfetti_launcher.py`
+> `python3 /home/TUO_UTENTE/PostiPerfetti/moduli/postiperfetti_launcher.py`
 
 ---
 
