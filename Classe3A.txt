@@ -1,0 +1,23 @@
+# Classe: Classe3A (16 studenti)
+# Formato: Cognome;Nome;Genere;Posizione;Incompatibilità;Affinità
+# Genere: M/F (in caso di attivazione del flag "Genere misto" l'abbinamento [maschio][femmina] diventa un vincolo FORTE)
+# Posizione: NORMALE (= vincolo neutro) / PRIMA (= VINCOLO OBBLIGATORIO) / ULTIMA (= vincolo soft) / FISSO (= posizione fissa primo banco)
+# Vincoli "Incompatibilità": Cognome Nome:livello (1-3, dove 1= vincolo neutro, 2 = vincolo soft, 3 = VINCOLO OBBLIGATORIO)
+# Vincoli "Affinità": Cognome Nome:livello (1-3, dove 1 = vincolo neutro, 2 = vincolo soft, 3 = vincolo FORTE)
+
+Baggio;Andrea;M;NORMALE;Sbrissa Francesco:3,Vella Federico:2,Louis Mohamade:3,Parolin Fabian:3,Shala Leona:1;Cecchele Evan:3
+Barbosa;Nitzschi;F;NORMALE;Shala Leona:3,Busatto Adele:2;Parolin Fabian:3
+Busatto;Adele;F;NORMALE;Barbosa Nitzschi:2,Shala Leona:2;Parolin Fabian:3
+Cecchele;Evan;M;NORMALE;;Parolin Fabian:3,Kamani Kevin:2,Louis Mohamade:2,Baggio Andrea:3
+Dolzan;Pietro;M;NORMALE;Sbrissa Francesco:2,Parolin Fabian:1;
+Kamani;Kevin;M;NORMALE;Zanon Alex:3,Sbrissa Francesco:3,Parolin Fabian:2,Louis Mohamade:1;Pavin Giacomo:2,Cecchele Evan:2
+Louis;Mohamade;M;ULTIMA;Sbrissa Francesco:3,Murati Kasem:3,Parolin Fabian:3,Baggio Andrea:3,Kamani Kevin:1;Cecchele Evan:2
+Murati;Kasem;M;NORMALE;Sbrissa Francesco:3,Louis Mohamade:3,Parolin Fabian:3;
+Parolin;Fabian;M;FISSO;Zanon Alex:3,Sbrissa Francesco:3,Louis Mohamade:3,Shala Leona:3,Kamani Kevin:2,Murati Kasem:3,Baggio Andrea:3,Dolzan Pietro:1;Cecchele Evan:3,Tessarolo Filippo:1,Pavin Giacomo:2,Barbosa Nitzschi:3,Vella Filippo:2,Vella Federico:2,Busatto Adele:3
+Pavin;Giacomo;M;NORMALE;Sbrissa Francesco:1;Parolin Fabian:2,Kamani Kevin:2
+Sbrissa;Francesco;M;NORMALE;Louis Mohamade:3,Murati Kasem:3,Parolin Fabian:3,Shala Leona:3,Baggio Andrea:3,Kamani Kevin:3,Zanon Alex:3,Dolzan Pietro:2,Pavin Giacomo:1;
+Shala;Leona;F;NORMALE;Sbrissa Francesco:3,Barbosa Nitzschi:3,Parolin Fabian:3,Busatto Adele:2,Baggio Andrea:1;
+Tessarolo;Filippo;M;NORMALE;;Parolin Fabian:1
+Vella;Federico;M;NORMALE;Vella Filippo:3,Baggio Andrea:2;Parolin Fabian:2
+Vella;Filippo;M;NORMALE;Vella Federico:3;Parolin Fabian:2
+Zanon;Alex;M;NORMALE;Parolin Fabian:3,Kamani Kevin:3,Sbrissa Francesco:3;
