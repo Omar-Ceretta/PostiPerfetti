@@ -39,7 +39,7 @@ python3 moduli/postiperfetti_launcher.py
 
 Al primo avvio il launcher:
 - **Crea automaticamente** l'ambiente virtuale (`.venv`)
-- **Scarica e installa** le dipendenze necessarie (PySide6, openpyxl)
+- **Scarica e installa** le dipendenze necessarie (PySide6, XlsxWriter)
 - **Avvia** il programma
 
 Ti verrà chiesta conferma tramite un popup grafico prima di ogni operazione. È necessaria una connessione a Internet per il primo avvio.
@@ -54,9 +54,9 @@ Le volte successive il launcher rileverà che tutto è già installato e avvier�
 
 ## ❓ Risoluzione problemi
 
-**"python" o "python3" non trovato:** Python non è installato o non è nel PATH di sistema. Su Windows, reinstalla Python da [python.org](https://www.python.org/downloads/) assicurandoti di spuntare "Add Python to PATH". Su Linux, installalo con il gestore pacchetti (vedi sopra).
+**"python" o "python3" non trovato:** Python non è installato o non è nel PATH di sistema. Installalo con il gestore pacchetti (vedi sopra).
 
-**Errore "No module named venv":** Su Debian/Ubuntu potrebbe mancare il modulo venv. Installalo con:
+**Errore "No module named venv":** Su Debian/Ubuntu/Linux Mint/Zorin OS e altre derivate potrebbe mancare il modulo venv. Installalo con:
 ```bash
 sudo apt install python3-venv
 ```
