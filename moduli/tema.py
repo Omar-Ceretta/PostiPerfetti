@@ -1,36 +1,16 @@
-    # =================================================================
+# -*- coding: utf-8 -*-
 """
-    «PostiPerfetti» v. 2.0 — Programma per l'assegnazione automatica
-    dei posti degli allievi in una classe scolastica,
-    con gestione di vincoli, affinità, incompatibilità,
-    rotazione allievi e storico assegnazioni.
+tema.py — palette semantica dei temi scuro e chiaro.
 
-    Autore: prof. Omar Ceretta — I.C. di Tombolo e Galliera Veneta (PD)
-    Licenza: GNU GPLv3
+Le stesse chiavi identificano gli stessi ruoli visivi nelle due palette. Il
+resto del programma legge i colori tramite ``C()``, senza dipendere dai valori
+esadecimali né dai componenti dell’interfaccia.
 
-    ▣ Questo software è libero: puoi usarlo, copiarlo, studiarlo
-    e redistribuirlo liberamente.
-    ▣ Se lo modifichi e redistribuisci, sei tenuto a mantenere
-    l'attribuzione al creatore originale e a rendere pubblico
-    il codice sorgente delle tue modifiche con la stessa licenza GPLv3.
-    ▣ Questo programma è distribuito «così com'è», senza alcuna
-    garanzia espressa o implicita.
-"""
-    # =================================================================
-"""
-    Sistema di gestione del tema colori (scuro/chiaro).
-    Questo modulo è importato da assegnazione-posti.py e da editor_studenti.py.
-    Tenerlo separato evita circular import e centralizza la gestione del tema.
+Parte di «PostiPerfetti». Autore: Omar Ceretta. Licenza: GNU GPLv3.
 """
 
-# =============================================================================
-# DIZIONARIO SEMANTICO DEI COLORI
-# =============================================================================
-# Ogni chiave descrive il RUOLO del colore (non il suo aspetto).
-# Ogni voce ha due versioni: "scuro" (default) e "chiaro".
-# Usare sempre C("nome") per accedere ai colori — mai valori hex diretti.
-# =============================================================================
 
+# Ogni chiave deve comparire in entrambe le palette con lo stesso significato.
 TEMI = {
 
     # ─── TEMA SCURO (default) ─────────────────────────────────────────────
@@ -50,6 +30,7 @@ TEMI = {
         "bordo_normale":         "#555555",
         "bordo_leggero":         "#666666",
         "bordo_focus":           "#4CAF50",
+        "drag_target_bordo":     "#FF9800",
 
         # --- Testi ---
         "testo_principale":      "#ffffff",
@@ -66,40 +47,60 @@ TEMI = {
         "btn_disabilitato_txt":  "#666666",
 
         # --- Bottoni specifici: pannello controlli ---
-        # Indaco (usato da Istruzioni e bottone ?)
+
         "btn_indaco_bg":         "#5C6BC0",
         "btn_indaco_hover":      "#3F51B5",
-        # Ambra (toggle tema scuro/chiaro)
+        "btn_indaco_txt":        "#ffffff",
+        "btn_indaco_bordo":      "#5C6BC0",
+
         "btn_tema_bg":           "#F57F17",
         "btn_tema_hover":        "#E65100",
         "btn_tema_txt":          "#ffffff",
-        # Grigio-blu (bottone crediti 💬)
+        "btn_tema_bordo":        "#F57F17",
+
         "btn_crediti_bg":        "#546E7A",
         "btn_crediti_hover":     "#37474F",
+        "btn_crediti_txt":       "#ffffff",
+        "btn_crediti_bordo":     "#546E7A",
 
         # --- Bottone avvia assegnazione ---
         "btn_avvia_bg":          "#4CAF50",
         "btn_avvia_hover":       "#45a049",
+        "btn_avvia_txt":         "#ffffff",
+        "btn_avvia_bordo":       "#4CAF50",
         "btn_avvia_disabled_bg": "#cccccc",
         "btn_avvia_disabled_txt": "#666666",
+        "btn_avvia_disabled_bordo": "#cccccc",
 
         # --- Bottoni pannello risultati ---
-        # Salva assegnazione (verde scuro)
+
         "btn_salva_bg":          "#2E7D32",
         "btn_salva_hover":       "#1B5E20",
-        # Esporta Excel (azzurro)
+        "btn_salva_txt":         "#ffffff",
+        "btn_salva_bordo":       "#2E7D32",
+
         "btn_excel_bg":          "#2196F3",
         "btn_excel_hover":       "#1976D2",
-        # Esporta TXT / Statistiche (arancione)
+        "btn_excel_txt":         "#ffffff",
+        "btn_excel_bordo":       "#2196F3",
+
         "btn_export_bg":         "#FF9800",
         "btn_export_hover":      "#F57C00",
-        # Stato disabilitato condiviso (salva, excel, txt)
-        "btn_azione_disabled_bg":  "#9E9E9E",
-        "btn_azione_disabled_txt": "#616161",
+        "btn_export_txt":        "#ffffff",
+        "btn_export_bordo":      "#FF9800",
+
+        "btn_statistiche_export_bg":    "#34495E",
+        "btn_statistiche_export_hover": "#405A73",
+        "btn_statistiche_export_txt":   "#EAF2F8",
+        "btn_statistiche_export_bordo": "#5D7891",
+
+        "btn_azione_disabled_bg":    "#9E9E9E",
+        "btn_azione_disabled_txt":   "#616161",
+        "btn_azione_disabled_bordo": "#9E9E9E",
 
         # --- Bottoni spinbox +/− (file di banchi, posti per fila) ---
         "btn_spinbox_bg":        "#505050",
-        "btn_spinbox_txt":       "#ffffff",   # Bianco su sfondo scuro
+        "btn_spinbox_txt":       "#ffffff",
         "btn_spinbox_bordo":     "#666666",
         "btn_meno_hover_bg":     "#f44336",
         "btn_meno_hover_bordo":  "#c62828",
@@ -126,20 +127,31 @@ TEMI = {
         "lavagna_bordo":         "#795548",
 
         # --- Label di stato (pannello sinistro) ---
-        # Attenzione: sfondo arancione scuro (genere da completare, file in Editor)
+
         "label_attenzione_bg":     "#E65100",
         "label_attenzione_bordo":  "#FF9800",
         "label_attenzione_txt":    "#ffffff",
-        # Successo: sfondo verde scuro (classe pronta per assegnazione)
-        "label_successo_bg":       "#2E7D32",
-        "label_successo_bordo":    "#4CAF50",
-        "label_successo_txt":      "#ffffff",
-        # Testo stato OK: verde per label_status in basso a sinistra
+
+
+        "label_successo_bg":       "#254A2D",
+        "label_successo_bordo":    "#4F7F59",
+        "label_successo_txt":      "#E8F5E9",
+
         "testo_stato_ok":          "#66BB6A",
-        # Caricato: sfondo ocra (studenti caricati e pronti per assegnazione)
-        "label_caricato_bg":       "#B8860B",
-        "label_caricato_bordo":    "#DAA520",
-        "label_caricato_txt":      "#ffffff",
+
+
+        "label_caricato_bg":       "#254A2D",
+        "label_caricato_bordo":    "#4F7F59",
+        "label_caricato_txt":      "#E8F5E9",
+
+
+        "label_capienza_bg":       "#3B434B",
+        "label_capienza_bordo":    "#66727D",
+        "label_capienza_txt":      "#E5E7EB",
+
+
+        "vincoli_riepilogo_bg":    "#454545",
+        "vincoli_riepilogo_bordo": "#565656",
 
         # --- Editor: struttura generale ---
         "editor_scroll_sf":      "#2d2d2d",
@@ -148,13 +160,13 @@ TEMI = {
         "editor_sep":            "#555555",
 
         # --- Editor: bottone "Aggiungi incompatibilità" ---
-        # Tema scuro: sfondo marrone scuro, testo arancio tenue
+
         "editor_btn_incomp_sf":    "#5d4037",
         "editor_btn_incomp_txt":   "#ffccbc",
         "editor_btn_incomp_hover": "#6d4c41",
 
         # --- Editor: bottone "Aggiungi affinità" ---
-        # Tema scuro: sfondo verde molto scuro, testo verde tenue
+
         "editor_btn_aff_sf":       "#1b5e20",
         "editor_btn_aff_txt":      "#c8e6c9",
         "editor_btn_aff_hover":    "#2e7d32",
@@ -173,55 +185,133 @@ TEMI = {
         "scheda_X_titolo_txt":   "#FFF3E0",
         "scheda_X_sf":           "#3E3428",
 
-        # --- Editor: ComboBox vincoli (placeholder vs valore valido) ---
-        "combo_ph_bordo":        "#FF9800",
-        "combo_ph_sf":           "#3e3529",
-        "combo_ph_txt":          "#FFB74D",
-        "combo_ok_bordo":        "#555555",
-        "combo_ok_sf":           "#404040",
-        "combo_ok_txt":          "#e0e0e0",
+        # --- Editor: ComboBox vincoli ---
+
+
+        "combo_ph_bordo":             "#FF9800",
+        "combo_ph_txt":               "#FFB74D",
+
+        "combo_incomp_bordo":         "#A1887F",
+        "combo_incomp_sf":            "#5D4037",
+        "combo_incomp_txt":           "#FFF3EE",
+        "combo_incomp_selezione_sf":  "#795548",
+
+        "combo_aff_bordo":            "#66A56A",
+        "combo_aff_sf":               "#1B5E20",
+        "combo_aff_txt":              "#F1FFF3",
+        "combo_aff_selezione_sf":     "#2E7D32",
 
         # --- Editor: ComboBox genere con placeholder "---" ---
         "genere_ph_bordo":       "#FF9800",
         "genere_ph_sf":          "#4a3000",
 
-        # Bottone azione primaria (carica file, avvia flussi)
-        "btn_primario_sf":       "#00695C",  # Verde-teal scuro
-        "btn_primario_hover":    "#004D40",  # Verde-teal molto scuro
+
+        "btn_primario_sf":       "#00695C",
+        "btn_primario_hover":    "#004D40",
         "btn_primario_txt":      "#ffffff",
 
-        # Colore testo "informativo/accentato"
+        # --- Editor: barra file e azioni di visualizzazione ---
+        "editor_btn_cartella_bg":     "#00695C",
+        "editor_btn_cartella_hover":  "#004D40",
+        "editor_btn_cartella_txt":    "#FFFFFF",
+        "editor_btn_cartella_bordo":  "#00897B",
+        "editor_btn_classe_bg":       "#1565C0",
+        "editor_btn_classe_hover":    "#0D47A1",
+        "editor_btn_classe_txt":      "#FFFFFF",
+        "editor_btn_classe_bordo":    "#1976D2",
+        "editor_btn_neutro_bg":       "#45515A",
+        "editor_btn_neutro_hover":    "#53616B",
+        "editor_btn_neutro_txt":      "#F3F4F6",
+        "editor_btn_neutro_bordo":    "#66727D",
+
+
         "testo_info":            "#4ECDC4",
-        # Colore testo secondario leggibile: grigio chiaro sul scuro
+
         "testo_label_sec":       "#cccccc",
 
         # --- Bottoni generici per dialog e sotto-finestre ---
-        # Rosso (elimina, rimuovi)
+
         "btn_rosso_bg":            "#d32f2f",
         "btn_rosso_hover":         "#b71c1c",
-        # Blu scuro (dettagli, salva report)
+
         "btn_blu_bg":              "#1565c0",
         "btn_blu_hover":           "#0d47a1",
-        # Grigio (chiudi, neutro)
+
+
+        "testo_blu":               "#5B9BD5",
+
         "btn_grigio_bg":           "#757575",
         "btn_grigio_hover":        "#616161",
-        # Viola (aggiungi vincolo nell'editor)
+
         "btn_viola_bg":            "#6a1b9a",
         "btn_viola_hover":         "#4a148c",
-        # Arancione (azione attenzione nell'editor)
+
         "btn_arancione_bg":        "#E65100",
         "btn_arancione_hover":     "#BF360C",
-        # Stato disabilitato per bottoni colorati
+
         "btn_colore_disabled_sf":  "#616161",
         "btn_colore_disabled_txt": "#9e9e9e",
+        # --- Storico: azioni della tabella e dei dialog ---
+
+
+        "popup_btn_distruttivo_bg":    "#713737",
+        "popup_btn_distruttivo_hover": "#5F2D2D",
+        "popup_btn_distruttivo_txt":   "#FFFFFF",
+        "popup_btn_distruttivo_bordo": "#9B5555",
+        "storico_btn_elimina_bg":     "#D32F2F",
+        "storico_btn_elimina_hover":  "#B71C1C",
+        "storico_btn_elimina_txt":    "#FFFFFF",
+        "storico_btn_elimina_bordo":  "#EF5350",
+        "storico_btn_dettagli_bg":    "#1565C0",
+        "storico_btn_dettagli_hover": "#0D47A1",
+        "storico_btn_dettagli_txt":   "#FFFFFF",
+        "storico_btn_dettagli_bordo": "#42A5F5",
+        "storico_btn_layout_bg":      "#236B5B",
+        "storico_btn_layout_hover":   "#174D42",
+        "storico_btn_layout_txt":     "#F3F4F6",
+        "storico_btn_layout_bordo":   "#4E9B89",
+        "storico_btn_neutro_bg":      "#4B5563",
+        "storico_btn_neutro_hover":   "#374151",
+        "storico_btn_neutro_txt":     "#F3F4F6",
+        "storico_btn_neutro_bordo":   "#66727D",
 
         # --- Testi semantici ---
-        "testo_ocra":              "#CC8800",   # Evidenziazione coppie riutilizzate
-        "testo_incomp":            "#ef5350",   # Label incompatibilità (editor)
-        "testo_affinita":          "#66bb6a",   # Label affinità (editor)
-        "testo_arancione":         "#FF9800",   # Avvisi, trio, prima fila
-        "testo_negativo":          "#FF6B6B",   # Coppie mai formate (statistiche)
-        "banner_formato_txt":      "#1a1a1a",   # Testo su banner arancione
+        "testo_ocra":              "#CC8800",
+        "testo_incomp":            "#ef5350",
+        "testo_affinita":          "#66bb6a",
+        "testo_arancione":         "#FF9800",
+        "testo_negativo":          "#FF6B6B",
+        "statistiche_titolo_sezione": "#90CAF9",
+        "banner_formato_txt":      "#1a1a1a",
+
+        # --- Finestre informative: Istruzioni, Crediti, Aiuto aula ---
+
+
+        "istruzioni_documento_bg":    "#1B1F23",
+        "istruzioni_card_bg":         "#30363D",
+        "istruzioni_bordo":           "#56616C",
+        "istruzioni_titolo":          "#8AB4F8",
+        "istruzioni_sezione_bg":      "#263747",
+        "istruzioni_sezione_bordo":   "#4F6B84",
+        "istruzioni_info_bg":         "#243743",
+        "istruzioni_info_bordo":      "#5B8EAD",
+        "istruzioni_info_txt":        "#E5F3FB",
+        "istruzioni_avviso_bg":       "#473922",
+        "istruzioni_avviso_bordo":    "#C58B38",
+        "istruzioni_avviso_txt":      "#FFF1D2",
+        "istruzioni_tabella_header_bg":  "#3C4956",
+        "istruzioni_tabella_header_txt": "#F5F7FA",
+        "istruzioni_codice_bg":       "#181B1E",
+        "istruzioni_codice_txt":      "#E6EDF3",
+        "istruzioni_link":            "#90CAF9",
+        "istruzioni_testo_secondario": "#AAB4BE",
+        "istruzioni_testo_errore":    "#FF7B72",
+        "istruzioni_testo_successo":  "#7EE787",
+        "istruzioni_testo_avviso":    "#FFB454",
+        "istruzioni_testo_ocra":      "#E0A94D",
+
+        # --- Dialog Dettaglio vincoli ---
+        "dettaglio_vincoli_bg":          "#1E1E1E",
 
         # --- Label errore (posti insufficienti) ---
         "label_errore_bg":         "#FF4444",
@@ -258,6 +348,7 @@ TEMI = {
         "bordo_normale":         "#cccccc",
         "bordo_leggero":         "#bbbbbb",
         "bordo_focus":           "#2E7D32",
+        "drag_target_bordo":     "#FF9800",
 
         # --- Testi ---
         "testo_principale":      "#212121",
@@ -274,43 +365,63 @@ TEMI = {
         "btn_disabilitato_txt":  "#9e9e9e",
 
         # --- Bottoni specifici: pannello controlli ---
-        # Indaco (usato da Istruzioni e bottone ?)
-        # Su sfondo chiaro: stessi colori saturi funzionano bene
-        "btn_indaco_bg":         "#5C6BC0",
-        "btn_indaco_hover":      "#3949AB",   # Leggermente più scuro per visibilità hover
-        # Ambra (toggle tema scuro/chiaro)
-        "btn_tema_bg":           "#F57F17",
-        "btn_tema_hover":        "#E65100",
-        "btn_tema_txt":          "#1a1a1a",
-        # Grigio-blu (bottone crediti 💬)
-        "btn_crediti_bg":        "#607D8B",   # Leggermente più chiaro per contrasto su bianco
-        "btn_crediti_hover":     "#455A64",
+
+
+        "btn_indaco_bg":         "#EEF0FF",
+        "btn_indaco_hover":      "#E0E4FF",
+        "btn_indaco_txt":        "#303F9F",
+        "btn_indaco_bordo":      "#AAB2E8",
+
+        "btn_tema_bg":           "#FFF4D6",
+        "btn_tema_hover":        "#FFE7A3",
+        "btn_tema_txt":          "#7A4E00",
+        "btn_tema_bordo":        "#E3B341",
+
+        "btn_crediti_bg":        "#EEF2F4",
+        "btn_crediti_hover":     "#DDE5E9",
+        "btn_crediti_txt":       "#37474F",
+        "btn_crediti_bordo":     "#B0BEC5",
 
         # --- Bottone avvia assegnazione ---
-        "btn_avvia_bg":          "#43A047",   # Verde leggermente più scuro su bianco
-        "btn_avvia_hover":       "#388E3C",
-        "btn_avvia_disabled_bg": "#E0E0E0",   # Più scuro di #ccc per non confondersi col bianco
-        "btn_avvia_disabled_txt": "#9E9E9E",
+        "btn_avvia_bg":          "#E6F4EA",
+        "btn_avvia_hover":       "#D1EAD8",
+        "btn_avvia_txt":         "#1B5E20",
+        "btn_avvia_bordo":       "#81C784",
+        "btn_avvia_disabled_bg": "#F1F3F5",
+        "btn_avvia_disabled_txt": "#8A929A",
+        "btn_avvia_disabled_bordo": "#D5DADF",
 
         # --- Bottoni pannello risultati ---
-        # Salva assegnazione (verde scuro — stesso, buon contrasto su bianco)
-        "btn_salva_bg":          "#2E7D32",
-        "btn_salva_hover":       "#1B5E20",
-        # Esporta Excel (azzurro)
-        "btn_excel_bg":          "#1E88E5",   # Leggermente più scuro per leggibilità
-        "btn_excel_hover":       "#1565C0",
-        # Esporta TXT / Statistiche (arancione)
-        "btn_export_bg":         "#FB8C00",   # Leggermente più scuro su sfondo chiaro
-        "btn_export_hover":      "#EF6C00",
-        # Stato disabilitato condiviso (salva, excel, txt)
-        "btn_azione_disabled_bg":  "#BDBDBD",  # Più visibile su sfondo bianco
-        "btn_azione_disabled_txt": "#757575",
+
+        "btn_salva_bg":          "#D3E8D5",
+        "btn_salva_hover":       "#B9D8BC",
+        "btn_salva_txt":         "#174D1C",
+        "btn_salva_bordo":       "#5FA968",
+
+        "btn_excel_bg":          "#E8F1FB",
+        "btn_excel_hover":       "#D6E7F8",
+        "btn_excel_txt":         "#0D47A1",
+        "btn_excel_bordo":       "#90CAF9",
+
+        "btn_export_bg":         "#FFF2E1",
+        "btn_export_hover":      "#FFE3C1",
+        "btn_export_txt":        "#8A4B00",
+        "btn_export_bordo":      "#FFB74D",
+
+        "btn_statistiche_export_bg":    "#E8F1FB",
+        "btn_statistiche_export_hover": "#D6E7F8",
+        "btn_statistiche_export_txt":   "#0D47A1",
+        "btn_statistiche_export_bordo": "#90CAF9",
+
+        "btn_azione_disabled_bg":    "#F1F3F5",
+        "btn_azione_disabled_txt":   "#8A929A",
+        "btn_azione_disabled_bordo": "#D5DADF",
 
         # --- Bottoni spinbox +/− (file di banchi, posti per fila) ---
-        "btn_spinbox_bg":        "#E0E0E0",   # Grigio chiaro (vs #505050 del tema scuro)
-        "btn_spinbox_txt":       "#212121",   # Testo scuro su sfondo chiaro
-        "btn_spinbox_bordo":     "#BDBDBD",   # Bordo più chiaro
-        "btn_meno_hover_bg":     "#EF5350",   # Rosso leggermente più chiaro
+        "btn_spinbox_bg":        "#E0E0E0",
+        "btn_spinbox_txt":       "#212121",
+        "btn_spinbox_bordo":     "#BDBDBD",
+        "btn_meno_hover_bg":     "#EF5350",
         "btn_meno_hover_bordo":  "#D32F2F",
         "btn_piu_hover_bg":      "#4CAF50",
         "btn_piu_hover_bordo":   "#2E7D32",
@@ -335,20 +446,28 @@ TEMI = {
         "lavagna_bordo":         "#4E342E",
 
         # --- Label di stato (pannello sinistro) ---
-        # Attenzione: sfondo arancione scuro (genere da completare, file in Editor)
+
         "label_attenzione_bg":     "#E65100",
         "label_attenzione_bordo":  "#FF9800",
         "label_attenzione_txt":    "#ffffff",
-        # Successo: sfondo verde scuro (classe pronta per assegnazione)
-        "label_successo_bg":       "#2E7D32",
-        "label_successo_bordo":    "#4CAF50",
-        "label_successo_txt":      "#ffffff",
-        # Testo stato OK: verde per label_status in basso a sinistra
-        "testo_stato_ok":          "#4CAF50",
-        # Caricato: sfondo ocra (studenti caricati e pronti per assegnazione)
-        "label_caricato_bg":       "#B8860B",
-        "label_caricato_bordo":    "#DAA520",
-        "label_caricato_txt":      "#ffffff",
+
+        "label_successo_bg":       "#E6F4EA",
+        "label_successo_bordo":    "#81C784",
+        "label_successo_txt":      "#1B5E20",
+
+        "testo_stato_ok":          "#2E7D32",
+
+        "label_caricato_bg":       "#E6F4EA",
+        "label_caricato_bordo":    "#81C784",
+        "label_caricato_txt":      "#1B5E20",
+
+        "label_capienza_bg":       "#EEF2F4",
+        "label_capienza_bordo":    "#C5CDD3",
+        "label_capienza_txt":      "#374151",
+
+
+        "vincoli_riepilogo_bg":    "#eaedf2",
+        "vincoli_riepilogo_bordo": "#d6dae1",
 
         # --- Editor: struttura generale ---
         "editor_scroll_sf":      "#f0f0f0",
@@ -357,13 +476,13 @@ TEMI = {
         "editor_sep":            "#cccccc",
 
         # --- Editor: bottone "Aggiungi incompatibilità" ---
-        # Tema chiaro: sfondo arancio tenue, testo marrone scuro
+
         "editor_btn_incomp_sf":    "#ffccbc",
         "editor_btn_incomp_txt":   "#bf360c",
         "editor_btn_incomp_hover": "#ffab91",
 
         # --- Editor: bottone "Aggiungi affinità" ---
-        # Tema chiaro: sfondo verde tenue, testo verde scuro
+
         "editor_btn_aff_sf":       "#c8e6c9",
         "editor_btn_aff_txt":      "#1b5e20",
         "editor_btn_aff_hover":    "#a5d6a7",
@@ -383,25 +502,47 @@ TEMI = {
         "scheda_X_sf":           "#FFF3E0",
 
         # --- Editor: ComboBox vincoli ---
-        "combo_ph_bordo":        "#FF9800",
-        "combo_ph_sf":           "#FFF8E1",
-        "combo_ph_txt":          "#E65100",
-        "combo_ok_bordo":        "#cccccc",
-        "combo_ok_sf":           "#ffffff",
-        "combo_ok_txt":          "#212121",
+
+
+        "combo_ph_bordo":             "#FF9800",
+        "combo_ph_txt":               "#E65100",
+
+        "combo_incomp_bordo":         "#5D4037",
+        "combo_incomp_sf":            "#FFCCBC",
+        "combo_incomp_txt":           "#3E2723",
+        "combo_incomp_selezione_sf":  "#FFAB91",
+
+        "combo_aff_bordo":            "#1B5E20",
+        "combo_aff_sf":               "#C8E6C9",
+        "combo_aff_txt":              "#0E3D12",
+        "combo_aff_selezione_sf":     "#A5D6A7",
 
         # --- Editor: ComboBox genere con placeholder "---" ---
         "genere_ph_bordo":       "#FF9800",
         "genere_ph_sf":          "#FFF8E1",
 
-        # Bottone azione primaria
-        "btn_primario_sf":       "#00897B",  # Verde-teal medio
-        "btn_primario_hover":    "#00695C",  # Verde-teal scuro
-        "btn_primario_txt":      "#ffffff",
 
-        # Sul tema chiaro: blu scuro leggibile al posto del turchese
+        "btn_primario_sf":       "#E6F4F1",
+        "btn_primario_hover":    "#D2EAE4",
+        "btn_primario_txt":      "#155E55",
+
+        # --- Editor: barra file e azioni di visualizzazione ---
+        "editor_btn_cartella_bg":     "#D2E8E3",
+        "editor_btn_cartella_hover":  "#B9DCD4",
+        "editor_btn_cartella_txt":    "#104F47",
+        "editor_btn_cartella_bordo":  "#5FAE9F",
+        "editor_btn_classe_bg":       "#E8F1FB",
+        "editor_btn_classe_hover":    "#D6E7F8",
+        "editor_btn_classe_txt":      "#0D47A1",
+        "editor_btn_classe_bordo":    "#90CAF9",
+        "editor_btn_neutro_bg":       "#EEF2F4",
+        "editor_btn_neutro_hover":    "#DDE5E9",
+        "editor_btn_neutro_txt":      "#37474F",
+        "editor_btn_neutro_bordo":    "#B0BEC5",
+
+
         "testo_info":            "#1565C0",
-        # Testo secondario leggibile sul bianco
+
         "testo_label_sec":       "#424242",
 
         # --- Bottoni generici per dialog e sotto-finestre ---
@@ -409,23 +550,79 @@ TEMI = {
         "btn_rosso_hover":         "#b71c1c",
         "btn_blu_bg":              "#1565c0",
         "btn_blu_hover":           "#0d47a1",
+
+
+        "testo_blu":               "#1565c0",
         "btn_grigio_bg":           "#757575",
         "btn_grigio_hover":        "#616161",
         "btn_viola_bg":            "#6a1b9a",
         "btn_viola_hover":         "#4a148c",
         "btn_arancione_bg":        "#E65100",
         "btn_arancione_hover":     "#BF360C",
-        # Disabled più chiaro per sfondo bianco
+
         "btn_colore_disabled_sf":  "#BDBDBD",
         "btn_colore_disabled_txt": "#757575",
+        # --- Storico: azioni della tabella e dei dialog ---
+
+
+        "popup_btn_distruttivo_bg":    "#F7D6D6",
+        "popup_btn_distruttivo_hover": "#EFC1C1",
+        "popup_btn_distruttivo_txt":   "#8F1515",
+        "popup_btn_distruttivo_bordo": "#D86A6A",
+        "storico_btn_elimina_bg":     "#F7D6D6",
+        "storico_btn_elimina_hover":  "#EFC1C1",
+        "storico_btn_elimina_txt":    "#8F1515",
+        "storico_btn_elimina_bordo":  "#D86A6A",
+        "storico_btn_dettagli_bg":    "#E8F1FB",
+        "storico_btn_dettagli_hover": "#D6E7F8",
+        "storico_btn_dettagli_txt":   "#0D47A1",
+        "storico_btn_dettagli_bordo": "#90CAF9",
+        "storico_btn_layout_bg":      "#E6F4F1",
+        "storico_btn_layout_hover":   "#D2EAE4",
+        "storico_btn_layout_txt":     "#155E55",
+        "storico_btn_layout_bordo":   "#80CBC4",
+        "storico_btn_neutro_bg":      "#EEF2F4",
+        "storico_btn_neutro_hover":   "#DDE5E9",
+        "storico_btn_neutro_txt":     "#37474F",
+        "storico_btn_neutro_bordo":   "#B0BEC5",
 
         # --- Testi semantici (scuriti per leggibilità su bianco) ---
         "testo_ocra":              "#CC8800",
-        "testo_incomp":            "#D32F2F",   # Rosso più scuro su bianco
-        "testo_affinita":          "#2E7D32",   # Verde più scuro su bianco
-        "testo_arancione":         "#E65100",   # Arancione più scuro su bianco
-        "testo_negativo":          "#D32F2F",   # Rosso più scuro su bianco
+        "testo_incomp":            "#D32F2F",
+        "testo_affinita":          "#2E7D32",
+        "testo_arancione":         "#E65100",
+        "testo_negativo":          "#D32F2F",
+        "statistiche_titolo_sezione": "#1565C0",
         "banner_formato_txt":      "#1a1a1a",
+
+        # --- Finestre informative: Istruzioni, Crediti, Aiuto aula ---
+
+
+        "istruzioni_documento_bg":    "#E1E8F0",
+        "istruzioni_card_bg":         "#F2F5F7",
+        "istruzioni_bordo":           "#93A6B7",
+        "istruzioni_titolo":          "#0D47A1",
+        "istruzioni_sezione_bg":      "#C4D8E8",
+        "istruzioni_sezione_bordo":   "#7FA1BD",
+        "istruzioni_info_bg":         "#CBDDE8",
+        "istruzioni_info_bordo":      "#5F91AF",
+        "istruzioni_info_txt":        "#15384B",
+        "istruzioni_avviso_bg":       "#FFF4E5",
+        "istruzioni_avviso_bordo":    "#E6A24A",
+        "istruzioni_avviso_txt":      "#6B3D00",
+        "istruzioni_tabella_header_bg":  "#C8D7E3",
+        "istruzioni_tabella_header_txt": "#17324D",
+        "istruzioni_codice_bg":       "#DCE4EA",
+        "istruzioni_codice_txt":      "#24313D",
+        "istruzioni_link":            "#0D47A1",
+        "istruzioni_testo_secondario": "#596570",
+        "istruzioni_testo_errore":    "#B42318",
+        "istruzioni_testo_successo":  "#1B5E20",
+        "istruzioni_testo_avviso":    "#8A4500",
+        "istruzioni_testo_ocra":      "#805A00",
+
+        # --- Dialog Dettaglio vincoli ---
+        "dettaglio_vincoli_bg":          "#EEF2F4",
 
         # --- Label errore ---
         "label_errore_bg":         "#FF4444",
@@ -446,33 +643,23 @@ TEMI = {
     },
 }
 
-# Tema attivo corrente: "scuro" o "chiaro".
-# Modificato dal toggle nella toolbar.
-# Salvato e caricato da config.json.
+
+# Nome della palette corrente.
 TEMA_ATTIVO = "scuro"
 
 
 def imposta_tema(nome: str):
-    """
-    Cambia il tema attivo. Chiamare prima di ridisegnare i widget.
-    Args:
-        nome: "scuro" o "chiaro"
-    """
+    """Imposta il tema attivo se il nome è riconosciuto."""
     global TEMA_ATTIVO
     if nome in TEMI:
         TEMA_ATTIVO = nome
 
 
 def get_tema() -> str:
-    """Restituisce il nome del tema attivo ("scuro" o "chiaro")."""
+    """Restituisce il nome del tema attivo."""
     return TEMA_ATTIVO
 
 
 def C(nome_colore: str) -> str:
-    """
-    Restituisce il colore del tema attivo per la chiave semantica indicata.
-
-    Uso:  C("sfondo_principale")  →  "#2b2b2b"  (tema scuro)
-                                   →  "#f0f2f5"  (tema chiaro)
-    """
+    """Restituisce il colore associato alla chiave nel tema attivo."""
     return TEMI[TEMA_ATTIVO][nome_colore]

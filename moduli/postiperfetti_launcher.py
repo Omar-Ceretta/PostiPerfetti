@@ -4,7 +4,7 @@ Launcher per «PostiPerfetti» — Script di avvio con verifica ambiente.
 
 COSA FA QUESTO SCRIPT:
 1. Verifica che l'ambiente virtuale (.venv) esista
-2. Verifica che le dipendenze necessarie (PySide6, openpyxl) siano installate
+2. Verifica che le dipendenze necessarie (PySide6, xlsxwriter) siano installate
 3. Se manca qualcosa, mostra un dialogo grafico e offre di installare/riparare
 4. Avvia l'applicazione principale con il Python del venv
 
@@ -425,7 +425,7 @@ def main():
                 "Errore — «PostiPerfetti»",
                 "Impossibile creare l'ambiente virtuale.\n\n"
                 "Verifica che python3-venv sia installato:\n"
-                "  sudo pacman -S python\n\n"
+                "  sudo dnf install python3 python3-devel python3-pip\n\n"
                 "Oppure prova a creare il venv manualmente:\n"
                 f"  python3 -m venv {CARTELLA_VENV}",
                 tipo="errore"
