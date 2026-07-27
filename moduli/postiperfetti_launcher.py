@@ -219,12 +219,13 @@ def mostra_progresso_kdialog(comando, titolo="Installazione in corso..."):
     # --- Prova ad aprire una finestra di attesa grafica -------------
     if shutil.which("kdialog"):
         try:
-            # --sorry mostra un messaggio con una sola icona informativa.
-            # La finestra resta aperta finché NOI non la chiudiamo: la
-            # useremo come semplice indicatore visivo "sto lavorando".
+            # --passivepopup: notifica SENZA pulsanti, che l'utente non
+            # può chiudere né "annullare" per errore. Il "3600" è la
+            # durata massima in secondi (un'ora, di fatto illimitata):
+            # tanto la chiudiamo NOI appena il comando finisce.
             finestra_attesa = subprocess.Popen(
                 ["kdialog", "--title", titolo,
-                 "--sorry", f"{titolo}\n\nAttendere, l'operazione è in corso…"],
+                 "--passivepopup", f"{titolo}\nAttendere, l'operazione è in corso…", "3600"],
                 stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
             )
         except Exception:
