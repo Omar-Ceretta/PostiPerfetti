@@ -20,7 +20,7 @@
 > 
 > [![Schermata "Editor" con 'Tema scuro'](dati/screenshot/000_editor-scuro.png)](dati/screenshot/000_editor-scuro.png)
 > 
-> [![Schermata "Editor" con 'Tema chiaro'](dati/screenshot/000_editor-chiaro.png)](https://github.com/Omar-Ceretta/PostiPerfetti/blob/main/dati/screenshot/000_editor-chiaro.png?raw=true)
+> [![Schermata "Editor" con 'Tema chiaro'](dati/screenshot/000_editor-chiaro.png)](dati/screenshot/000_editor-chiaro.png)
 
 ------
 
