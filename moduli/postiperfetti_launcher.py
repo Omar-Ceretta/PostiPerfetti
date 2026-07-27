@@ -195,51 +195,71 @@ def mostra_dialogo(titolo, messaggio, tipo="info", si_no=False):
 
 def mostra_progresso_kdialog(comando, titolo="Installazione in corso..."):
     """
-    Esegue un comando mostrando una progress bar kdialog.
-    Se kdialog non è disponibile, esegue normalmente nel terminale.
+    Esegue un comando mostrando una finestra di attesa (kdialog).
+
+    STRATEGIA (robusta e indipendente da qdbus):
+    1. Avvia una finestra di attesa kdialog come processo separato.
+    2. Esegue il comando reale (es. pip) e ne ASPETTA la fine.
+    3. Chiude la finestra di attesa terminando il suo processo.
+
+    A differenza della versione precedente, NON usa qdbus per chiudere
+    il dialogo (il cui nome cambia da distro a distro: qdbus, qdbus6,
+    qdbus-qt6...). Terminare il processo della finestra è un'operazione
+    Python standard, che funziona su qualsiasi sistema.
 
     Args:
         comando: Lista di stringhe per subprocess
-        titolo: Titolo della finestra di progresso
+        titolo: Titolo della finestra di attesa
 
     Returns:
         True se il comando è riuscito, False altrimenti
     """
-    # Prova con kdialog --progressbar
+    finestra_attesa = None  # Riferimento al processo del dialogo (se aperto)
+
+    # --- Prova ad aprire una finestra di attesa grafica -------------
     if shutil.which("kdialog"):
         try:
-            # Apri progress bar indeterminata
-            proc_dialog = subprocess.Popen(
-                ["kdialog", "--title", titolo, "--progressbar", "Attendere...", "0"],
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
+            # --sorry mostra un messaggio con una sola icona informativa.
+            # La finestra resta aperta finché NOI non la chiudiamo: la
+            # useremo come semplice indicatore visivo "sto lavorando".
+            finestra_attesa = subprocess.Popen(
+                ["kdialog", "--title", titolo,
+                 "--sorry", f"{titolo}\n\nAttendere, l'operazione è in corso…"],
+                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
             )
-
-            # Leggi il riferimento DBus della progress bar
-            dbus_ref = proc_dialog.stdout.readline().strip()
-
-            # Esegui il comando reale
-            risultato = subprocess.run(
-                comando,
-                capture_output=True, text=True
-            )
-
-            # Chiudi la progress bar via DBus (qdbus o qdbus6)
-            qdbus_cmd = "qdbus6" if shutil.which("qdbus6") else "qdbus"
-            if dbus_ref and shutil.which(qdbus_cmd):
-                subprocess.run(
-                    [qdbus_cmd, dbus_ref, "/ProgressDialog", "close"],
-                    capture_output=True
-                )
-
-            return risultato.returncode == 0
-
         except Exception:
-            pass  # Fallback sotto
+            finestra_attesa = None  # Se fallisce, proseguiamo senza finestra
 
-    # Fallback: esegui nel terminale con output visibile
-    print(f"\n⏳ {titolo}")
-    risultato = subprocess.run(comando)
-    return risultato.returncode == 0
+    # --- Esegui il comando reale e ASPETTA che finisca --------------
+    # Questo è il cuore: subprocess.run BLOCCA fino al termine del
+    # comando. Solo quando pip ha finito, il codice prosegue.
+    try:
+        risultato = subprocess.run(comando, capture_output=True, text=True)
+        successo = (risultato.returncode == 0)
+    except Exception:
+        successo = False
+
+    # --- Chiudi la finestra di attesa, se era stata aperta ----------
+    # terminate() invia al processo del dialogo il segnale di chiusura.
+    # È l'operazione che PRIMA veniva delegata a qdbus e falliva: ora
+    # la facciamo direttamente, senza dipendere da comandi esterni.
+    if finestra_attesa is not None:
+        try:
+            finestra_attesa.terminate()
+            finestra_attesa.wait(timeout=5)  # Attende la chiusura effettiva
+        except Exception:
+            # Se terminate() non bastasse, forza la chiusura
+            try:
+                finestra_attesa.kill()
+            except Exception:
+                pass
+
+    # --- Se non c'era finestra grafica, dai comunque un feedback -----
+    # (caso di sistema senza kdialog: l'utente vede l'attività a schermo)
+    if finestra_attesa is None:
+        print(f"\n⏳ {titolo}")
+
+    return successo
 
 
 # =====================================================================
