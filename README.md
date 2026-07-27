@@ -1,4 +1,4 @@
-![«PostiPerfetti»](moduli/postiperfetti_logo.png)
+![«PostiPerfetti»](dati/icone/postiperfetti_logo.png)
 
 # 📖 «PostiPerfetti» 📖
 
@@ -18,7 +18,7 @@
 >
 > A seconda delle tue preferenze, per usare l'interfaccia puoi selezionare un **🌚 Tema scuro** o un **☀️ Tema chiaro**, che apparirà come nei seguenti screenshot (clicca per allargare le immagini):
 > 
-> [![Schermata "Editor" con 'Tema scuro'](screens/000_editor-scuro.png)](https://raw.githubusercontent.com/Omar-Ceretta/PostiPerfetti/refs/heads/main/screens/000_editor-scuro.png)
+> [![Schermata "Editor" con 'Tema scuro'](dati/screenshot/000_editor-scuro.png)](dati/screenshot/000_editor-scuro.png)
 > 
 > [![Schermata "Editor" con 'Tema chiaro'](screens/000_editor-chiaro.png)](https://github.com/Omar-Ceretta/PostiPerfetti/blob/main/screens/000_editor-chiaro.png?raw=true)
 
