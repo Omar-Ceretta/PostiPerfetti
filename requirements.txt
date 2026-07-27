@@ -1,0 +1,6 @@
+# Dipendenze di «PostiPerfetti»
+# Versioni testate: PySide6 6.11.1, XlsxWriter 3.2.9
+# Vincoli: minima compatibile testata, esclusa la major successiva
+# (poiché i salti di major version possono rompere l'API).
+PySide6>=6.11,<7
+XlsxWriter>=3.2,<4
