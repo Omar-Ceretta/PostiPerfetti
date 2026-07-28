@@ -267,6 +267,32 @@ def mostra_progresso_kdialog(comando, titolo="Installazione in corso..."):
 # SEZIONE 3: Verifica e creazione ambiente virtuale
 # =====================================================================
 
+def ambiente_incompleto():
+    """
+    Dice se manca qualcosa per far girare l'app: il venv o una
+    qualsiasi dipendenza. Verifica SILENZIOSA (non stampa nulla):
+    serve solo a decidere, all'avvio, se occorre intervenire.
+
+    Returns:
+        True  se manca il venv OPPURE almeno una dipendenza
+        False se è tutto a posto (l'app può partire subito)
+    """
+    # Se manca il venv, l'ambiente è certamente incompleto: inutile
+    # controllare le dipendenze (girerebbero su un venv inesistente).
+    if not (PYTHON_VENV.is_file() and PIP_VENV.is_file()):
+        return True
+
+    # Il venv c'è: controlliamo che ogni dipendenza sia importabile.
+    for _, nome_import in DIPENDENZE:
+        risultato = subprocess.run(
+            [str(PYTHON_VENV), "-c", f"import {nome_import}"],
+            capture_output=True   # silenzioso: non mostra nulla a schermo
+        )
+        if risultato.returncode != 0:
+            return True   # una dipendenza manca → incompleto
+
+    return False   # venv presente e tutte le dipendenze importabili
+
 def venv_esiste():
     """
     Verifica che l'ambiente virtuale esista e sia funzionante.
@@ -394,8 +420,72 @@ def avvia_applicazione():
 
 
 # =====================================================================
-# SEZIONE 6: Flusso principale
+# SEZIONE 5-bis: Auto-rilancio in un terminale (avvio da menu con
+#                ambiente da preparare)
 # =====================================================================
+
+# Emulatori di terminale da tentare, in ordine di preferenza.
+# Ogni voce: (comando, argomento_che_precede_il_comando_da_eseguire).
+# La maggior parte usa "-e", konsole compreso; li elenchiamo dai più
+# diffusi ai più generici, con xterm come minimo comune denominatore.
+TERMINALI = [
+    ("konsole",         "-e"),   # KDE Plasma
+    ("gnome-terminal",  "--"),   # GNOME (usa "--", non "-e")
+    ("xfce4-terminal",  "-e"),   # XFCE
+    ("mate-terminal",   "-e"),   # MATE
+    ("tilix",           "-e"),   # vari
+    ("alacritty",       "-e"),   # tiling / moderni
+    ("kitty",           None),   # kitty esegue il comando senza flag
+    ("foot",            None),   # Wayland minimalista, come kitty
+    ("xterm",           "-e"),   # fallback universale X11
+]
+
+
+def rilancia_in_terminale():
+    """
+    Riavvia QUESTO launcher dentro un emulatore di terminale.
+
+    Serve quando il launcher è stato avviato dal menu (nessun terminale)
+    ma l'ambiente va preparato: apriamo un terminale in cui l'utente
+    veda i messaggi testuali e possa rispondere alle domande.
+
+    La copia rilanciata riceve la variabile-sentinella
+    POSTIPERFETTI_RILANCIATO=1: la vede, capisce di essere già la
+    copia "in terminale" e NON tenterà mai di rilanciarsi di nuovo
+    (protezione contro un ciclo infinito).
+
+    Returns:
+        True  se un terminale è stato aperto (questa copia deve uscire)
+        False se nessun terminale era disponibile (gestire altrimenti)
+    """
+    # Comando che il terminale dovrà eseguire: reinvochiamo questo
+    # stesso file con lo stesso Python di sistema che ci sta eseguendo.
+    comando_launcher = [sys.executable, str(Path(__file__).resolve())]
+
+    # Prepariamo l'ambiente per la copia figlia, con la sentinella.
+    ambiente = os.environ.copy()
+    ambiente["POSTIPERFETTI_RILANCIATO"] = "1"
+
+    # Proviamo i terminali in ordine, fermandoci al primo che parte.
+    for nome_terminale, flag in TERMINALI:
+        if not shutil.which(nome_terminale):
+            continue   # non installato: passa al successivo
+
+        # Costruiamo la riga di comando del terminale.
+        if flag is None:
+            riga = [nome_terminale] + comando_launcher
+        else:
+            riga = [nome_terminale, flag] + comando_launcher
+
+        try:
+            # start_new_session: il terminale vive indipendente da noi.
+            subprocess.Popen(riga, start_new_session=True, env=ambiente)
+            return True   # aperto: la copia attuale può uscire
+        except Exception:
+            continue   # questo terminale ha fallito: prova il prossimo
+
+    # Nessun terminale disponibile.
+    return False
 
 def main():
     """
@@ -405,6 +495,35 @@ def main():
     3. Verifica/installa le dipendenze
     4. Avvia l'applicazione
     """
+    # === PASSO C: se lanciato dal menu (niente terminale) e l'ambiente
+    #     va preparato, ci rilanciamo in un terminale e usciamo. ===
+    # Tre condizioni, TUTTE necessarie perché scatti il rilancio:
+    #   1. non siamo in un terminale (avvio da menu);
+    #   2. l'ambiente è incompleto (serve creare venv / installare);
+    #   3. non siamo GIÀ una copia rilanciata (sentinella anti-loop).
+    # Nel caso quotidiano (menu + ambiente a posto) la condizione 2 è
+    # falsa: il rilancio NON avviene e il launcher prosegue normale.
+    gia_rilanciato = os.environ.get("POSTIPERFETTI_RILANCIATO") == "1"
+
+    if (not in_terminale()) and ambiente_incompleto() and (not gia_rilanciato):
+        if rilancia_in_terminale():
+            # Terminale aperto: il lavoro prosegue nella copia figlia.
+            # Questa copia (senza terminale) ha esaurito il suo compito.
+            sys.exit(0)
+        else:
+            # Nessun terminale disponibile: ultimo ripiego, un dialogo
+            # grafico che spiega come procedere manualmente.
+            mostra_dialogo(
+                "Preparazione necessaria — «PostiPerfetti»",
+                "Al primo avvio «PostiPerfetti» deve preparare il proprio "
+                "ambiente, ma non è stato possibile aprire un terminale.\n\n"
+                "Apri un terminale ed esegui questo comando:\n\n"
+                f"  {sys.executable} {Path(__file__).resolve()}\n\n"
+                "Il programma completerà da solo la preparazione.",
+                tipo="errore"
+            )
+            sys.exit(1)
+
     print("=" * 50)
     print("🎓 Launcher «PostiPerfetti»")
     print("=" * 50)
