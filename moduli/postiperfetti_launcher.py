@@ -27,6 +27,10 @@ CARTELLA_VENV = CARTELLA_PROGETTO / ".venv"
 FILE_PRINCIPALE = CARTELLA_PROGETTO / "postiperfetti.py"
 PYTHON_VENV = CARTELLA_VENV / "bin" / "python3"
 PIP_VENV = CARTELLA_VENV / "bin" / "pip"
+# requirements.txt nella radice del progetto: fonte primaria delle
+# dipendenze CON i vincoli di versione (es. PySide6>=6.11,<7).
+# Se assente, si ripiega sui nomi elencati in DIPENDENZE (senza vincoli).
+FILE_REQUIREMENTS = CARTELLA_PROGETTO / "requirements.txt"
 
 # Dipendenze richieste: (nome_pacchetto_pip, nome_import_python)
 DIPENDENZE = [
@@ -423,10 +427,22 @@ def verifica_tutte_dipendenze():
 
 def installa_dipendenze(mancanti):
     """
-    Installa le dipendenze mancanti nel venv.
+    Installa le dipendenze nel venv.
+
+    Strategia "fonte unica per le versioni":
+    - se requirements.txt esiste, si installa con «pip install -r»,
+      rispettando i VINCOLI DI VERSIONE lì definiti (es. PySide6<7).
+      È il caso normale: le versioni sono dichiarate in UN solo posto.
+    - se requirements.txt manca (installazione danneggiata), si ripiega
+      sui nomi elencati in DIPENDENZE, SENZA vincoli di versione.
+
+    Nota: qualunque manchi tra le dipendenze, reinstalliamo comunque
+    l'intero requirements.txt. È corretto e più semplice: pip salta
+    ciò che è già presente e installa solo il necessario.
 
     Args:
-        mancanti: Lista di tuple (nome_pip, nome_import) da installare
+        mancanti: Lista di tuple (nome_pip, nome_import). Usata per il
+                  messaggio e come fallback se requirements.txt manca.
 
     Returns:
         True se l'installazione è riuscita
@@ -434,12 +450,21 @@ def installa_dipendenze(mancanti):
     nomi_pip = [nome for nome, _ in mancanti]
     elenco_nomi = ", ".join(nomi_pip)
 
-    print(f"📥 Installazione dipendenze: {elenco_nomi}...")
+    # Scegliamo il comando pip in base alla presenza di requirements.txt.
+    if FILE_REQUIREMENTS.is_file():
+        # Fonte primaria: il file con i vincoli di versione.
+        print(f"📥 Installazione dipendenze da requirements.txt...")
+        comando_pip = [str(PIP_VENV), "install", "-r", str(FILE_REQUIREMENTS)]
+        titolo = "Installazione dipendenze..."
+    else:
+        # Fallback: nomi da DIPENDENZE, senza vincoli. Avvisiamo, perché
+        # l'assenza del file è un'anomalia (installazione incompleta).
+        print(f"⚠️  requirements.txt non trovato: uso l'elenco interno.")
+        print(f"📥 Installazione dipendenze: {elenco_nomi}...")
+        comando_pip = [str(PIP_VENV), "install"] + nomi_pip
+        titolo = f"Installazione {elenco_nomi}..."
 
-    successo = mostra_progresso_kdialog(
-        [str(PIP_VENV), "install"] + nomi_pip,
-        titolo=f"Installazione {elenco_nomi}..."
-    )
+    successo = mostra_progresso_kdialog(comando_pip, titolo=titolo)
 
     if successo:
         print(f"   ✅ Dipendenze installate con successo")
@@ -712,14 +737,22 @@ def main():
 
         # Installa le dipendenze
         if not installa_dipendenze(mancanti):
-            mostra_dialogo(
-                "Errore — «PostiPerfetti»",
+            # Messaggio con DUE possibili cause: rete assente, oppure
+            # versioni richieste non più disponibili/compatibili (caso
+            # dell'"invecchiamento" dei vincoli in requirements.txt).
+            testo_errore = (
                 f"Impossibile installare le dipendenze: {nomi_mancanti}\n\n"
-                "Verifica la connessione a internet e riprova.\n\n"
-                "Puoi anche installarle manualmente:\n"
-                f"  {PIP_VENV} install {nomi_mancanti}",
-                tipo="errore"
+                "Possibili cause:\n"
+                "  • assenza di connessione a internet;\n"
+                "  • le versioni richieste non sono più disponibili\n"
+                "    o compatibili con questo sistema.\n\n"
+                "Puoi provare a installarle manualmente:\n"
+                f"  {PIP_VENV} install -r {FILE_REQUIREMENTS}"
             )
+            if in_terminale():
+                print(f"\n❌ {testo_errore}")
+            else:
+                mostra_dialogo("Errore — «PostiPerfetti»", testo_errore, tipo="errore")
             sys.exit(1)
 
         # Verifica post-installazione
