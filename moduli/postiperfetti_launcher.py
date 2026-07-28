@@ -36,8 +36,60 @@ DIPENDENZE = [
 
 
 # =====================================================================
+# SEZIONE 0: Rilevamento del contesto di esecuzione
+# =====================================================================
+
+def in_terminale():
+    """
+    Indica se il launcher è attaccato a un terminale interattivo.
+
+    True  → siamo in un terminale (l'utente ci ha lanciato da console,
+            oppure ci siamo rilanciati noi dentro un terminale).
+            In questo caso il feedback e le domande vanno nel TERMINALE.
+    False → nessun terminale (avvio dal menu delle applicazioni con
+            Terminal=false). Qui NON possiamo scrivere a schermo.
+
+    Usa os.isatty() sul descrittore dello standard input: è nella
+    libreria standard di Python, non dipende da alcun desktop e
+    funziona identico su ogni sistema Linux.
+    """
+    try:
+        return os.isatty(sys.stdin.fileno())
+    except Exception:
+        # In casi limite (stdin non disponibile) assumiamo "no terminale":
+        # è l'ipotesi prudente, che evita di scrivere dove nessuno legge.
+        return False
+
+
+# =====================================================================
 # SEZIONE 1: Sistema di dialoghi cross-platform
 # =====================================================================
+
+def chiedi_conferma_terminale(domanda):
+    """
+    Pone una domanda Sì/No direttamente nel terminale.
+
+    Da usare SOLO quando in_terminale() è True: mostra la domanda
+    testualmente e attende la risposta dell'utente, senza alcun
+    dialogo grafico. Universale, senza dipendenze esterne.
+
+    Il default (solo Invio) è "Sì" [S/n], coerente con l'installer:
+    l'azione più probabile (procedere) è a portata di un tasto.
+
+    Returns: True se l'utente conferma, False altrimenti.
+    """
+    try:
+        # input() attende la risposta; strip() toglie spazi, lower()
+        # rende indifferente maiuscolo/minuscolo.
+        risposta = input(f"{domanda} [S/n] ").strip().lower()
+    except (EOFError, KeyboardInterrupt):
+        # Se l'utente preme Ctrl-D o Ctrl-C, interpretiamo come "No":
+        # nel dubbio non procediamo con operazioni che scaricano da rete.
+        print()  # a capo pulito dopo l'interruzione
+        return False
+    # Stringa vuota (solo Invio) o un "sì" esplicito → conferma.
+    return risposta in ("", "s", "si", "sì", "y", "yes")
+
 
 def _dialogo_kdialog(titolo, messaggio, tipo="info", si_no=False):
     """
@@ -403,20 +455,69 @@ def installa_dipendenze(mancanti):
 
 def avvia_applicazione():
     """
-    Avvia l'applicazione principale usando il Python del venv.
-    Sostituisce il processo corrente (exec) per non lasciare
-    il launcher in memoria.
+    Avvia PostiPerfetti come processo INDIPENDENTE dal terminale.
+
+    A differenza di os.execv (che rimpiazzava il launcher facendo
+    ereditare all'app il terminale, così che chiudere il terminale
+    uccidesse anche la GUI), qui generiamo l'app in una SESSIONE
+    NUOVA e separata: il terminale può essere chiuso liberamente e
+    la GUI resta viva.
+
+    Strategia "sorveglia un istante, poi lascia andare":
+    - avvia l'app staccata;
+    - attende brevemente per intercettare un eventuale crash immediato
+      (dipendenza rotta, errore di import): in tal caso stampa l'errore;
+    - se dopo l'attesa l'app è ancora viva, esce lasciandola autonoma.
     """
     print(f"\n🚀 Avvio «PostiPerfetti»...")
-    print(f"   Python: {PYTHON_VENV}")
-    print(f"   Script: {FILE_PRINCIPALE}")
 
-    # os.execv sostituisce il processo corrente con l'app
-    # così il launcher non resta in memoria
-    os.execv(
-        str(PYTHON_VENV),
-        [str(PYTHON_VENV), str(FILE_PRINCIPALE)]
-    )
+    # start_new_session=True → equivale a setsid: nuova sessione,
+    # scollegata dal terminale. È Python puro (libreria standard),
+    # senza dipendere dal comando esterno «setsid».
+    try:
+        processo_app = subprocess.Popen(
+            [str(PYTHON_VENV), str(FILE_PRINCIPALE)],
+            start_new_session=True
+        )
+    except Exception as errore:
+        # Se non riusciamo nemmeno ad avviare il processo, è un problema
+        # serio (Python del venv mancante?): segnaliamolo e usciamo male.
+        messaggio = f"Impossibile avviare il programma:\n{errore}"
+        if in_terminale():
+            print(f"\n❌ {messaggio}")
+        else:
+            mostra_dialogo("Errore — «PostiPerfetti»", messaggio, tipo="errore")
+        sys.exit(1)
+
+    # --- Sorveglianza breve: l'app crasha all'istante? ---------------
+    # Attendiamo fino a ~2 secondi. Se il processo termina entro questo
+    # tempo con un codice d'errore, quasi certamente è un crash di avvio
+    # e vale la pena mostrarlo. Se resta vivo, l'avvio è riuscito.
+    try:
+        codice = processo_app.wait(timeout=2)
+        # Se siamo qui, il processo è GIÀ terminato entro il timeout.
+        if codice != 0:
+            messaggio = (
+                f"«PostiPerfetti» si è chiuso subito dopo l'avvio "
+                f"(codice {codice}).\n"
+                "Potrebbe esserci un problema con l'installazione."
+            )
+            if in_terminale():
+                print(f"\n❌ {messaggio}")
+            else:
+                mostra_dialogo("Errore — «PostiPerfetti»", messaggio, tipo="errore")
+            sys.exit(1)
+        # codice == 0: l'app è partita e si è chiusa subito ma
+        # regolarmente (raro, ma legittimo). Nulla da segnalare.
+    except subprocess.TimeoutExpired:
+        # Caso NORMALE: dopo 2 secondi l'app è ancora viva → avvio
+        # riuscito. Il launcher ha finito: esce lasciando la GUI
+        # indipendente, e il terminale torna libero.
+        if in_terminale():
+            print("   ✅ Programma avviato. Puoi chiudere questo terminale.")
+
+    # Il launcher termina qui. La GUI, in sessione separata, prosegue.
+    sys.exit(0)
 
 
 # =====================================================================
@@ -545,15 +646,22 @@ def main():
     if not venv_esiste():
         print("   ⚠️  Ambiente virtuale non trovato o corrotto")
 
-        risposta = mostra_dialogo(
-            "Ambiente virtuale mancante — «PostiPerfetti»",
-            "L'ambiente virtuale (.venv) non è stato trovato "
-            "o risulta corrotto.\n\n"
-            "È necessario per eseguire l'applicazione.\n"
-            "Vuoi crearlo adesso?\n\n"
-            "(Richiede connessione a internet per scaricare le dipendenze)",
-            si_no=True
-        )
+        # In terminale: domanda testuale. Senza terminale: dialogo grafico.
+        if in_terminale():
+            print("\n⚠️  L'ambiente virtuale (.venv) non è stato trovato o è corrotto.")
+            print("   È necessario per eseguire il programma e richiede una")
+            print("   connessione a internet per scaricare le dipendenze.")
+            risposta = chiedi_conferma_terminale("   Vuoi crearlo adesso?")
+        else:
+            risposta = mostra_dialogo(
+                "Ambiente virtuale mancante — «PostiPerfetti»",
+                "L'ambiente virtuale (.venv) non è stato trovato "
+                "o risulta corrotto.\n\n"
+                "È necessario per eseguire l'applicazione.\n"
+                "Vuoi crearlo adesso?\n\n"
+                "(Richiede connessione a internet per scaricare le dipendenze)",
+                si_no=True
+            )
 
         if not risposta:
             print("   ⏹️  Operazione annullata dall'utente")
@@ -581,14 +689,22 @@ def main():
     if mancanti:
         nomi_mancanti = ", ".join(nome for nome, _ in mancanti)
 
-        risposta = mostra_dialogo(
-            "Dipendenze mancanti — «PostiPerfetti»",
-            f"Le seguenti dipendenze sono mancanti:\n\n"
-            f"  • {chr(10) + '  • '.join(nome for nome, _ in mancanti)}\n\n"
-            f"Vuoi installarle adesso?\n\n"
-            f"(Richiede connessione a internet)",
-            si_no=True
-        )
+        # Stessa logica del punto precedente: terminale → testo, menu → grafico.
+        if in_terminale():
+            print("\n⚠️  Dipendenze mancanti:")
+            for nome, _ in mancanti:
+                print(f"     • {nome}")
+            print("   L'installazione richiede una connessione a internet.")
+            risposta = chiedi_conferma_terminale("   Vuoi installarle adesso?")
+        else:
+            risposta = mostra_dialogo(
+                "Dipendenze mancanti — «PostiPerfetti»",
+                f"Le seguenti dipendenze sono mancanti:\n\n"
+                f"  • {chr(10) + '  • '.join(nome for nome, _ in mancanti)}\n\n"
+                f"Vuoi installarle adesso?\n\n"
+                f"(Richiede connessione a internet)",
+                si_no=True
+            )
 
         if not risposta:
             print("   ⏹️  Operazione annullata dall'utente")
