@@ -249,72 +249,56 @@ def mostra_dialogo(titolo, messaggio, tipo="info", si_no=False):
 # SEZIONE 2: Gestione progress bar per installazione
 # =====================================================================
 
-def mostra_progresso_kdialog(comando, titolo="Installazione in corso..."):
+def esegui_con_progresso(comando, titolo="Installazione in corso..."):
     """
-    Esegue un comando mostrando una finestra di attesa (kdialog).
+    Esegue un comando (es. pip) mostrandone l'output IN DIRETTA nel
+    terminale, incorniciato tra due messaggi chiari e rassicuranti.
 
-    STRATEGIA (robusta e indipendente da qdbus):
-    1. Avvia una finestra di attesa kdialog come processo separato.
-    2. Esegue il comando reale (es. pip) e ne ASPETTA la fine.
-    3. Chiude la finestra di attesa terminando il suo processo.
+    Perché così (Opzione C):
+    - l'output di pip scorre a schermo → l'utente VEDE che il lavoro
+      procede (niente sensazione di blocco durante il download, lungo,
+      di PySide6);
+    - i due messaggi di cornice spiegano cosa sta succedendo, così il
+      testo tecnico di pip non spaventa chi non è programmatore;
+    - NESSUNA finestra grafica (kdialog eliminato): niente più notifiche
+      appese, niente dipendenza da qdbus, comportamento identico su ogni
+      desktop. Il flusso garantisce sempre un terminale (Passo C).
 
-    A differenza della versione precedente, NON usa qdbus per chiudere
-    il dialogo (il cui nome cambia da distro a distro: qdbus, qdbus6,
-    qdbus-qt6...). Terminare il processo della finestra è un'operazione
-    Python standard, che funziona su qualsiasi sistema.
+    Nota: NON usiamo capture_output. Lasciando che pip scriva
+    direttamente nel terminale, un eventuale errore (rete che cade)
+    appare da sé sotto gli occhi dell'utente, senza doverlo ricatturare.
 
     Args:
         comando: Lista di stringhe per subprocess
-        titolo: Titolo della finestra di attesa
+        titolo: Etichetta dell'operazione (mostrata nella cornice)
 
     Returns:
-        True se il comando è riuscito, False altrimenti
+        True se il comando è riuscito (codice 0), False altrimenti
     """
-    finestra_attesa = None  # Riferimento al processo del dialogo (se aperto)
+    # --- Messaggio di apertura: prepara e rassicura -----------------
+    print()
+    print(f"📥 {titolo}")
+    print("   Sto scaricando e installando le librerie necessarie.")
+    print("   Può richiedere qualche minuto: è del tutto normale.")
+    print("   Qui sotto vedrai scorrere del testo tecnico — lascialo lavorare.")
+    print("   " + "─" * 55)
 
-    # --- Prova ad aprire una finestra di attesa grafica -------------
-    if shutil.which("kdialog"):
-        try:
-            # --passivepopup: notifica SENZA pulsanti, che l'utente non
-            # può chiudere né "annullare" per errore. Il "3600" è la
-            # durata massima in secondi (un'ora, di fatto illimitata):
-            # tanto la chiudiamo NOI appena il comando finisce.
-            finestra_attesa = subprocess.Popen(
-                ["kdialog", "--title", titolo,
-                 "--passivepopup", f"{titolo}\nAttendere, l'operazione è in corso…", "3600"],
-                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
-            )
-        except Exception:
-            finestra_attesa = None  # Se fallisce, proseguiamo senza finestra
-
-    # --- Esegui il comando reale e ASPETTA che finisca --------------
-    # Questo è il cuore: subprocess.run BLOCCA fino al termine del
-    # comando. Solo quando pip ha finito, il codice prosegue.
+    # --- Esecuzione con output IN DIRETTA ---------------------------
+    # Senza capture_output, stdout/stderr di pip vanno al terminale.
+    # subprocess.run BLOCCA fino al termine: quando pip finisce, prosegue.
     try:
-        risultato = subprocess.run(comando, capture_output=True, text=True)
+        risultato = subprocess.run(comando)
         successo = (risultato.returncode == 0)
-    except Exception:
+    except Exception as errore:
+        print(f"   ⚠️  Errore nell'avvio del comando: {errore}")
         successo = False
 
-    # --- Chiudi la finestra di attesa, se era stata aperta ----------
-    # terminate() invia al processo del dialogo il segnale di chiusura.
-    # È l'operazione che PRIMA veniva delegata a qdbus e falliva: ora
-    # la facciamo direttamente, senza dipendere da comandi esterni.
-    if finestra_attesa is not None:
-        try:
-            finestra_attesa.terminate()
-            finestra_attesa.wait(timeout=5)  # Attende la chiusura effettiva
-        except Exception:
-            # Se terminate() non bastasse, forza la chiusura
-            try:
-                finestra_attesa.kill()
-            except Exception:
-                pass
-
-    # --- Se non c'era finestra grafica, dai comunque un feedback -----
-    # (caso di sistema senza kdialog: l'utente vede l'attività a schermo)
-    if finestra_attesa is None:
-        print(f"\n⏳ {titolo}")
+    # --- Messaggio di chiusura --------------------------------------
+    print("   " + "─" * 55)
+    if successo:
+        print("   ✅ Operazione completata.")
+    else:
+        print("   ❌ L'operazione non è riuscita (vedi i messaggi qui sopra).")
 
     return successo
 
@@ -374,7 +358,7 @@ def crea_venv():
         shutil.rmtree(CARTELLA_VENV)
 
     # Crea nuovo venv
-    successo = mostra_progresso_kdialog(
+    successo = esegui_con_progresso(
         [sys.executable, "-m", "venv", str(CARTELLA_VENV)],
         titolo="Creazione ambiente virtuale..."
     )
@@ -464,7 +448,7 @@ def installa_dipendenze(mancanti):
         comando_pip = [str(PIP_VENV), "install"] + nomi_pip
         titolo = f"Installazione {elenco_nomi}..."
 
-    successo = mostra_progresso_kdialog(comando_pip, titolo=titolo)
+    successo = esegui_con_progresso(comando_pip, titolo=titolo)
 
     if successo:
         print(f"   ✅ Dipendenze installate con successo")
