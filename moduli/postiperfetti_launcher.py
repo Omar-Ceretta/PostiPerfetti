@@ -435,18 +435,23 @@ def installa_dipendenze(mancanti):
     elenco_nomi = ", ".join(nomi_pip)
 
     # Scegliamo il comando pip in base alla presenza di requirements.txt.
+    # L'informazione sulla fonte va nel TITOLO: sarà esegui_con_progresso
+    # a stamparlo una sola volta, evitando intestazioni doppie.
+    # --disable-pip-version-check: sopprime l'avviso "a new release of pip
+    # is available". È solo informativo e non riguarda PostiPerfetti; NON
+    # aggiorna pip (che resterebbe soggetto a possibili incompatibilità
+    # future), si limita a non stampare il notice.
     if FILE_REQUIREMENTS.is_file():
         # Fonte primaria: il file con i vincoli di versione.
-        print(f"📥 Installazione dipendenze da requirements.txt...")
-        comando_pip = [str(PIP_VENV), "install", "-r", str(FILE_REQUIREMENTS)]
-        titolo = "Installazione dipendenze..."
+        comando_pip = [str(PIP_VENV), "install", "--disable-pip-version-check",
+                       "-r", str(FILE_REQUIREMENTS)]
+        titolo = "Installazione dipendenze (da requirements.txt)..."
     else:
         # Fallback: nomi da DIPENDENZE, senza vincoli. Avvisiamo, perché
         # l'assenza del file è un'anomalia (installazione incompleta).
-        print(f"⚠️  requirements.txt non trovato: uso l'elenco interno.")
-        print(f"📥 Installazione dipendenze: {elenco_nomi}...")
-        comando_pip = [str(PIP_VENV), "install"] + nomi_pip
-        titolo = f"Installazione {elenco_nomi}..."
+        print("⚠️  requirements.txt non trovato: uso l'elenco interno.")
+        comando_pip = [str(PIP_VENV), "install", "--disable-pip-version-check"] + nomi_pip
+        titolo = f"Installazione dipendenze ({elenco_nomi})..."
 
     successo = esegui_con_progresso(comando_pip, titolo=titolo)
 
