@@ -1,4 +1,4 @@
-![«PostiPerfetti»](dati/banner-github.png)
+![«PostiPerfetti»](dati/icon/github.png)
 
 # 📖 «PostiPerfetti» 📖
 
