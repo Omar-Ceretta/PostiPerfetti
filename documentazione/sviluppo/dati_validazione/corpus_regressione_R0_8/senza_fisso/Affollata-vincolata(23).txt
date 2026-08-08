@@ -1,0 +1,30 @@
+# Classe: Affollata-vincolata(23) (23 studenti)
+# Formato: Cognome;Nome;Genere;Posizione;Incompatibilità;Affinità
+# Genere: M/F (in caso di attivazione del flag "Genere misto" l'abbinamento [maschio][femmina] diventa un vincolo FORTE)
+# Posizione: NORMALE (= vincolo neutro) / PRIMA (= VINCOLO OBBLIGATORIO) / ULTIMA (= vincolo soft) / FISSO (= posizione fissa primo banco)
+# Vincoli "Incompatibilità": Cognome Nome:livello (1-3, dove 1= vincolo neutro, 2 = vincolo soft, 3 = VINCOLO OBBLIGATORIO)
+# Vincoli "Affinità": Cognome Nome:livello (1-3, dove 1 = vincolo neutro, 2 = vincolo soft, 3 = vincolo FORTE)
+
+Adani;Sara;F;ULTIMA;Bertoldi Marco:3,Iori Luca:1;
+Belli;Marta;F;NORMALE;;Longo Eva:1
+Bertoldi;Marco;M;NORMALE;Adani Sara:3;Dallo Elena:2
+Conti;Anna;F;ULTIMA;Dallo Elena:3,Marin Paolo:1;
+Dallo;Elena;F;NORMALE;Conti Anna:3;Bertoldi Marco:2
+Esposti;Marco;M;NORMALE;Fabbri Giulia:3,Orsi Tom:1;
+Fabbri;Giulia;F;NORMALE;Esposti Marco:3;Hoxha Ardit:1
+Gallo;Davide;M;NORMALE;Hoxha Ardit:3;
+Hoxha;Ardit;M;NORMALE;Gallo Davide:3;Fabbri Giulia:1
+Iori;Luca;M;NORMALE;Longo Eva:2,Adani Sara:1;Marin Paolo:2
+Leone;Sofia;F;NORMALE;Monti Aldo:3,Patti Sofia:1;
+Longo;Eva;F;NORMALE;Iori Luca:2,Patti Sofia:1;Belli Marta:1
+Marin;Paolo;M;NORMALE;Nadi Chiara:2,Conti Anna:1;Iori Luca:2
+Monti;Aldo;M;NORMALE;Leone Sofia:3;Nadi Chiara:1
+Nadi;Chiara;F;PRIMA;Marin Paolo:2,Sartori Giorgia:2;Monti Aldo:1
+Orsi;Tom;M;NORMALE;Patti Sofia:2,Esposti Marco:1;Quadri Marta:1
+Patti;Sofia;F;NORMALE;Orsi Tom:2,Longo Eva:1,Leone Sofia:1;Rizzo Ilir:3
+Pozzi;Elsa;F;NORMALE;Russo Iari:3;
+Quadri;Marta;F;NORMALE;Rizzo Ilir:2;Orsi Tom:1
+Rizzo;Ilir;M;NORMALE;Quadri Marta:2,Turra Lara:1;Patti Sofia:3
+Russo;Iari;M;NORMALE;Pozzi Elsa:3;
+Sartori;Giorgia;F;PRIMA;Nadi Chiara:2;
+Turra;Lara;F;NORMALE;Rizzo Ilir:1;

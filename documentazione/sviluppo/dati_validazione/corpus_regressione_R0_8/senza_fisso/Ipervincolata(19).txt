@@ -1,0 +1,26 @@
+# Classe: Ipervincolata(19) (19 studenti)
+# Formato: Cognome;Nome;Genere;Posizione;Incompatibilità;Affinità
+# Genere: M/F (se il flag "Genere misto" è attivo, l'abbinamento [maschio][femmina] riceve un BONUS forte, non obbligatorio)
+# Vincoli di posizione: NORMALE (= neutro) / PRIMA (= OBBLIGATORIO: prima fila) / ULTIMA (= preferenza per ultima fila) / FISSO (= OBBLIGATORIO: primo banco a sinistra della prima fila)
+# Vincoli di "Incompatibilità": Cognome Nome:livello (1-3, dove 1 = Leggera, 2 = Media, 3 = ASSOLUTA [= mai insieme])
+# Vincoli di "Affinità": Cognome Nome:livello (1-3, dove 1 = Leggera, 2 = Buona, 3 = Forte)
+
+Alighieri;Dante;M;NORMALE;Austen Jane:1,Brontë Charlotte:3,Leopardi Giacomo:3,Plath Sylvia:3,Rosselli Amelia:3,Szymborska Wisława:1,Čechov Anton:3;Petrarca Francesco:2,Boccaccio Giovanni:3,Pasolini Pier Paolo:2
+Austen;Jane;F;NORMALE;Alighieri Dante:1,Brontë Charlotte:2,Calvino Italo:3,D'Annunzio Gabriele:2,De André Fabrizio:3,Dostoevskij Fëdor:2,Leopardi Giacomo:3,Merini Alda:1,Morante Elsa:3,Pasolini Pier Paolo:1;Deledda Grazia:1,Szymborska Wisława:2,Ginzburg Natalia:2
+Boccaccio;Giovanni;M;NORMALE;Dostoevskij Fëdor:1,Leopardi Giacomo:3,Plath Sylvia:1,Rosselli Amelia:1;Alighieri Dante:3,Petrarca Francesco:3
+Brontë;Charlotte;F;NORMALE;Alighieri Dante:3,Austen Jane:2,Calvino Italo:1,D'Annunzio Gabriele:3,De André Fabrizio:3,Leopardi Giacomo:3,Szymborska Wisława:1,Čechov Anton:1;Morante Elsa:2,Plath Sylvia:3
+Calvino;Italo;M;NORMALE;Austen Jane:3,Brontë Charlotte:1,D'Annunzio Gabriele:2,Deledda Grazia:3,Dostoevskij Fëdor:2,Leopardi Giacomo:3,Merini Alda:3,Plath Sylvia:1;Szymborska Wisława:2,Ginzburg Natalia:3
+Čechov;Anton;M;NORMALE;Alighieri Dante:3,Brontë Charlotte:1,D'Annunzio Gabriele:2,Dostoevskij Fëdor:1,Merini Alda:1,Plath Sylvia:3;Leopardi Giacomo:2,Szymborska Wisława:3,Ginzburg Natalia:2
+D'Annunzio;Gabriele;M;ULTIMA;Austen Jane:2,Calvino Italo:2,De André Fabrizio:3,Deledda Grazia:1,Ginzburg Natalia:2,Leopardi Giacomo:3,Morante Elsa:1,Pasolini Pier Paolo:3,Szymborska Wisława:2,Čechov Anton:2,Brontë Charlotte:3,Dostoevskij Fëdor:3;
+De André;Fabrizio;M;ULTIMA;Austen Jane:3,Brontë Charlotte:3,D'Annunzio Gabriele:3,Leopardi Giacomo:3,Petrarca Francesco:1;Merini Alda:2,Szymborska Wisława:1,Pasolini Pier Paolo:3
+Deledda;Grazia;F;NORMALE;Calvino Italo:3,D'Annunzio Gabriele:1,Dostoevskij Fëdor:3,Plath Sylvia:1,Szymborska Wisława:3;Austen Jane:1,Leopardi Giacomo:1,Morante Elsa:1
+Dostoevskij;Fëdor;M;ULTIMA;Austen Jane:2,Calvino Italo:2,D'Annunzio Gabriele:3,Deledda Grazia:3,Morante Elsa:3,Szymborska Wisława:1,Čechov Anton:1,Boccaccio Giovanni:1;Leopardi Giacomo:2,Merini Alda:2,Plath Sylvia:3
+Ginzburg;Natalia;F;NORMALE;D'Annunzio Gabriele:2,Leopardi Giacomo:3,Petrarca Francesco:1,Plath Sylvia:1;Austen Jane:2,Calvino Italo:3,Morante Elsa:3,Čechov Anton:2
+Leopardi;Giacomo;M;PRIMA;Alighieri Dante:3,Austen Jane:3,Brontë Charlotte:3,Calvino Italo:3,D'Annunzio Gabriele:3,De André Fabrizio:3,Morante Elsa:3,Boccaccio Giovanni:3,Ginzburg Natalia:3,Pasolini Pier Paolo:3;Deledda Grazia:1,Dostoevskij Fëdor:2,Merini Alda:3,Petrarca Francesco:1,Plath Sylvia:3,Rosselli Amelia:3,Szymborska Wisława:2,Čechov Anton:2
+Merini;Alda;F;NORMALE;Austen Jane:1,Calvino Italo:3,Morante Elsa:3,Petrarca Francesco:3,Szymborska Wisława:1,Čechov Anton:1;De André Fabrizio:2,Dostoevskij Fëdor:2,Leopardi Giacomo:3,Plath Sylvia:3,Rosselli Amelia:2
+Morante;Elsa;F;NORMALE;Austen Jane:3,D'Annunzio Gabriele:1,Dostoevskij Fëdor:3,Leopardi Giacomo:3,Merini Alda:3;Brontë Charlotte:2,Deledda Grazia:1,Ginzburg Natalia:3,Pasolini Pier Paolo:3
+Pasolini;Pier Paolo;M;ULTIMA;Austen Jane:1,D'Annunzio Gabriele:3,Leopardi Giacomo:3;Alighieri Dante:2,De André Fabrizio:3,Morante Elsa:3,Rosselli Amelia:2
+Petrarca;Francesco;M;NORMALE;De André Fabrizio:1,Merini Alda:3,Plath Sylvia:3,Rosselli Amelia:3,Ginzburg Natalia:1;Alighieri Dante:2,Leopardi Giacomo:1,Boccaccio Giovanni:3
+Plath;Sylvia;F;PRIMA;Alighieri Dante:3,Calvino Italo:1,Deledda Grazia:1,Petrarca Francesco:3,Szymborska Wisława:1,Čechov Anton:3,Boccaccio Giovanni:1,Ginzburg Natalia:1;Brontë Charlotte:3,Dostoevskij Fëdor:3,Leopardi Giacomo:3,Merini Alda:3,Rosselli Amelia:3
+Rosselli;Amelia;F;PRIMA;Alighieri Dante:3,Petrarca Francesco:3,Szymborska Wisława:3,Boccaccio Giovanni:1;Leopardi Giacomo:3,Merini Alda:2,Plath Sylvia:3,Pasolini Pier Paolo:2
+Szymborska;Wisława;F;NORMALE;Alighieri Dante:1,Brontë Charlotte:1,D'Annunzio Gabriele:2,Deledda Grazia:3,Dostoevskij Fëdor:1,Merini Alda:1,Plath Sylvia:1,Rosselli Amelia:3;Austen Jane:2,Calvino Italo:2,De André Fabrizio:1,Leopardi Giacomo:2,Čechov Anton:3

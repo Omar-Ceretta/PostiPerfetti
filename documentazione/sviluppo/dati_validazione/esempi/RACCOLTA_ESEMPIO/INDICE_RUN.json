@@ -1,0 +1,84 @@
+{
+  "completa": true,
+  "protocollo_id": "protocollo_test_i9",
+  "run": [
+    {
+      "condizione": "senza_fisso",
+      "file_classe": "senza/Test.txt",
+      "genere_misto_attivo": false,
+      "mesi_generati": 2,
+      "metadati": {
+        "test": "I9"
+      },
+      "modalita": "coppie",
+      "motivo_esito": null,
+      "numero_mesi": 2,
+      "pair_id": "pair_1c5364920138c910bace0891",
+      "parametri_aula": {
+        "extra": {},
+        "modalita_trio": "centro",
+        "numero_file": 2,
+        "posizione_blocco_finale": "ultima",
+        "posti_per_fila": 6,
+        "preferenza_resto2": "coppia"
+      },
+      "parametri_ricerca": {
+        "budget_secondi": null,
+        "convergenza": 20,
+        "numero_candidati": 1,
+        "numero_stagioni_fisso": 1,
+        "tetto_stagioni": 50
+      },
+      "percorso_output": "run/run_3ad01c2d9201d0b9ff0684c1",
+      "problemi": [],
+      "run_id": "run_3ad01c2d9201d0b9ff0684c1",
+      "seed_principale": 123456789,
+      "sha256_annata_json": "3752235f115b6328d4b8b56684d25aa725c3171e2ccbae6ad2f76cb38d443993",
+      "stato": "completo",
+      "stato_iniziale_id": "stato_cb0869b4ab32aa48673d8ab4"
+    },
+    {
+      "condizione": "con_fisso",
+      "file_classe": "con/Test+fisso.txt",
+      "genere_misto_attivo": false,
+      "mesi_generati": 2,
+      "metadati": {
+        "test": "I9"
+      },
+      "modalita": "coppie",
+      "motivo_esito": null,
+      "numero_mesi": 2,
+      "pair_id": "pair_1c5364920138c910bace0891",
+      "parametri_aula": {
+        "extra": {},
+        "modalita_trio": "centro",
+        "numero_file": 2,
+        "posizione_blocco_finale": "ultima",
+        "posti_per_fila": 6,
+        "preferenza_resto2": "coppia"
+      },
+      "parametri_ricerca": {
+        "budget_secondi": null,
+        "convergenza": 20,
+        "numero_candidati": 1,
+        "numero_stagioni_fisso": 1,
+        "tetto_stagioni": 50
+      },
+      "percorso_output": "run/run_e00a90482bd6d6815690a9b1",
+      "problemi": [],
+      "run_id": "run_e00a90482bd6d6815690a9b1",
+      "seed_principale": 123456789,
+      "sha256_annata_json": "f1285a534a8ba7dd6e14be2af6149b86d7b553d62a43908b8ae483302ac1248b",
+      "stato": "completo",
+      "stato_iniziale_id": "stato_cb0869b4ab32aa48673d8ab4"
+    }
+  ],
+  "run_annullati": 0,
+  "run_attesi": 2,
+  "run_completi": 2,
+  "run_eseguiti": 2,
+  "run_falliti": 0,
+  "run_invalidi": 0,
+  "run_non_eseguiti": 0,
+  "run_parziali": 0
+}

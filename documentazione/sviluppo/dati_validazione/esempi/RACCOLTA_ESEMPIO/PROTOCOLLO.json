@@ -1,0 +1,82 @@
+{
+  "coppie": [
+    {
+      "classe": "Test",
+      "file_con_fisso": "con/Test+fisso.txt",
+      "file_senza_fisso": "senza/Test.txt",
+      "numero_studenti": 4,
+      "pair_id": "pair_1c5364920138c910bace0891",
+      "posizione_base": "NORMALE",
+      "studente_fisso": "A Test"
+    }
+  ],
+  "corpus_id": "corpus_test",
+  "data_approvazione": "2026-08-01",
+  "metadati": {},
+  "osservatore_id": "osservatore_semantico_r0_1",
+  "protocollo_id": "protocollo_test_i9",
+  "richiede_appaiamento_completo": true,
+  "run": [
+    {
+      "condizione": "senza_fisso",
+      "file_classe": "senza/Test.txt",
+      "genere_misto_attivo": false,
+      "metadati": {
+        "test": "I9"
+      },
+      "modalita": "coppie",
+      "numero_mesi": 2,
+      "pair_id": "pair_1c5364920138c910bace0891",
+      "parametri_aula": {
+        "extra": {},
+        "modalita_trio": "centro",
+        "numero_file": 2,
+        "posizione_blocco_finale": "ultima",
+        "posti_per_fila": 6,
+        "preferenza_resto2": "coppia"
+      },
+      "parametri_ricerca": {
+        "budget_secondi": null,
+        "convergenza": 20,
+        "numero_candidati": 1,
+        "numero_stagioni_fisso": 1,
+        "tetto_stagioni": 50
+      },
+      "run_id": "run_3ad01c2d9201d0b9ff0684c1",
+      "seed_principale": 123456789,
+      "stato_iniziale_id": "stato_cb0869b4ab32aa48673d8ab4"
+    },
+    {
+      "condizione": "con_fisso",
+      "file_classe": "con/Test+fisso.txt",
+      "genere_misto_attivo": false,
+      "metadati": {
+        "test": "I9"
+      },
+      "modalita": "coppie",
+      "numero_mesi": 2,
+      "pair_id": "pair_1c5364920138c910bace0891",
+      "parametri_aula": {
+        "extra": {},
+        "modalita_trio": "centro",
+        "numero_file": 2,
+        "posizione_blocco_finale": "ultima",
+        "posti_per_fila": 6,
+        "preferenza_resto2": "coppia"
+      },
+      "parametri_ricerca": {
+        "budget_secondi": null,
+        "convergenza": 20,
+        "numero_candidati": 1,
+        "numero_stagioni_fisso": 1,
+        "tetto_stagioni": 50
+      },
+      "run_id": "run_e00a90482bd6d6815690a9b1",
+      "seed_principale": 123456789,
+      "stato_iniziale_id": "stato_cb0869b4ab32aa48673d8ab4"
+    }
+  ],
+  "strategia": "C1",
+  "titolo": "Test I9",
+  "versione": "0.1"
+}

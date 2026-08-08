@@ -1,0 +1,35 @@
+# Classe: Affollata-difficile(28) (28 studenti)
+# Formato: Cognome;Nome;Genere;Posizione;Incompatibilità;Affinità
+# Genere: M/F (se il flag "Genere misto" è attivo, l'abbinamento [maschio][femmina] riceve un BONUS forte, non obbligatorio)
+# Vincoli di posizione: NORMALE (= neutro) / PRIMA (= OBBLIGATORIO: prima fila) / ULTIMA (= preferenza per ultima fila) / FISSO (= OBBLIGATORIO: primo banco a sinistra della prima fila)
+# Vincoli di "Incompatibilità": Cognome Nome:livello (1-3, dove 1 = Leggera, 2 = Media, 3 = ASSOLUTA [= mai insieme])
+# Vincoli di "Affinità": Cognome Nome:livello (1-3, dove 1 = Leggera, 2 = Buona, 3 = Forte)
+
+Aielli;Marta;F;NORMALE;Bellini Sara:2,Marchi Diego:1;Costa Luca:2
+Bellini;Sara;F;ULTIMA;Marchi Diego:3,Aielli Marta:2,Costa Luca:3;Donà Elena:3
+Bruno;Eva;F;NORMALE;Zola Pietro:2;Conte Sara:1
+Conte;Sara;F;NORMALE;;Zola Pietro:1,Bruno Eva:1
+Costa;Luca;M;NORMALE;Marchi Diego:3,Bellini Sara:3,Greco Paolo:3;Aielli Marta:2
+Dini;Alex;M;NORMALE;Endrizzi Gaia:2;Fante Luca:2
+Donà;Elena;F;NORMALE;Ferro Giulia:2;Bellini Sara:3,Marchi Diego:2
+Endrizzi;Gaia;F;NORMALE;Dini Alex:2;Gobbi Iris:1
+Esposito;Marco;M;NORMALE;Hassan Omar:3,Loreti Anna:2;
+Fante;Luca;M;NORMALE;Gobbi Iris:1;Dini Alex:2
+Ferro;Giulia;F;NORMALE;Marchi Diego:2,Donà Elena:2,Greco Paolo:3;Innocenti Davide:2
+Gobbi;Iris;F;NORMALE;Fante Luca:1;Endrizzi Gaia:1,Lai Tobia:1
+Greco;Paolo;M;PRIMA;Marchi Diego:3,Costa Luca:3,Ferro Giulia:3;
+Hassan;Omar;M;NORMALE;Esposito Marco:3,Innocenti Davide:3;Loreti Anna:2
+Innocenti;Davide;M;NORMALE;Hassan Omar:3,Loreti Anna:3;Ferro Giulia:2
+Lai;Tobia;M;NORMALE;;Gobbi Iris:1
+Loreti;Anna;F;ULTIMA;Innocenti Davide:3,Esposito Marco:2;Hassan Omar:2
+Manca;Sofia;F;NORMALE;Nardi Chiara:3,Pini Marta:2;Sanna Giorgia:2
+Marchi;Diego;M;NORMALE;Bellini Sara:3,Costa Luca:3,Ferro Giulia:2,Aielli Marta:1,Greco Paolo:3;Donà Elena:2
+Nardi;Chiara;F;NORMALE;Manca Sofia:3,Pini Marta:3;
+Olivieri;Tom;M;NORMALE;Quaranta Vito:3,Russi Elia:2;
+Pini;Marta;F;PRIMA;Nardi Chiara:3,Manca Sofia:2;
+Quaranta;Vito;M;NORMALE;Olivieri Tom:3,Russi Elia:2;
+Russi;Elia;M;NORMALE;Quaranta Vito:2,Olivieri Tom:2;
+Sanna;Giorgia;F;NORMALE;Turci Lara:3,Valli Nicola:2;Manca Sofia:2
+Turci;Lara;F;ULTIMA;Sanna Giorgia:3,Valli Nicola:2;
+Valli;Nicola;M;NORMALE;Turci Lara:2,Sanna Giorgia:2;
+Zola;Pietro;M;NORMALE;Bruno Eva:2;Conte Sara:1

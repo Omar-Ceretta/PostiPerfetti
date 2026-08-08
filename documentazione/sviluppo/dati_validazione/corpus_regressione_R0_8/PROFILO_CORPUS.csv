@@ -1,0 +1,11 @@
+file,studenti,M,F,sbilanciamento_genere,PRIMA,ULTIMA,FISSO,inc_L1,inc_L2,inc_L3,densita_incompatibilita,densita_L3,grado_L3_massimo,aff_L1,aff_L2,aff_L3,densita_affinita,mod_3
+Piccola(14).txt,14,7,7,0.0,1,2,0,2,4,3,0.099,0.033,1,4,5,0,0.099,2
+Affinita-dominante(16).txt,16,8,8,0.0,1,1,0,2,0,1,0.025,0.008,1,2,9,9,0.167,1
+Squilibrata-murata(16).txt,16,13,3,0.625,1,1,0,5,5,17,0.225,0.142,7,2,6,4,0.1,1
+Terzetti-regolare(18).txt,18,11,7,0.222,1,1,0,1,2,9,0.078,0.059,4,1,2,2,0.033,0
+Ipervincolata(19).txt,19,10,9,0.053,3,4,0,22,8,33,0.368,0.193,10,5,14,14,0.193,1
+Elastica(22).txt,22,11,11,0.0,0,3,0,3,1,0,0.017,0.0,0,5,1,0,0.026,1
+Affollata-vincolata(23).txt,23,10,13,0.13,2,2,0,6,5,6,0.067,0.024,1,4,2,1,0.028,2
+Affollata-difficile(28).txt,28,14,14,0.0,2,3,0,2,11,13,0.069,0.034,3,4,6,1,0.029,1
+Ipervincolata(19+fisso).txt,19,10,9,0.053,2,4,1,22,8,33,0.368,0.193,10,5,14,14,0.193,1
+Affollata-difficile(28+fisso).txt,28,14,14,0.0,2,3,1,2,11,13,0.069,0.034,3,4,6,1,0.029,1

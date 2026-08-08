@@ -1,0 +1,23 @@
+# Classe: Affinita-dominante(16) (16 studenti)
+# Formato: Cognome;Nome;Genere;Posizione;Incompatibilità;Affinità
+# Genere: M/F (se il flag "Genere misto" è attivo, l'abbinamento [maschio][femmina] riceve un BONUS forte, non obbligatorio)
+# Vincoli di posizione: NORMALE (= neutro) / PRIMA (= OBBLIGATORIO: prima fila) / ULTIMA (= preferenza per ultima fila) / FISSO (= OBBLIGATORIO: primo banco a sinistra della prima fila)
+# Vincoli di "Incompatibilità": Cognome Nome:livello (1-3, dove 1 = Leggera, 2 = Media, 3 = ASSOLUTA [= mai insieme])
+# Vincoli di "Affinità": Cognome Nome:livello (1-3, dove 1 = Leggera, 2 = Buona, 3 = Forte)
+
+Bianchi;Luca;M;NORMALE;Vitale Elena:3;Conti Marco:3,Greco Andrea:3
+Conti;Marco;M;NORMALE;Sala Matteo:1;Bianchi Luca:3,Greco Andrea:2,Ferrari Sofia:3
+Costa;Giulio;M;NORMALE;;Villa Tommaso:2,Sala Matteo:2,Vitale Elena:2
+Ferrari;Sofia;F;NORMALE;;Conti Marco:3,Greco Andrea:2,Galli Chiara:1
+Galli;Chiara;F;PRIMA;;Leone Giulia:3,Moretti Alice:2,Ferrari Sofia:1
+Greco;Andrea;M;ULTIMA;;Bianchi Luca:3,Conti Marco:2,Ferrari Sofia:2
+Leone;Giulia;F;NORMALE;;Galli Chiara:3,Moretti Alice:3,Testa Martina:2
+Marini;Davide;M;NORMALE;;Parisi Sara:3,Riva Stefano:2
+Moretti;Alice;F;NORMALE;Riva Stefano:1;Leone Giulia:3,Galli Chiara:2,Parisi Sara:2
+Parisi;Sara;F;NORMALE;;Marini Davide:3,Moretti Alice:2
+Rinaldi;Anna;F;NORMALE;;Riva Stefano:3,Testa Martina:1
+Riva;Stefano;M;NORMALE;Moretti Alice:1;Rinaldi Anna:3,Marini Davide:2
+Sala;Matteo;M;NORMALE;Conti Marco:1;Villa Tommaso:3,Costa Giulio:2
+Testa;Martina;F;NORMALE;;Vitale Elena:3,Leone Giulia:2,Rinaldi Anna:1
+Villa;Tommaso;M;NORMALE;;Sala Matteo:3,Costa Giulio:2
+Vitale;Elena;F;NORMALE;Bianchi Luca:3;Testa Martina:3,Costa Giulio:2

@@ -1,0 +1,25 @@
+Installazione completata!
+
+COME INIZIARE
+
+Avvia «PostiPerfetti» dal Menu Start oppure dall'eventuale
+collegamento creato sul Desktop.
+
+All'interno del programma, il pulsante «Istruzioni» apre la guida
+completa alle funzionalità.
+
+Con «Seleziona classe» troverai già due file di esempio:
+  • Classe-BASE_esempio.txt
+  • Classe-COMPLETO_esempio.txt
+
+I dati creati durante l'uso restano nelle sottocartelle:
+  • classi
+  • stato
+  • log
+
+Gli aggiornamenti preservano questi dati.
+Durante la disinstallazione verrà chiesto esplicitamente se conservarli
+oppure eliminarli.
+
+Per segnalazioni o suggerimenti:
+ceretta.omar@ictombologalliera.edu.it

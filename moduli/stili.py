@@ -1,91 +1,28 @@
-    # =================================================================
-"""
-    «PostiPerfetti» v. 2.0 — Programma per l'assegnazione automatica
-    dei posti degli allievi in una classe scolastica,
-    con gestione di vincoli, affinità, incompatibilità,
-    rotazione allievi e storico assegnazioni.
+# -*- coding: utf-8 -*-
+"""Stili Qt dell'interfaccia principale di «PostiPerfetti».
 
-    Autore: prof. Omar Ceretta — I.C. di Tombolo e Galliera Veneta (PD)
-    Licenza: GNU GPLv3
+Definisce il foglio di stile globale e rigenera gli stili inline dei widget
+che non ereditano automaticamente il tema. Tutti i colori provengono da
+tema.py.
 
-    ▣ Questo software è libero: puoi usarlo, copiarlo, studiarlo
-    e redistribuirlo liberamente.
-    ▣ Se lo modifichi e redistribuisci, sei tenuto a mantenere
-    l'attribuzione al creatore originale e a rendere pubblico
-    il codice sorgente delle tue modifiche con la stessa licenza GPLv3.
-    ▣ Questo programma è distribuito «così com'è», senza alcuna
-    garanzia espressa o implicita.
-"""
-    # =================================================================
-"""
-    Gestione degli stili grafici.
-
-    Contiene la classe StiliMixin con 2 metodi estratti dalla classe
-    FinestraPostiPerfetti:
-    • setup_stili()                → Stylesheet globale (CSS Qt completo)
-    • _aggiorna_stili_widget()     → Stili inline per widget specifici
-
-    USO (Mixin Pattern):
-        La classe StiliMixin va aggiunta come classe base a FinestraPostiPerfetti:
-            from moduli.stili import StiliMixin
-            class FinestraPostiPerfetti(QMainWindow, StatisticheMixin, StiliMixin):
-            ...
-    I metodi usano `self` perché, una volta mixata, `self` è l'istanza di
-    FinestraPostiPerfetti — esattamente come se fossero definiti lì dentro.
+Autore: prof. Omar Ceretta. Licenza: GNU GPLv3.
 """
 
-# Importa la funzione C() per leggere i colori del tema attivo
 from moduli.tema import C
-# QPalette + QColor: per impostare i colori dei tooltip a livello applicazione.
-# I tooltip Qt sono finestre top-level, NON figli della QMainWindow, quindi
-# non ereditano dallo stylesheet della finestra.
-# Usare QPalette è MOLTO più veloce di QApplication.setStyleSheet():
-# quest'ultimo forza il restyle di TUTTI i widget ad ogni chiamata,
-# mentre setPalette aggiorna solo i ruoli colore specificati → istantaneo.
+# I tooltip sono finestre autonome: la palette applicativa ne aggiorna i
+# colori senza forzare il restyle di tutti i widget.
 from PySide6.QtWidgets import QApplication
 from PySide6.QtGui import QPalette, QColor
 
 
 class StiliMixin:
-    """
-    Mixin che aggiunge la gestione degli stili a FinestraPostiPerfetti.
+    """Aggiunge alla finestra principale la gestione del tema Qt."""
 
-    Attributi usati da self (devono esistere nella classe principale):
-        - self.setStyleSheet()               (ereditato da QMainWindow)
-        - self.input_nome_classe             (QLineEdit)
-        - self.input_num_file                (QLineEdit)
-        - self.input_posti_fila              (QLineEdit)
-        - self.btn_file_meno, btn_file_piu   (QPushButton)
-        - self.btn_posti_meno, btn_posti_piu (QPushButton)
-        - self.btn_istruzioni                (QPushButton)
-        - self.btn_toggle_tema               (QPushButton)
-        - self.btn_crediti                   (QPushButton)
-        - self.btn_avvia_assegnazione        (QPushButton)
-        - self.btn_salva_progetto            (QPushButton)
-        - self.btn_export_excel              (QPushButton)
-        - self.btn_export_report_txt         (QPushButton)
-        - self.btn_export_stats              (QPushButton)
-        - self.btn_aiuto_aula               (QPushButton)
-        - self.label_storico                 (QLabel)
-        - self.label_studenti_caricati       (QLabel)
-        - self.label_info_dispari            (QLabel)
-        - self.filtro_classe_combo           (ComboBoxProtetto)
-        - self.config_app                    (ConfigurazioneApp)
-    """
-
-    # =================================================================
-    # STYLESHEET GLOBALE — Tema completo per tutta l'applicazione
-    # =================================================================
+    # Stile globale
 
     def setup_stili(self):
-        """
-        Applica il tema attivo all'interfaccia principale.
-        I colori vengono letti dal dizionario TEMI tramite la funzione C(),
-        quindi basta cambiare TEMA_ATTIVO per aggiornare l'intera interfaccia.
-        """
+        """Applica alla finestra il tema attivo e aggiorna i tooltip Qt."""
 
-        # Costruisce lo stylesheet completo usando i colori del tema attivo.
-        # Ogni C("nome") restituisce il colore corretto per scuro o chiaro.
         stylesheet = f"""
             /* === FINESTRA PRINCIPALE === */
             QMainWindow {{
@@ -120,16 +57,21 @@ class StiliMixin:
             /* === TAB WIDGET === */
             QTabWidget::pane {{
                 border: 1px solid {C("bordo_normale")};
-                border-radius: 6px;
+                border-radius: 0px 6px 6px 6px;
                 background-color: {C("sfondo_pannello")};
+                top: -1px;
             }}
 
             QTabBar::tab {{
                 background: {C("sfondo_tab_normale")};
                 border: 1px solid {C("bordo_normale")};
+                border-bottom: none;
                 padding: 10px 18px;
                 margin-right: 2px;
-                border-radius: 4px 4px 0px 0px;
+                border-top-left-radius: 6px;
+                border-top-right-radius: 6px;
+                border-bottom-left-radius: 0px;
+                border-bottom-right-radius: 0px;
                 color: {C("testo_secondario")};
             }}
 
@@ -137,7 +79,11 @@ class StiliMixin:
                 background: {C("accento")};
                 color: {C("selezione_testo")};
                 font-weight: bold;
-                border-bottom-color: {C("accento")};
+                margin-bottom: -1px;
+            }}
+
+            QTabBar::tab:!selected {{
+                margin-top: 2px;
             }}
 
             QTabBar::tab:hover:!selected {{
@@ -162,6 +108,10 @@ class StiliMixin:
 
             QPushButton:pressed {{
                 background-color: {C("btn_premuto")};
+            }}
+
+            QPushButton:focus {{
+                border: 2px solid {C("bordo_focus")};
             }}
 
             QPushButton:disabled {{
@@ -238,6 +188,10 @@ class StiliMixin:
                 border: 2px solid {C("accento")};
             }}
 
+            QRadioButton:focus {{
+                color: {C("bordo_focus")};
+            }}
+
             /* === CHECKBOX === */
             QCheckBox {{
                 color: {C("testo_principale")};
@@ -256,6 +210,10 @@ class StiliMixin:
                 background-color: {C("accento")};
                 border: 2px solid {C("accento_scuro")};
                 font-weight: bold;
+            }}
+
+            QCheckBox:focus {{
+                color: {C("bordo_focus")};
             }}
 
             /* === PROGRESS BAR === */
@@ -280,6 +238,10 @@ class StiliMixin:
                 background-color: {C("sfondo_testo_area")};
                 color: {C("testo_principale")};
                 selection-background-color: {C("accento")};
+            }}
+
+            QTextEdit:focus, QTableWidget:focus, QTabWidget:focus {{
+                border: 2px solid {C("bordo_focus")};
             }}
 
             /* === TABLE === */
@@ -394,46 +356,104 @@ class StiliMixin:
             }}
         """
 
-        # Applica il tema all'intera finestra principale.
-        # Tutti i widget figli ereditano questi stili salvo override locali.
+        if hasattr(self, "editor_studenti"):
+            stylesheet += (
+                "\n"
+                + self.editor_studenti._stylesheet_componenti_dinamici()
+            )
+
         self.setStyleSheet(stylesheet)
 
-        # === TOOLTIP VIA PALETTE (istantaneo, senza restyle globale) ===
-        # I tooltip Qt sono finestre top-level: NON ereditano da self.setStyleSheet().
+        # I tooltip non ereditano lo stylesheet della finestra.
         palette = QApplication.instance().palette()
         palette.setColor(QPalette.ToolTipBase, QColor(C("sfondo_pannello")))
         palette.setColor(QPalette.ToolTipText, QColor(C("testo_principale")))
         QApplication.instance().setPalette(palette)
 
-    # =================================================================
-    # STILI INLINE — Widget che non ereditano dallo stylesheet globale
-    # =================================================================
+    # Label semantiche
+
+    def _applica_stile_label_stato_classe(self, stato=None):
+        """Applica la grammatica cromatica alla label «Stato classe»."""
+        if stato is None:
+            stato = self.label_studenti_caricati.property("stato_classe")
+        stato = stato if stato in {"attenzione", "successo"} else "neutro"
+        self.label_studenti_caricati.setProperty("stato_classe", stato)
+
+        if stato == "attenzione":
+            self.label_studenti_caricati.setStyleSheet(f"""
+                background-color: {C("label_attenzione_bg")};
+                color: {C("label_attenzione_txt")};
+                font-weight: bold;
+                font-size: 13px;
+                padding: 6px 8px;
+                border-radius: 5px;
+                border: 1px solid {C("label_attenzione_bordo")};
+            """)
+        elif stato == "successo":
+            self.label_studenti_caricati.setStyleSheet(f"""
+                background-color: {C("label_successo_bg")};
+                color: {C("label_successo_txt")};
+                font-weight: bold;
+                font-size: 13px;
+                padding: 6px 8px;
+                border-radius: 5px;
+                border: 1px solid {C("label_successo_bordo")};
+            """)
+        else:
+            self.label_studenti_caricati.setStyleSheet(f"""
+                background-color: transparent;
+                color: {C("testo_grigio")};
+                border: none;
+                padding: 0px;
+                font-size: 13px;
+                font-style: italic;
+                font-weight: normal;
+            """)
+
+    def _applica_stile_label_capienza(self, stato=None):
+        """Rende neutra la capienza normale e rossa solo l'insufficienza."""
+        if stato is None:
+            stato = self.label_posti_totali.property("stato_capienza")
+        stato = "errore" if stato == "errore" else "neutro"
+        self.label_posti_totali.setProperty("stato_capienza", stato)
+
+        if stato == "errore":
+            self.label_posti_totali.setStyleSheet(f"""
+                background-color: {C("label_errore_bg")};
+                color: white;
+                font-weight: bold;
+                font-size: 15px;
+                padding: 8px;
+                border: 3px solid {C("label_errore_bordo")};
+                border-radius: 6px;
+            """)
+        else:
+            self.label_posti_totali.setStyleSheet(f"""
+                background-color: {C("label_capienza_bg")};
+                color: {C("label_capienza_txt")};
+                font-weight: bold;
+                font-size: 13px;
+                padding: 6px 8px;
+                border-radius: 5px;
+                border: 1px solid {C("label_capienza_bordo")};
+            """)
+
+    # Stili inline
 
     def _aggiorna_stili_widget(self):
-        """
-        Riapplica gli stili inline ai widget che non ereditano
-        automaticamente dallo stylesheet globale della finestra.
-        Chiamato sia all'avvio (per caricare il tema salvato)
-        sia al cambio tema (toggle scuro/chiaro).
+        """Rigenera gli stili inline all'avvio e dopo un cambio di tema."""
 
-        Include:
-        - Campo nome classe (read-only)
-        - Campi numerici file/posti e bottoni +/−
-        - Tutti i bottoni standard (Istruzioni, Tema, Crediti, Avvia,
-          Salva, Excel, TXT, Statistiche, Aiuto aula)
-        - Label storico
-        """
-
-        # === Helper: genera lo stylesheet per un bottone standard ===
-        # Evita ripetizione del pattern CSS per i bottoni con factory crea_bottone().
-        # Al cambio tema, i colori C() producono valori diversi → lo stile si aggiorna.
         def _stile_btn(bg, hover, disabled_bg=None, disabled_txt=None,
-                       font_size=13, border_radius=6, padding="10px 20px"):
-            """Genera la stringa CSS per un bottone standard."""
+                       font_size=13, border_radius=6, padding="10px 20px",
+                       testo="#ffffff", bordo=None, disabled_bordo=None):
+            """Genera il CSS dei pulsanti, inclusi testo e bordo tematici."""
+            bordo = bordo or bg
+            disabled_bordo = disabled_bordo or disabled_bg
             s = f"""
                 QPushButton {{
                     background-color: {bg};
-                    color: white;
+                    color: {testo};
+                    border: 1px solid {bordo};
                     font-size: {font_size}px;
                     font-weight: bold;
                     border-radius: {border_radius}px;
@@ -441,16 +461,17 @@ class StiliMixin:
                 }}
                 QPushButton:hover {{
                     background-color: {hover};
+                    border-color: {bordo};
                 }}"""
             if disabled_bg and disabled_txt:
                 s += f"""
                 QPushButton:disabled {{
                     background-color: {disabled_bg};
                     color: {disabled_txt};
+                    border-color: {disabled_bordo};
                 }}"""
             return s
 
-        # --- Campo nome classe (read-only: sfondo leggermente diverso) ---
         self.input_nome_classe.setStyleSheet(f"""
             QLineEdit {{
                 background-color: {C("sfondo_pannello")};
@@ -459,7 +480,6 @@ class StiliMixin:
             }}
         """)
 
-        # --- Campi numerici file/posti ---
         stile_campo_numero = f"""
             QLineEdit {{
                 background-color: {C("sfondo_input")};
@@ -474,7 +494,6 @@ class StiliMixin:
         self.input_num_file.setStyleSheet(stile_campo_numero)
         self.input_posti_fila.setStyleSheet(stile_campo_numero)
 
-        # --- Bottoni spinbox +/− (usano chiavi semantiche dedicate) ---
         stile_btn_meno = f"""
             QPushButton {{
                 background-color: {C("btn_spinbox_bg")};
@@ -505,34 +524,42 @@ class StiliMixin:
                 border: 1px solid {C("btn_piu_hover_bordo")};
             }}
         """
-        self.btn_file_meno.setStyleSheet(stile_btn_meno)
-        self.btn_file_piu.setStyleSheet(stile_btn_piu)
         self.btn_posti_meno.setStyleSheet(stile_btn_meno)
         self.btn_posti_piu.setStyleSheet(stile_btn_piu)
 
-        # --- Bottoni standard: rigenerazione stili per cambio tema ---
-        # I bottoni creati con crea_bottone() hanno lo stylesheet "congelato"
-        # al momento della creazione. Al cambio tema, C() restituisce i nuovi
-        # colori e questi setStyleSheet() li aggiornano.
-
-        # Bottone Istruzioni (indaco)
+        # Gli stylesheet creati dalla factory incorporano i colori correnti e
+        # devono quindi essere rigenerati quando cambia il tema.
         self.btn_istruzioni.setStyleSheet(
-            _stile_btn(C("btn_indaco_bg"), C("btn_indaco_hover"), font_size=14))
+            _stile_btn(C("btn_indaco_bg"), C("btn_indaco_hover"),
+                       font_size=13, padding="0px",
+                       testo=C("btn_indaco_txt"), bordo=C("btn_indaco_bordo")))
 
-        # Bottone Toggle tema (ambra)
-        self.btn_toggle_tema.setStyleSheet(
-            _stile_btn(C("btn_tema_bg"), C("btn_tema_hover"),
-                       font_size=12, padding="8px 14px"))
+        # Il pulsante del tema usa il colore del testo previsto dalla palette,
+        # perciò richiede uno stile dedicato invece dell'helper standard.
+        self.btn_toggle_tema.setStyleSheet(f"""
+            QPushButton {{
+                background-color: {C("btn_tema_bg")};
+                color: {C("btn_tema_txt")};
+                border: 1px solid {C("btn_tema_bordo")};
+                font-size: 13px;
+                font-weight: bold;
+                border-radius: 6px;
+                padding: 0px;
+            }}
+            QPushButton:hover {{
+                background-color: {C("btn_tema_hover")};
+            }}
+        """)
 
-        # Bottone Crediti (grigio-blu, rotondo — CSS speciale)
+        # Il raggio pari a metà del lato mantiene circolare il pulsante Crediti.
         self.btn_crediti.setStyleSheet(f"""
             QPushButton {{
                 background-color: {C("btn_crediti_bg")};
-                color: white;
+                color: {C("btn_crediti_txt")};
                 font-size: 16px;
                 font-weight: bold;
-                border-radius: 21px;
-                border: none;
+                border-radius: {self.btn_crediti.width() // 2}px;
+                border: 1px solid {C("btn_crediti_bordo")};
                 padding: 0px;
             }}
             QPushButton:hover {{
@@ -540,67 +567,69 @@ class StiliMixin:
             }}
         """)
 
-        # Bottone Avvia assegnazione (verde, con disabled)
         self.btn_avvia_assegnazione.setStyleSheet(
             _stile_btn(C("btn_avvia_bg"), C("btn_avvia_hover"),
                        C("btn_avvia_disabled_bg"), C("btn_avvia_disabled_txt"),
-                       font_size=16, border_radius=8))
+                       font_size=16, border_radius=8,
+                       testo=C("btn_avvia_txt"), bordo=C("btn_avvia_bordo"),
+                       disabled_bordo=C("btn_avvia_disabled_bordo")))
 
-        # Bottone Salva (verde scuro, con disabled)
         self.btn_salva_progetto.setStyleSheet(
             _stile_btn(C("btn_salva_bg"), C("btn_salva_hover"),
-                       C("btn_azione_disabled_bg"), C("btn_azione_disabled_txt")))
+                       C("btn_azione_disabled_bg"), C("btn_azione_disabled_txt"),
+                       testo=C("btn_salva_txt"), bordo=C("btn_salva_bordo"),
+                       disabled_bordo=C("btn_azione_disabled_bordo")))
 
-        # Bottone Export Excel (azzurro, con disabled)
         self.btn_export_excel.setStyleSheet(
             _stile_btn(C("btn_excel_bg"), C("btn_excel_hover"),
-                       C("btn_azione_disabled_bg"), C("btn_azione_disabled_txt")))
+                       C("btn_azione_disabled_bg"), C("btn_azione_disabled_txt"),
+                       testo=C("btn_excel_txt"), bordo=C("btn_excel_bordo"),
+                       disabled_bordo=C("btn_azione_disabled_bordo")))
 
-        # Bottone Export TXT (arancione, con disabled)
         self.btn_export_report_txt.setStyleSheet(
             _stile_btn(C("btn_export_bg"), C("btn_export_hover"),
-                       C("btn_azione_disabled_bg"), C("btn_azione_disabled_txt")))
+                       C("btn_azione_disabled_bg"), C("btn_azione_disabled_txt"),
+                       testo=C("btn_export_txt"), bordo=C("btn_export_bordo"),
+                       disabled_bordo=C("btn_azione_disabled_bordo")))
 
-        # Bottone Export Statistiche (arancione, senza disabled)
         self.btn_export_stats.setStyleSheet(
-            _stile_btn(C("btn_export_bg"), C("btn_export_hover"), font_size=14))
+            _stile_btn(
+                C("btn_statistiche_export_bg"),
+                C("btn_statistiche_export_hover"),
+                font_size=14,
+                testo=C("btn_statistiche_export_txt"),
+                bordo=C("btn_statistiche_export_bordo"),
+            )
+        )
 
-        # Bottone Aiuto aula (?) — indaco, rotondo — CSS speciale
         self.btn_aiuto_aula.setStyleSheet(f"""
             QPushButton {{
                 background-color: {C("btn_indaco_bg")};
-                color: white;
+                color: {C("btn_indaco_txt")};
                 font-weight: bold;
                 font-size: 15px;
                 border-radius: 16px;
-                border: none;
+                border: 1px solid {C("btn_indaco_bordo")};
                 padding: 0px;
             }}
             QPushButton:hover {{ background-color: {C("btn_indaco_hover")}; }}
         """)
 
-        # --- Label storico (se non ci sono dati, rimane grigia) ---
         num_storico = len(self.config_app.config_data.get("storico_assegnazioni", []))
         if num_storico == 0:
             self.label_storico.setStyleSheet(
                 f"color: {C('testo_grigio')}; font-size: 12px; font-style: italic;"
             )
 
-        # --- Label studenti caricati (stato grigio iniziale) ---
-        # Riapplica solo se non contiene già dati (evita sovrascrittura di colori verdi/rossi)
-        testo = self.label_studenti_caricati.text()
-        if "Nessun file" in testo or "Nuova classe" in testo:
-            self.label_studenti_caricati.setStyleSheet(
-                f"color: {C('testo_grigio')}; font-size: 13px; font-style: italic;"
-            )
+        # Le proprietà Qt conservano lo stato semantico durante il cambio tema.
+        self._applica_stile_label_stato_classe()
+        self._applica_stile_label_capienza()
 
-        # --- Label info dispari ---
         self.label_info_dispari.setStyleSheet(
             f"color: {C('testo_info')}; font-size: 13px; font-style: italic;"
         )
 
-        # --- Combo filtro classi (tab Statistiche) ---
-        # Lo stylesheet inline non eredita dal tema globale → rigenerazione esplicita
+        # Lo stile inline del filtro non eredita il tema globale.
         self.filtro_classe_combo.setStyleSheet(f"""
             QComboBox {{
                 padding: 8px 12px;
@@ -622,16 +651,15 @@ class StiliMixin:
             }}
         """)
 
-        # --- Banner hint nella tab Report (rich text) ---
-        # Rigenera il testo HTML con il colore del nuovo tema.
+        # L'icona del banner è gestita dal refresh globale.
         self.label_hint_report.setText(
-            f'<p align="center" style="color: {C("testo_secondario")}; '
-            f'font-size: 14px; font-style: italic; padding: 6px;">'
-            f'💡 Per esportare il Report in formato .txt, vai nella tab 🏫 Aula.'
-            f'</p>'
+            "Per esportare il Report in formato .txt, vai nella scheda Aula."
+        )
+        self.label_hint_report.setStyleSheet(
+            f'color: {C("testo_secondario")}; font-size: 14px; '
+            f'font-style: italic; padding: 6px;'
         )
 
-        # --- Placeholder storico vuoto ---
         self.label_storico_vuoto.setStyleSheet(
             f"color: {C('testo_grigio')}; font-size: 16px; padding: 50px;"
         )

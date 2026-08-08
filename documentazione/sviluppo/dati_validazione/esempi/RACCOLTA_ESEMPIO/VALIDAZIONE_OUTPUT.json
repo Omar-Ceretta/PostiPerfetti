@@ -1,0 +1,16 @@
+{
+  "avvisi": [],
+  "completa": true,
+  "confronti_prodotti": 1,
+  "confronti_validi": 1,
+  "problemi": [],
+  "protocollo_id": "protocollo_test_i9",
+  "righe_csv": {
+    "adiacenze": 8,
+    "confronti": 1,
+    "mesi": 4,
+    "run": 2,
+    "studenti_annata": 8
+  },
+  "valido": true
+}

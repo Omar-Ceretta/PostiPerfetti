@@ -1,0 +1,23 @@
+# Classe: Squilibrata-murata(16) (16 studenti)
+# Formato: Cognome;Nome;Genere;Posizione;Incompatibilità;Affinità
+# Genere: M/F (se il flag "Genere misto" è attivo, l'abbinamento [maschio][femmina] riceve un BONUS forte, non obbligatorio)
+# Vincoli di posizione: NORMALE (= neutro) / PRIMA (= OBBLIGATORIO: prima fila) / ULTIMA (= preferenza per ultima fila) / FISSO (= OBBLIGATORIO: primo banco a sinistra della prima fila)
+# Vincoli di "Incompatibilità": Cognome Nome:livello (1-3, dove 1 = Leggera, 2 = Media, 3 = ASSOLUTA [= mai insieme])
+# Vincoli di "Affinità": Cognome Nome:livello (1-3, dove 1 = Leggera, 2 = Buona, 3 = Forte)
+
+CasoM01;Test;M;NORMALE;CasoM09 Test:3,CasoM11 Test:2,CasoM05 Test:3,CasoM07 Test:3,CasoF03 Test:1;CasoM02 Test:3
+CasoF01;Test;F;NORMALE;CasoF03 Test:3,CasoF02 Test:2;CasoM07 Test:3
+CasoF02;Test;F;NORMALE;CasoF01 Test:2,CasoF03 Test:2;CasoM07 Test:3
+CasoM02;Test;M;NORMALE;;CasoM07 Test:3,CasoM04 Test:2,CasoM05 Test:2,CasoM01 Test:3
+CasoM03;Test;M;NORMALE;CasoM13 Test:1,CasoM09 Test:2,CasoM07 Test:1;
+CasoM04;Test;M;NORMALE;CasoM13 Test:3,CasoM09 Test:3,CasoM07 Test:2,CasoM05 Test:1;CasoM08 Test:2,CasoM02 Test:2
+CasoM05;Test;M;ULTIMA;CasoM09 Test:3,CasoM06 Test:3,CasoM07 Test:3,CasoM01 Test:3,CasoM04 Test:1;CasoM02 Test:2
+CasoM06;Test;M;NORMALE;CasoM09 Test:3,CasoM05 Test:3,CasoM07 Test:3;CasoF03 Test:1
+CasoM07;Test;M;NORMALE;CasoM13 Test:3,CasoM09 Test:3,CasoM05 Test:3,CasoF03 Test:3,CasoM04 Test:2,CasoM06 Test:3,CasoM01 Test:3,CasoM03 Test:1;CasoM02 Test:3,CasoM10 Test:1,CasoM08 Test:2,CasoF01 Test:3,CasoM12 Test:2,CasoM11 Test:2,CasoF02 Test:3
+CasoM08;Test;M;NORMALE;CasoM09 Test:1;CasoM07 Test:2,CasoM04 Test:2
+CasoM09;Test;M;NORMALE;CasoM05 Test:3,CasoM06 Test:3,CasoM07 Test:3,CasoF03 Test:3,CasoM01 Test:3,CasoM04 Test:3,CasoM13 Test:3,CasoM03 Test:2,CasoM08 Test:1;
+CasoF03;Test;F;NORMALE;CasoM09 Test:3,CasoF01 Test:3,CasoM07 Test:3,CasoF02 Test:2,CasoM01 Test:1;CasoM06 Test:1
+CasoM10;Test;M;NORMALE;;CasoM07 Test:1
+CasoM11;Test;M;NORMALE;CasoM12 Test:3,CasoM01 Test:2;CasoM07 Test:2
+CasoM12;Test;M;NORMALE;CasoM11 Test:3;CasoM07 Test:2
+CasoM13;Test;M;PRIMA;CasoM07 Test:3,CasoM04 Test:3,CasoM09 Test:3,CasoM03 Test:1;

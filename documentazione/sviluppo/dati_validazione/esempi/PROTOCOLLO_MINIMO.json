@@ -1,0 +1,84 @@
+{
+  "coppie": [
+    {
+      "classe": "Affinita-dominante",
+      "file_con_fisso": "corpus/con_fisso/Affinita-dominante(16+fisso).txt",
+      "file_senza_fisso": "corpus/senza_fisso/Affinita-dominante(16).txt",
+      "numero_studenti": 16,
+      "pair_id": "pair_6996f7f07da911ca21ec03a1",
+      "posizione_base": "NORMALE",
+      "studente_fisso": "Riva Stefano"
+    }
+  ],
+  "corpus_id": "PostiPerfetti_CantiereSemantico_R0",
+  "data_approvazione": "2026-08-01",
+  "metadati": {
+    "nota": "Protocollo tecnico minimo per collaudare le fondazioni I1–I3; non è il protocollo definitivo della raccolta."
+  },
+  "osservatore_id": "osservatore_semantico_r0_1",
+  "protocollo_id": "protocollo_esempio_i3",
+  "richiede_appaiamento_completo": true,
+  "run": [
+    {
+      "condizione": "senza_fisso",
+      "file_classe": "corpus/senza_fisso/Affinita-dominante(16).txt",
+      "genere_misto_attivo": false,
+      "metadati": {
+        "scopo": "esempio minimo I3"
+      },
+      "modalita": "coppie",
+      "numero_mesi": 10,
+      "pair_id": "pair_6996f7f07da911ca21ec03a1",
+      "parametri_aula": {
+        "extra": {},
+        "modalita_trio": "centro",
+        "numero_file": 4,
+        "posizione_blocco_finale": null,
+        "posti_per_fila": 4,
+        "preferenza_resto2": "coppia"
+      },
+      "parametri_ricerca": {
+        "budget_secondi": null,
+        "convergenza": 300,
+        "numero_candidati": 10,
+        "numero_stagioni_fisso": 5,
+        "tetto_stagioni": 5000
+      },
+      "run_id": "run_011380b0a0d10598282de8bc",
+      "seed_principale": 123456789,
+      "stato_iniziale_id": "stato_cb0869b4ab32aa48673d8ab4"
+    },
+    {
+      "condizione": "con_fisso",
+      "file_classe": "corpus/con_fisso/Affinita-dominante(16+fisso).txt",
+      "genere_misto_attivo": false,
+      "metadati": {
+        "scopo": "esempio minimo I3"
+      },
+      "modalita": "coppie",
+      "numero_mesi": 10,
+      "pair_id": "pair_6996f7f07da911ca21ec03a1",
+      "parametri_aula": {
+        "extra": {},
+        "modalita_trio": "centro",
+        "numero_file": 4,
+        "posizione_blocco_finale": null,
+        "posti_per_fila": 4,
+        "preferenza_resto2": "coppia"
+      },
+      "parametri_ricerca": {
+        "budget_secondi": null,
+        "convergenza": 300,
+        "numero_candidati": 10,
+        "numero_stagioni_fisso": 5,
+        "tetto_stagioni": 5000
+      },
+      "run_id": "run_dc3fe4e7baa202b0e2ebe4e8",
+      "seed_principale": 123456789,
+      "stato_iniziale_id": "stato_cb0869b4ab32aa48673d8ab4"
+    }
+  ],
+  "strategia": "C1",
+  "titolo": "Protocollo minimo di esempio — I3",
+  "versione": "0.1"
+}

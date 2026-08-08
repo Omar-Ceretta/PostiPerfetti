@@ -1,0 +1,9 @@
+run_id,pair_id,condizione,modalita,seed_principale,mese,event_id,studente_a,studente_b,ruolo,canale_rotazione,coinvolge_fisso,incompatibilita_livello,affinita_livello,adiacenza_mista,usi_precedenti_totali,numero_ripetizione,ultimo_uso_origine,ultimo_uso_mese,distanza_mesi
+run_3ad01c2d9201d0b9ff0684c1,pair_1c5364920138c910bace0891,senza_fisso,coppie,123456789,1,event_fd860800acd3c78900f2c0dc,A Test,B Test,coppia_ordinaria,coppie,false,0,0,true,0,,nessuno,,
+run_3ad01c2d9201d0b9ff0684c1,pair_1c5364920138c910bace0891,senza_fisso,coppie,123456789,1,event_72b9bb6ad8ef83f7818b1258,C Test,D Test,coppia_ordinaria,coppie,false,0,0,true,0,,nessuno,,
+run_3ad01c2d9201d0b9ff0684c1,pair_1c5364920138c910bace0891,senza_fisso,coppie,123456789,2,event_1d0b283e6d177568cbbe2c0a,A Test,C Test,coppia_ordinaria,coppie,false,0,0,false,0,,nessuno,,
+run_3ad01c2d9201d0b9ff0684c1,pair_1c5364920138c910bace0891,senza_fisso,coppie,123456789,2,event_b9a027f46996f9a6e1ccfb62,B Test,D Test,coppia_ordinaria,coppie,false,0,0,false,0,,nessuno,,
+run_e00a90482bd6d6815690a9b1,pair_1c5364920138c910bace0891,con_fisso,coppie,123456789,1,event_d119d8ecd7bc7ec7b1e94605,A Test,B Test,vicino_fisso,vicino_fisso,true,0,0,true,0,,nessuno,,
+run_e00a90482bd6d6815690a9b1,pair_1c5364920138c910bace0891,con_fisso,coppie,123456789,1,event_a6815302274cf513148ea5cf,C Test,D Test,coppia_ordinaria,coppie,false,0,0,true,0,,nessuno,,
+run_e00a90482bd6d6815690a9b1,pair_1c5364920138c910bace0891,con_fisso,coppie,123456789,2,event_2f4a6c5d47d01882620715a4,A Test,B Test,vicino_fisso,vicino_fisso,true,0,0,true,1,1,annata_corrente,1,1
+run_e00a90482bd6d6815690a9b1,pair_1c5364920138c910bace0891,con_fisso,coppie,123456789,2,event_9d2862d7b5e04746e53b1a52,C Test,D Test,coppia_ordinaria,coppie,false,0,0,true,1,1,annata_corrente,1,1

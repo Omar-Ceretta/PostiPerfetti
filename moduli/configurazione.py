@@ -1,273 +1,1538 @@
-    # =================================================================
+# -*- coding: utf-8 -*-
 """
-    «PostiPerfetti» v. 2.0 — Programma per l'assegnazione automatica
-    dei posti degli allievi in una classe scolastica,
-    con gestione di vincoli, affinità, incompatibilità,
-    rotazione allievi e storico assegnazioni.
+configurazione.py — persistenza, backup e Storico delle assegnazioni.
 
-    Autore: prof. Omar Ceretta — I.C. di Tombolo e Galliera Veneta (PD)
-    Licenza: GNU GPLv3
+Parte di «PostiPerfetti».
+Autore: prof. Omar Ceretta — I.C. di Tombolo e Galliera Veneta (PD).
+Licenza: GNU GPLv3. Distribuito "così com'è", senza garanzie.
 
-    ▣ Questo software è libero: puoi usarlo, copiarlo, studiarlo
-    e redistribuirlo liberamente.
-    ▣ Se lo modifichi e redistribuisci, sei tenuto a mantenere
-    l'attribuzione al creatore originale e a rendere pubblico
-    il codice sorgente delle tue modifiche con la stessa licenza GPLv3.
-    ▣ Questo programma è distribuito «così com'è», senza alcuna
-    garanzia espressa o implicita.
-"""
-    # =================================================================
-"""
-    Gestione configurazione e storico.
-
-    Contiene la classe ConfigurazioneApp che gestisce:
-        • Caricamento/salvataggio del file JSON di configurazione
-        • Storico assegnazioni (aggiunta, eliminazione, ricostruzione layout)
-        • Blacklist coppie da evitare per le rotazioni
-        • Contatori trio e studenti vicino al FISSO
-
-    USO:
-        from moduli.configurazione import ConfigurazioneApp
-        config = ConfigurazioneApp()
-        config.carica_configurazione()
+Il modulo carica e salva il JSON applicativo, recupera configurazioni danneggiate,
+registra le assegnazioni e ricostruisce layout, blacklist e contatori. Le
+rotazioni delle modalità a coppie e a terzetti restano separate.
 """
 
 import os
 import json
+import shutil
+import copy
 from datetime import datetime
 from typing import List, Dict
 
-# Importa get_base_path per trovare la cartella dati/
-from moduli.utilita import get_base_path
+from moduli.percorsi import (
+    get_state_path,
+    inizializza_struttura_dati_utente,
+)
+
+# Blacklist e aggiornamento delle adiacenze a terzetti sono definiti
+# nello strato storico condiviso da applicazione e collaudi.
+from moduli.strato_storico import (aggiorna_blacklist_terzetti,
+                                   CHIAVE_BLACKLIST_PER_MODO)
+from moduli.studenti import nome_completo_da_identificatore
+
+
+AZIONE_FILE_ASSENTE_RICREA = "ricrea"
+AZIONE_FILE_ASSENTE_AZZERA = "azzera"
+AZIONE_FILE_ASSENTE_ANNULLA = "annulla"
+
+ESITO_SALVATAGGIO_SALVATO = "salvato"
+ESITO_SALVATAGGIO_AZZERATO = "azzerato"
+ESITO_SALVATAGGIO_ANNULLATO = "annullato"
+ESITO_SALVATAGGIO_ERRORE = "errore"
+
+CHIAVI_STORICO_E_ROTAZIONI = (
+    "storico_assegnazioni",
+    "coppie_da_evitare",
+    CHIAVE_BLACKLIST_PER_MODO["terzetti"],
+    "studenti_trio_contatore",
+    "studenti_vicino_fisso_contatore",
+)
 
 
 class ConfigurazioneApp:
-    """
-    Gestisce la configurazione dell'applicazione e la memoria storica.
-    """
+    """Gestisce la configurazione persistente e lo Storico."""
 
     def __init__(self):
-        # Il file di configurazione si trova nella cartella dati/
-        # che viene creata automaticamente se non esiste
-        cartella_dati = os.path.join(get_base_path(), "dati")
-        os.makedirs(cartella_dati, exist_ok=True)
-        self.file_config = os.path.join(cartella_dati, "postiperfetti_configurazione.json")
+        inizializza_struttura_dati_utente()
+        self.file_config = get_state_path(
+            "postiperfetti_configurazione.json"
+        )
+
+        # Il temporaneo protegge la singola scrittura; il backup conserva
+        # invece l’ultima configurazione valida precedente.
+        self.file_backup = get_state_path(
+            "postiperfetti_configurazione.backup.json"
+        )
+
+        self.avviso_recupero = None
+
+        # La GUI installa questi callback dopo avere creato la finestra.
+        # Restano opzionali per mantenere il modello utilizzabile nei test e
+        # negli strumenti senza interfaccia grafica.
+        self.gestore_file_assente = None
+        self.gestore_azzeramento_completato = None
+
+        self.ultimo_esito_salvataggio = None
+        self._file_config_presente_nella_sessione = False
+
         self.config_data = self._carica_configurazione_default()
 
+    def copia_temporanea(self):
+        """Crea una copia isolata per i calcoli senza duplicare la GUI.
+
+        Le generazioni Annuali modificano una fotografia privata di Storico e
+        rotazioni. I callback installati dalla finestra principale non fanno
+        parte di quella fotografia e, essendo metodi legati a un QObject, non
+        devono essere attraversati da ``deepcopy``.
+        """
+        temporanea = copy.copy(self)
+        temporanea.config_data = copy.deepcopy(self.config_data)
+        temporanea.avviso_recupero = None
+        temporanea.gestore_file_assente = None
+        temporanea.gestore_azzeramento_completato = None
+        temporanea.ultimo_esito_salvataggio = None
+        return temporanea
+
     def _carica_configurazione_default(self) -> Dict:
-        """Configurazione di default se non esiste file."""
+        """Restituisce la struttura iniziale della configurazione."""
         return {
-            "classe_info": {
-                "nome_classe": "",
-                "ultima_modifica": ""
-            },
-            "configurazione_aula": {
-                "num_file": 4, # Default: 4 file di banchi (più comune nelle aule)
-                "posti_per_fila": 6,
-                "layout_type": "standard"
-            },
-            "opzioni_vincoli": {
-                "genere_misto_obbligatorio": False
-            },
+            # Persistono soltanto Storico, rotazioni e preferenze globali.
             "storico_assegnazioni": [],
             "coppie_da_evitare": [],
-            "studenti_trio_contatore": {},  # Traccia quante volte ogni studente è stato nel trio
-            "studenti_vicino_fisso_contatore": {},  # Traccia quante volte ogni studente è stato in col 1 (adiacente al FISSO)
-            "tema": "scuro"                 # Tema interfaccia: "scuro" o "chiaro"
+            # Le adiacenze a terzetti hanno una blacklist distinta da
+            # quella delle coppie; la chiave è centralizzata nello strato storico.
+            CHIAVE_BLACKLIST_PER_MODO["terzetti"]: [],
+            "studenti_trio_contatore": {},  # presenze nel trio
+            "studenti_vicino_fisso_contatore": {},  # presenze accanto al FISSO
+            "tema": "scuro"  # tema dell’interfaccia
         }
 
-    # =================================================================
-    # CARICAMENTO / SALVATAGGIO — File JSON di configurazione
-    # =================================================================
+    # Caricamento e salvataggio
+
+    def _leggi_json_validato(self, percorso: str) -> Dict:
+        """Legge un JSON e ne verifica il formato corrente completo.
+
+        Non integra chiavi mancanti e non accetta campi di schemi precedenti:
+        un file divergente viene trattato come non valido e segue il normale
+        percorso di recupero dal backup.
+        """
+        with open(percorso, 'r', encoding='utf-8') as file_json:
+            dati = json.load(file_json)
+
+        if not isinstance(dati, dict):
+            raise ValueError(
+                "La radice del file JSON non è un oggetto."
+            )
+
+        tipi_attesi = {
+            "storico_assegnazioni": list,
+            "coppie_da_evitare": list,
+            CHIAVE_BLACKLIST_PER_MODO["terzetti"]: list,
+            "studenti_trio_contatore": dict,
+            "studenti_vicino_fisso_contatore": dict,
+            "tema": str,
+        }
+        chiavi_attese = set(tipi_attesi)
+        chiavi_presenti = set(dati)
+
+        mancanti = sorted(chiavi_attese - chiavi_presenti)
+        inattese = sorted(chiavi_presenti - chiavi_attese)
+        if mancanti or inattese:
+            dettagli = []
+            if mancanti:
+                dettagli.append("mancano: " + ", ".join(mancanti))
+            if inattese:
+                dettagli.append("non previste: " + ", ".join(inattese))
+            raise ValueError(
+                "Il file JSON non usa il formato corrente; "
+                + "; ".join(dettagli)
+                + "."
+            )
+
+        for chiave, tipo_atteso in tipi_attesi.items():
+            if not isinstance(dati[chiave], tipo_atteso):
+                raise ValueError(
+                    f"La chiave «{chiave}» ha un formato non valido: "
+                    f"atteso {tipo_atteso.__name__}."
+                )
+
+        def intero_valido(valore) -> bool:
+            return isinstance(valore, int) and not isinstance(valore, bool)
+
+        if dati["tema"] not in {"scuro", "chiaro"}:
+            raise ValueError(
+                "La chiave «tema» deve valere «scuro» oppure «chiaro»."
+            )
+
+        def valida_blacklist(nome_chiave: str, tipo_atteso: str) -> None:
+            """Verifica struttura, contatori e unicità di una blacklist."""
+            coppie_viste = set()
+            for posizione, voce in enumerate(dati[nome_chiave], start=1):
+                if not isinstance(voce, dict):
+                    raise ValueError(
+                        f"La voce {posizione} di «{nome_chiave}» non è un oggetto."
+                    )
+
+                if voce.get("tipo") != tipo_atteso:
+                    raise ValueError(
+                        f"La voce {posizione} di «{nome_chiave}» ha un tipo "
+                        "non valido."
+                    )
+
+                studenti = voce.get("studenti")
+                if (
+                    not isinstance(studenti, list)
+                    or len(studenti) != 2
+                    or any(
+                        not isinstance(nome, str) or not nome.strip()
+                        for nome in studenti
+                    )
+                    or studenti[0] == studenti[1]
+                ):
+                    raise ValueError(
+                        f"La voce {posizione} di «{nome_chiave}» non contiene "
+                        "due studenti validi e distinti."
+                    )
+
+                volte_usata = voce.get("volte_usata")
+                if not intero_valido(volte_usata) or volte_usata < 1:
+                    raise ValueError(
+                        f"La voce {posizione} di «{nome_chiave}» ha un "
+                        "contatore non valido."
+                    )
+
+                chiave_coppia = tuple(sorted(studenti))
+                if chiave_coppia in coppie_viste:
+                    raise ValueError(
+                        f"La voce {posizione} di «{nome_chiave}» duplica "
+                        "una coppia già presente."
+                    )
+                coppie_viste.add(chiave_coppia)
+
+        def valida_contatore_nomi(nome_chiave: str) -> None:
+            """Verifica i contatori indicizzati per nome completo."""
+            for nome, conteggio in dati[nome_chiave].items():
+                if not isinstance(nome, str) or not nome.strip():
+                    raise ValueError(
+                        f"La chiave «{nome_chiave}» contiene un nome non valido."
+                    )
+                if not intero_valido(conteggio) or conteggio < 0:
+                    raise ValueError(
+                        f"La chiave «{nome_chiave}» contiene un contatore "
+                        f"non valido per «{nome}»."
+                    )
+
+        valida_blacklist("coppie_da_evitare", "coppia")
+        valida_blacklist(
+            CHIAVE_BLACKLIST_PER_MODO["terzetti"],
+            "adiacenza",
+        )
+        valida_contatore_nomi("studenti_trio_contatore")
+        valida_contatore_nomi("studenti_vicino_fisso_contatore")
+
+        campi_storico = {
+            "data_creazione": str,
+            "nome": str,
+            "classe": str,
+            "file_origine": str,
+            "generazione": str,
+            "modo": str,
+            "progressivo": int,
+            "abbinamenti": str,
+        }
+        campi_configurazione_aula = {
+            "num_file": int,
+            "posti_per_fila": int,
+            "num_studenti": int,
+            "num_righe": int,
+            "num_colonne": int,
+            "ha_fisso": bool,
+            "larghezza_blocco_sx": int,
+            "genere_misto": bool,
+        }
+        dimensioni_gruppo = {
+            "coppia": 2,
+            "terzetto": 3,
+            "quartetto": 4,
+        }
+
+        serie_storico_viste = set()
+
+        for indice, assegnazione in enumerate(
+                dati["storico_assegnazioni"], start=1):
+            if not isinstance(assegnazione, dict):
+                raise ValueError(
+                    f"La voce {indice} dello Storico non è un oggetto."
+                )
+
+            mancanti = [
+                chiave for chiave in campi_storico
+                if chiave not in assegnazione
+            ]
+            if mancanti:
+                raise ValueError(
+                    f"La voce {indice} dello Storico non usa il formato "
+                    "corrente; mancano: " + ", ".join(mancanti) + "."
+                )
+
+            for chiave, tipo_atteso in campi_storico.items():
+                valore = assegnazione[chiave]
+                tipo_valido = isinstance(valore, tipo_atteso)
+                if tipo_atteso is int:
+                    tipo_valido = intero_valido(valore)
+                if not tipo_valido:
+                    raise ValueError(
+                        f"La voce {indice} dello Storico ha «{chiave}» "
+                        f"in formato non valido: atteso "
+                        f"{tipo_atteso.__name__}."
+                    )
+
+            if assegnazione["generazione"] not in {"mensile", "annuale"}:
+                raise ValueError(
+                    f"La voce {indice} dello Storico dichiara una "
+                    "generazione non valida."
+                )
+            if assegnazione["modo"] not in {"coppie", "terzetti"}:
+                raise ValueError(
+                    f"La voce {indice} dello Storico dichiara una "
+                    "geometria non valida."
+                )
+            for chiave in ("data_creazione", "nome", "classe", "file_origine", "abbinamenti"):
+                if not assegnazione[chiave].strip():
+                    raise ValueError(
+                        f"La voce {indice} dello Storico ha «{chiave}» vuoto."
+                    )
+
+            if assegnazione["progressivo"] < 1:
+                raise ValueError(
+                    f"La voce {indice} dello Storico ha un progressivo "
+                    "non valido."
+                )
+
+            chiave_serie = (
+                assegnazione["file_origine"],
+                assegnazione["generazione"],
+                assegnazione["modo"],
+                assegnazione["progressivo"],
+            )
+            if chiave_serie in serie_storico_viste:
+                raise ValueError(
+                    f"La voce {indice} dello Storico duplica il progressivo "
+                    "di una serie già registrata."
+                )
+            serie_storico_viste.add(chiave_serie)
+
+            layout = assegnazione.get("layout")
+            configurazione_aula = assegnazione.get("configurazione_aula")
+            if not isinstance(layout, list):
+                raise ValueError(
+                    f"La voce {indice} dello Storico non contiene un layout valido."
+                )
+            if not isinstance(configurazione_aula, dict):
+                raise ValueError(
+                    f"La voce {indice} dello Storico non contiene una "
+                    "configurazione dell'aula valida."
+                )
+
+            for chiave, tipo_atteso in campi_configurazione_aula.items():
+                if chiave not in configurazione_aula:
+                    raise ValueError(
+                        f"La voce {indice} dello Storico ha una configurazione "
+                        f"dell'aula incompleta; manca «{chiave}»."
+                    )
+                valore = configurazione_aula[chiave]
+                tipo_valido = isinstance(valore, tipo_atteso)
+                if tipo_atteso is int:
+                    tipo_valido = intero_valido(valore) and valore > 0
+                if not tipo_valido:
+                    raise ValueError(
+                        f"La voce {indice} dello Storico ha «{chiave}» "
+                        "in formato non valido nella configurazione dell'aula."
+                    )
+
+            if configurazione_aula["num_righe"] != configurazione_aula["num_file"] + 2:
+                raise ValueError(
+                    f"La voce {indice} dello Storico dichiara un numero di file "
+                    "incoerente con le righe della griglia."
+                )
+
+            if assegnazione["modo"] == "coppie":
+                if "modalita_trio" not in configurazione_aula:
+                    raise ValueError(
+                        f"La voce {indice} dello Storico a coppie non contiene "
+                        "la posizione del trio."
+                    )
+                if configurazione_aula["modalita_trio"] not in {
+                    None, "prima", "centro", "ultima", "auto"
+                }:
+                    raise ValueError(
+                        f"La voce {indice} dello Storico a coppie ha una "
+                        "posizione del trio non valida."
+                    )
+            else:
+                campi_terzetti = {
+                    "modalita": str,
+                    "studente_fisso": (str, type(None)),
+                    "terzetti_per_fila": int,
+                    "tipo_blocco_finale": (str, type(None)),
+                    "fila_blocco_finale": (int, type(None)),
+                    "posizione_blocco_finale": (str, type(None)),
+                    "preferenza_resto2": str,
+                }
+                for chiave, tipo_atteso in campi_terzetti.items():
+                    if chiave not in configurazione_aula:
+                        raise ValueError(
+                            f"La voce {indice} dello Storico a terzetti è "
+                            f"incompleta; manca «{chiave}»."
+                        )
+                    valore = configurazione_aula[chiave]
+                    if not isinstance(valore, tipo_atteso) or isinstance(valore, bool):
+                        raise ValueError(
+                            f"La voce {indice} dello Storico a terzetti ha "
+                            f"«{chiave}» in formato non valido."
+                        )
+                if configurazione_aula["modalita"] != "terzetti":
+                    raise ValueError(
+                        f"La voce {indice} dello Storico a terzetti dichiara "
+                        "una modalità dell'aula non valida."
+                    )
+                if configurazione_aula["terzetti_per_fila"] < 1:
+                    raise ValueError(
+                        f"La voce {indice} dello Storico a terzetti ha un numero "
+                        "non valido di terzetti per fila."
+                    )
+                if configurazione_aula["tipo_blocco_finale"] not in {
+                    None, "coppia", "quartetto"
+                }:
+                    raise ValueError(
+                        f"La voce {indice} dello Storico a terzetti ha un tipo "
+                        "di blocco finale non valido."
+                    )
+                fila_finale = configurazione_aula["fila_blocco_finale"]
+                if fila_finale is not None and fila_finale < 0:
+                    raise ValueError(
+                        f"La voce {indice} dello Storico a terzetti ha una fila "
+                        "del blocco finale non valida."
+                    )
+                if configurazione_aula["posizione_blocco_finale"] not in {
+                    None, "prima", "centro", "ultima"
+                }:
+                    raise ValueError(
+                        f"La voce {indice} dello Storico a terzetti ha una "
+                        "posizione del blocco finale non valida."
+                    )
+                if configurazione_aula["preferenza_resto2"] not in {
+                    "coppia", "due_quartetti"
+                }:
+                    raise ValueError(
+                        f"La voce {indice} dello Storico a terzetti ha una "
+                        "preferenza del resto non valida."
+                    )
+
+            num_righe = configurazione_aula["num_righe"]
+            num_colonne = configurazione_aula["num_colonne"]
+            nomi_layout = []
+            coordinate_layout = set()
+
+            geometria_terzetti = None
+            if assegnazione["modo"] == "terzetti":
+                from moduli.aula import ConfigurazioneAula
+
+                geometria_terzetti = ConfigurazioneAula(
+                    "Validazione Storico terzetti"
+                )
+                geometria_terzetti.crea_layout_terzetti(
+                    configurazione_aula["num_studenti"],
+                    terzetti_per_fila=configurazione_aula["terzetti_per_fila"],
+                    posizione_blocco_finale=(
+                        configurazione_aula["posizione_blocco_finale"] or "ultima"
+                    ),
+                    ha_fisso=configurazione_aula["ha_fisso"],
+                    preferenza_resto2=configurazione_aula["preferenza_resto2"],
+                )
+                if (
+                    geometria_terzetti.num_righe != num_righe
+                    or geometria_terzetti.num_colonne != num_colonne
+                ):
+                    raise ValueError(
+                        f"La voce {indice} dello Storico a terzetti ha una "
+                        "geometria incoerente con i metadati salvati."
+                    )
+
+            for posizione, elemento in enumerate(layout, start=1):
+                if not isinstance(elemento, dict):
+                    raise ValueError(
+                        f"La voce {indice} dello Storico ha l'elemento "
+                        f"{posizione} del layout in formato non valido."
+                    )
+                for chiave in ("studente", "riga", "colonna"):
+                    if chiave not in elemento:
+                        raise ValueError(
+                            f"La voce {indice} dello Storico ha l'elemento "
+                            f"{posizione} del layout incompleto; manca «{chiave}»."
+                        )
+                nome_studente = elemento["studente"]
+                riga = elemento["riga"]
+                colonna = elemento["colonna"]
+                if not isinstance(nome_studente, str) or not nome_studente.strip():
+                    raise ValueError(
+                        f"La voce {indice} dello Storico ha un nome studente "
+                        "non valido nel layout."
+                    )
+                if not intero_valido(riga) or not intero_valido(colonna):
+                    raise ValueError(
+                        f"La voce {indice} dello Storico ha coordinate non valide "
+                        "nel layout."
+                    )
+                if not (0 <= riga < num_righe and 0 <= colonna < num_colonne):
+                    raise ValueError(
+                        f"La voce {indice} dello Storico ha coordinate fuori "
+                        "dalla geometria salvata."
+                    )
+
+                coordinata = (riga, colonna)
+                if coordinata in coordinate_layout:
+                    raise ValueError(
+                        f"La voce {indice} dello Storico colloca più studenti "
+                        f"nella posizione ({riga}, {colonna})."
+                    )
+                coordinate_layout.add(coordinata)
+
+                if riga < 2:
+                    raise ValueError(
+                        f"La voce {indice} dello Storico colloca uno studente "
+                        "nella zona degli arredi."
+                    )
+                if (
+                    geometria_terzetti is not None
+                    and geometria_terzetti.griglia[riga][colonna].tipo != "banco"
+                ):
+                    raise ValueError(
+                        f"La voce {indice} dello Storico colloca uno studente "
+                        f"fuori da un banco valido in ({riga}, {colonna})."
+                    )
+
+                nomi_layout.append(nome_studente)
+
+            if len(nomi_layout) != len(set(nomi_layout)):
+                raise ValueError(
+                    f"La voce {indice} dello Storico contiene studenti duplicati "
+                    "nel layout."
+                )
+            if len(nomi_layout) != configurazione_aula["num_studenti"]:
+                raise ValueError(
+                    f"La voce {indice} dello Storico dichiara un numero di "
+                    "studenti diverso da quello del layout."
+                )
+
+            mappa_layout = {elemento["studente"]: elemento for elemento in layout}
+
+            if assegnazione["modo"] == "coppie":
+                tipi_validi = {"coppia", "trio", "fisso"}
+                for elemento in layout:
+                    if elemento.get("tipo") not in tipi_validi:
+                        raise ValueError(
+                            f"La voce {indice} dello Storico a coppie contiene "
+                            "un tipo di posto non valido."
+                        )
+
+                fissi = [e for e in layout if e["tipo"] == "fisso"]
+                if len(fissi) != int(configurazione_aula["ha_fisso"]):
+                    raise ValueError(
+                        f"La voce {indice} dello Storico a coppie non è coerente "
+                        "sulla presenza dello studente FISSO."
+                    )
+                if fissi:
+                    adiacente = fissi[0].get("adiacente")
+                    if adiacente not in mappa_layout or adiacente == fissi[0]["studente"]:
+                        raise ValueError(
+                            f"La voce {indice} dello Storico a coppie ha un "
+                            "adiacente del FISSO non valido."
+                        )
+
+                for elemento in layout:
+                    if elemento["tipo"] != "coppia":
+                        continue
+                    compagno = elemento.get("compagno")
+                    controparte = mappa_layout.get(compagno)
+                    if (
+                        controparte is None
+                        or controparte.get("tipo") != "coppia"
+                        or controparte.get("compagno") != elemento["studente"]
+                    ):
+                        raise ValueError(
+                            f"La voce {indice} dello Storico contiene una coppia "
+                            "non reciproca."
+                        )
+
+                elementi_trio = [e for e in layout if e["tipo"] == "trio"]
+                if elementi_trio:
+                    nomi_trio = {e["studente"] for e in elementi_trio}
+                    posizioni = {e.get("posizione_trio") for e in elementi_trio}
+                    if len(elementi_trio) != 3 or posizioni != {
+                        "primo", "centrale", "terzo"
+                    }:
+                        raise ValueError(
+                            f"La voce {indice} dello Storico contiene un trio "
+                            "incompleto o non ordinato."
+                        )
+                    for elemento in elementi_trio:
+                        compagni = elemento.get("compagni_trio")
+                        if not isinstance(compagni, list) or set(compagni) != (
+                            nomi_trio - {elemento["studente"]}
+                        ):
+                            raise ValueError(
+                                f"La voce {indice} dello Storico contiene un trio "
+                                "non reciproco."
+                            )
+                    if configurazione_aula["modalita_trio"] is None:
+                        raise ValueError(
+                            f"La voce {indice} dello Storico contiene un trio ma "
+                            "non ne registra la posizione."
+                        )
+                elif configurazione_aula["modalita_trio"] is not None:
+                    raise ValueError(
+                        f"La voce {indice} dello Storico registra una posizione "
+                        "del trio senza contenere un trio."
+                    )
+
+            else:
+                gruppi = assegnazione.get("gruppi")
+                if not isinstance(gruppi, list):
+                    raise ValueError(
+                        f"La voce {indice} dello Storico a terzetti non contiene "
+                        "gruppi validi."
+                    )
+                nomi_gruppi = []
+                tipo_per_nome = {}
+                for posizione, gruppo in enumerate(gruppi, start=1):
+                    if not isinstance(gruppo, dict):
+                        raise ValueError(
+                            f"La voce {indice} dello Storico ha il gruppo "
+                            f"{posizione} in formato non valido."
+                        )
+                    tipo = gruppo.get("tipo")
+                    membri = gruppo.get("membri")
+                    if tipo not in dimensioni_gruppo or not isinstance(membri, list):
+                        raise ValueError(
+                            f"La voce {indice} dello Storico ha il gruppo "
+                            f"{posizione} in formato non valido."
+                        )
+                    if len(membri) != dimensioni_gruppo[tipo]:
+                        raise ValueError(
+                            f"La voce {indice} dello Storico ha il gruppo "
+                            f"{posizione} con una dimensione non valida."
+                        )
+                    if any(not isinstance(nome, str) or not nome.strip()
+                           for nome in membri):
+                        raise ValueError(
+                            f"La voce {indice} dello Storico ha membri non validi "
+                            f"nel gruppo {posizione}."
+                        )
+                    for nome in membri:
+                        tipo_per_nome[nome] = tipo
+                    nomi_gruppi.extend(membri)
+
+                if sorted(nomi_gruppi) != sorted(nomi_layout):
+                    raise ValueError(
+                        f"La voce {indice} dello Storico ha gruppi non coerenti "
+                        "con il layout."
+                    )
+                for elemento in layout:
+                    if elemento.get("tipo") != tipo_per_nome[elemento["studente"]]:
+                        raise ValueError(
+                            f"La voce {indice} dello Storico a terzetti ha un "
+                            "tipo di gruppo incoerente nel layout."
+                        )
+                    if not isinstance(elemento.get("fisso"), bool):
+                        raise ValueError(
+                            f"La voce {indice} dello Storico a terzetti non "
+                            "registra correttamente il FISSO nel layout."
+                        )
+                fissi_layout = [e for e in layout if e["fisso"]]
+                nome_fisso = configurazione_aula["studente_fisso"]
+                if configurazione_aula["ha_fisso"]:
+                    if len(fissi_layout) != 1 or fissi_layout[0]["studente"] != nome_fisso:
+                        raise ValueError(
+                            f"La voce {indice} dello Storico a terzetti non è "
+                            "coerente sullo studente FISSO."
+                        )
+                elif fissi_layout or nome_fisso is not None:
+                    raise ValueError(
+                        f"La voce {indice} dello Storico a terzetti registra un "
+                        "FISSO non previsto."
+                    )
+
+        return dati
+
+    def _preserva_file_danneggiato(self, percorso: str) -> str:
+        """Rinomina un file non valido con data e ora e ne restituisce il percorso."""
+        cartella = os.path.dirname(percorso)
+        nome_file = os.path.basename(percorso)
+        radice, estensione = os.path.splitext(nome_file)
+
+        timestamp = datetime.now().strftime(
+            "%Y%m%d-%H%M%S"
+        )
+
+        destinazione = os.path.join(
+            cartella,
+            f"{radice}.corrotto-{timestamp}{estensione}"
+        )
+
+        # Evita collisioni fra recuperi avvenuti nello stesso secondo.
+        contatore = 2
+        while os.path.exists(destinazione):
+            destinazione = os.path.join(
+                cartella,
+                f"{radice}.corrotto-{timestamp}-{contatore}"
+                f"{estensione}"
+            )
+            contatore += 1
+
+        os.replace(percorso, destinazione)
+        return destinazione
+
+    def _crea_backup_atomico(self, sorgente: str) -> None:
+        """Copia un JSON valido nel backup mediante sostituzione atomica."""
+        file_temp_backup = self.file_backup + ".tmp"
+
+        try:
+            shutil.copy2(
+                sorgente,
+                file_temp_backup
+            )
+
+            # Il backup viene validato prima della promozione.
+            self._leggi_json_validato(
+                file_temp_backup
+            )
+
+            os.replace(
+                file_temp_backup,
+                self.file_backup
+            )
+
+        finally:
+            if os.path.exists(file_temp_backup):
+                try:
+                    os.remove(file_temp_backup)
+                except OSError:
+                    pass
+
+    def _ripristina_da_backup(self) -> Dict:
+        """Ripristina il file principale da un backup validato e restituisce i dati."""
+        dati_backup = self._leggi_json_validato(
+            self.file_backup
+        )
+
+        file_ripristino = (
+            self.file_config + ".ripristino.tmp"
+        )
+
+        try:
+            shutil.copy2(
+                self.file_backup,
+                file_ripristino
+            )
+
+            # Anche la copia temporanea viene validata prima del ripristino.
+            self._leggi_json_validato(
+                file_ripristino
+            )
+
+            os.replace(
+                file_ripristino,
+                self.file_config
+            )
+
+        finally:
+            if os.path.exists(file_ripristino):
+                try:
+                    os.remove(file_ripristino)
+                except OSError:
+                    pass
+
+        return dati_backup
+
+    def _concludi_caricamento(self, esito: bool) -> bool:
+        """Registra se il file principale esiste al termine del caricamento."""
+        self._file_config_presente_nella_sessione = os.path.exists(
+            self.file_config
+        )
+        return bool(esito)
+
+    def azzera_storico_e_rotazioni(self) -> None:
+        """Svuota soltanto Storico e memorie di rotazione, preservando il tema."""
+        default = self._carica_configurazione_default()
+        for chiave in CHIAVI_STORICO_E_ROTAZIONI:
+            self.config_data[chiave] = copy.deepcopy(default[chiave])
+
+    def _risolvi_file_assente_prima_del_salvataggio(self) -> str:
+        """Chiede alla GUI come procedere se il JSON sparisce in sessione."""
+        if (
+            not self._file_config_presente_nella_sessione
+            or os.path.exists(self.file_config)
+        ):
+            return AZIONE_FILE_ASSENTE_RICREA
+
+        gestore = self.gestore_file_assente
+        if gestore is None:
+            return AZIONE_FILE_ASSENTE_ANNULLA
+
+        try:
+            azione = gestore(self.file_config)
+        except Exception as errore:
+            print(
+                "⚠️ Errore nella richiesta sul file di stato assente: "
+                f"{errore}"
+            )
+            return AZIONE_FILE_ASSENTE_ANNULLA
+
+        if azione not in {
+            AZIONE_FILE_ASSENTE_RICREA,
+            AZIONE_FILE_ASSENTE_AZZERA,
+            AZIONE_FILE_ASSENTE_ANNULLA,
+        }:
+            return AZIONE_FILE_ASSENTE_ANNULLA
+        return azione
 
     def carica_configurazione(self) -> bool:
-        """Carica configurazione da file JSON."""
+        """Carica la configurazione e tenta il recupero automatico se necessario.
+
+        Usa il backup quando il file principale è assente o non valido; conserva
+        i file danneggiati e ricorre ai valori predefiniti soltanto quando nessuna
+        copia valida è disponibile.
+        """
+        self.avviso_recupero = None
+
+        # File principale assente.
+        if not os.path.exists(self.file_config):
+            if not os.path.exists(self.file_backup):
+                print(
+                    "ℹ️ File configurazione non trovato, "
+                    "uso i valori predefiniti"
+                )
+                return self._concludi_caricamento(False)
+
+            try:
+                self.config_data = (
+                    self._ripristina_da_backup()
+                )
+
+                self.avviso_recupero = {
+                    "gravita": "avviso",
+                    "titolo": "Configurazione recuperata",
+                    "messaggio": (
+                        "Il file principale della configurazione "
+                        "non era presente.\n\n"
+                        "PostiPerfetti lo ha ricostruito usando "
+                        "il backup automatico.\n\n"
+                        f"Backup utilizzato:\n{self.file_backup}"
+                    ),
+                }
+
+                print(
+                    "✅ Configurazione ripristinata dal backup"
+                )
+                return self._concludi_caricamento(True)
+
+            except Exception as errore_backup:
+                percorso_backup_corrotto = None
+
+                try:
+                    percorso_backup_corrotto = (
+                        self._preserva_file_danneggiato(
+                            self.file_backup
+                        )
+                    )
+                except Exception:
+                    pass
+
+                self.config_data = (
+                    self._carica_configurazione_default()
+                )
+
+                dettaglio_backup = (
+                    f"\n\nIl backup non valido è stato conservato in:\n"
+                    f"{percorso_backup_corrotto}"
+                    if percorso_backup_corrotto
+                    else ""
+                )
+
+                self.avviso_recupero = {
+                    "gravita": "critico",
+                    "titolo": "Configurazione non recuperabile",
+                    "messaggio": (
+                        "Il file principale non era presente e il "
+                        "backup automatico non è utilizzabile.\n\n"
+                        "PostiPerfetti è stato avviato con una "
+                        "configurazione vuota.\n\n"
+                        f"Errore del backup:\n{errore_backup}"
+                        f"{dettaglio_backup}"
+                    ),
+                }
+
+                return self._concludi_caricamento(False)
+
+        # File principale presente.
         try:
-            if os.path.exists(self.file_config):
-                with open(self.file_config, 'r', encoding='utf-8') as f:
-                    self.config_data = json.load(f)
-                print(f"✅ Configurazione caricata da {self.file_config}")
-                return True
-            else:
-                print(f"ℹ️  File configurazione non trovato, uso default")
-                return False
-        except Exception as e:
-            print(f"⚠️  Errore caricamento configurazione: {e}")
-            return False
+            self.config_data = self._leggi_json_validato(
+                self.file_config
+            )
+
+        except Exception as errore_principale:
+            percorso_corrotto = None
+
+            try:
+                percorso_corrotto = (
+                    self._preserva_file_danneggiato(
+                        self.file_config
+                    )
+                )
+            except Exception as errore_preservazione:
+                print(
+                    "⚠️ Impossibile preservare il JSON "
+                    f"danneggiato: {errore_preservazione}"
+                )
+
+            # Tenta il recupero dall’ultimo backup valido.
+            if os.path.exists(self.file_backup):
+                try:
+                    self.config_data = (
+                        self._ripristina_da_backup()
+                    )
+
+                    dettaglio_corrotto = (
+                        f"\n\nIl file danneggiato è stato "
+                        f"conservato in:\n{percorso_corrotto}"
+                        if percorso_corrotto
+                        else ""
+                    )
+
+                    self.avviso_recupero = {
+                        "gravita": "avviso",
+                        "titolo": "Storico recuperato dal backup",
+                        "messaggio": (
+                            "Il file principale della configurazione "
+                            "era danneggiato o incompleto.\n\n"
+                            "PostiPerfetti ha ripristinato automaticamente "
+                            "l'ultima copia valida disponibile.\n\n"
+                            f"Errore rilevato:\n{errore_principale}"
+                            f"{dettaglio_corrotto}"
+                        ),
+                    }
+
+                    print(
+                        "✅ Configurazione recuperata dal backup"
+                    )
+                    return self._concludi_caricamento(True)
+
+                except Exception as errore_backup:
+                    percorso_backup_corrotto = None
+
+                    try:
+                        percorso_backup_corrotto = (
+                            self._preserva_file_danneggiato(
+                                self.file_backup
+                            )
+                        )
+                    except Exception:
+                        pass
+
+                    self.config_data = (
+                        self._carica_configurazione_default()
+                    )
+
+                    dettagli = []
+
+                    if percorso_corrotto:
+                        dettagli.append(
+                            "File principale conservato in:\n"
+                            f"{percorso_corrotto}"
+                        )
+
+                    if percorso_backup_corrotto:
+                        dettagli.append(
+                            "Backup conservato in:\n"
+                            f"{percorso_backup_corrotto}"
+                        )
+
+                    dettaglio_file = (
+                        "\n\n" + "\n\n".join(dettagli)
+                        if dettagli
+                        else ""
+                    )
+
+                    self.avviso_recupero = {
+                        "gravita": "critico",
+                        "titolo": "Storico non recuperabile",
+                        "messaggio": (
+                            "Sia il file principale sia il backup "
+                            "automatico risultano non validi.\n\n"
+                            "PostiPerfetti è stato avviato con una "
+                            "configurazione vuota.\n\n"
+                            f"Errore principale:\n{errore_principale}\n\n"
+                            f"Errore backup:\n{errore_backup}"
+                            f"{dettaglio_file}"
+                        ),
+                    }
+
+                    return self._concludi_caricamento(False)
+
+            # Senza un backup valido riparte dalla configurazione iniziale.
+            self.config_data = (
+                self._carica_configurazione_default()
+            )
+
+            dettaglio_corrotto = (
+                f"\n\nIl file danneggiato è stato conservato in:\n"
+                f"{percorso_corrotto}"
+                if percorso_corrotto
+                else ""
+            )
+
+            self.avviso_recupero = {
+                "gravita": "critico",
+                "titolo": "Configurazione danneggiata",
+                "messaggio": (
+                    "Il file della configurazione non è leggibile e "
+                    "non esiste ancora un backup automatico.\n\n"
+                    "PostiPerfetti è stato avviato con una "
+                    "configurazione vuota.\n\n"
+                    f"Errore rilevato:\n{errore_principale}"
+                    f"{dettaglio_corrotto}"
+                ),
+            }
+
+            return self._concludi_caricamento(False)
+
+        # File principale valido.
+
+        # Un backup danneggiato viene preservato e rigenerato dal file
+        # principale, che in questo ramo è già stato validato.
+        if os.path.exists(self.file_backup):
+            try:
+                self._leggi_json_validato(
+                    self.file_backup
+                )
+
+            except Exception as errore_backup:
+                percorso_backup_corrotto = None
+
+                try:
+                    percorso_backup_corrotto = (
+                        self._preserva_file_danneggiato(
+                            self.file_backup
+                        )
+                    )
+                except Exception:
+                    pass
+
+                try:
+                    self._crea_backup_atomico(
+                        self.file_config
+                    )
+
+                    dettaglio = (
+                        f"\n\nIl vecchio backup è stato conservato in:\n"
+                        f"{percorso_backup_corrotto}"
+                        if percorso_backup_corrotto
+                        else ""
+                    )
+
+                    self.avviso_recupero = {
+                        "gravita": "avviso",
+                        "titolo": "Backup automatico rigenerato",
+                        "messaggio": (
+                            "La configurazione principale è integra, "
+                            "ma il backup automatico risultava danneggiato.\n\n"
+                            "È stato creato un nuovo backup valido."
+                            f"{dettaglio}\n\n"
+                            f"Errore rilevato:\n{errore_backup}"
+                        ),
+                    }
+
+                except Exception as errore_creazione:
+                    print(
+                        "⚠️ Impossibile rigenerare il backup: "
+                        f"{errore_creazione}"
+                    )
+
+        else:
+            # Se manca, crea il primo backup dal JSON esistente.
+            try:
+                self._crea_backup_atomico(
+                    self.file_config
+                )
+            except Exception as errore_backup:
+                print(
+                    "⚠️ Impossibile creare il backup iniziale: "
+                    f"{errore_backup}"
+                )
+
+        print(
+            f"✅ Configurazione caricata da "
+            f"{self.file_config}"
+        )
+        return self._concludi_caricamento(True)
 
     def salva_configurazione(self) -> bool:
+        """Salva la configurazione in modo atomico e mantiene un backup valido.
+
+        Scrive e sincronizza un file temporaneo, lo valida, conserva il precedente
+        JSON valido come backup e infine sostituisce il file principale.
         """
-        Salva configurazione su file JSON con scrittura ATOMICA.
+        file_temp = self.file_config + ".tmp"
+        self.ultimo_esito_salvataggio = None
 
-        Il file viene prima scritto in un file temporaneo (.tmp) nella
-        stessa cartella, poi rinominato con os.replace() che è un'operazione
-        atomica sui filesystem moderni (Linux, Windows NTFS, macOS).
+        file_assente_durante_sessione = (
+            self._file_config_presente_nella_sessione
+            and not os.path.exists(self.file_config)
+        )
+        azione_file_assente = (
+            self._risolvi_file_assente_prima_del_salvataggio()
+        )
 
-        Questo protegge da corruzione del JSON in caso di:
-        - Crash del programma durante la scrittura
-        - Spegnimento improvviso del PC
-        - Errori di disco durante il salvataggio
+        if azione_file_assente == AZIONE_FILE_ASSENTE_ANNULLA:
+            self.ultimo_esito_salvataggio = ESITO_SALVATAGGIO_ANNULLATO
+            return False
 
-        Senza questa protezione, un'interruzione a metà scrittura
-        produrrebbe un file JSON troncato → storico perso.
-        """
+        fotografia_prima_azzeramento = None
+        azzeramento_richiesto = (
+            azione_file_assente == AZIONE_FILE_ASSENTE_AZZERA
+        )
+        if azzeramento_richiesto:
+            fotografia_prima_azzeramento = copy.deepcopy(self.config_data)
+            self.azzera_storico_e_rotazioni()
+
         try:
-            self.config_data["classe_info"]["ultima_modifica"] = datetime.now().isoformat()
+            # Scrive e sincronizza il file temporaneo.
+            with open(
+                    file_temp,
+                    'w',
+                    encoding='utf-8') as file_json:
 
-            # Scrive prima in un file temporaneo (.tmp) nella stessa cartella.
-            # Stessa cartella = stesso filesystem → os.replace() sarà atomico.
-            file_temp = self.file_config + ".tmp"
-            with open(file_temp, 'w', encoding='utf-8') as f:
-                json.dump(self.config_data, f, indent=2, ensure_ascii=False)
+                json.dump(
+                    self.config_data,
+                    file_json,
+                    indent=2,
+                    ensure_ascii=False
+                )
 
-            # Rinomina atomicamente: sostituisce il file originale in un colpo solo.
-            # Se il .tmp è integro, il file finale sarà integro.
-            # Se il .tmp è corrotto (crash durante la scrittura), il file
-            # originale resta intatto perché os.replace() non è mai partito.
-            os.replace(file_temp, self.file_config)
+                file_json.flush()
 
-            print(f"💾 Configurazione salvata in {self.file_config}")
+                # Sincronizza il contenuto prima della sostituzione finale.
+                os.fsync(file_json.fileno())
+
+            # Valida il temporaneo prima di promuoverlo.
+            self._leggi_json_validato(
+                file_temp
+            )
+
+            # Conserva come backup il precedente file principale valido.
+            if os.path.exists(self.file_config):
+                try:
+                    self._leggi_json_validato(
+                        self.file_config
+                    )
+
+                    self._crea_backup_atomico(
+                        self.file_config
+                    )
+
+                except Exception as errore_precedente:
+                    # Un file alterato mentre il programma è aperto non deve
+                    # sostituire il backup valido.
+                    try:
+                        percorso_preservato = (
+                            self._preserva_file_danneggiato(
+                                self.file_config
+                            )
+                        )
+                        print(
+                            "⚠️ File precedente non valido, "
+                            f"conservato in {percorso_preservato}: "
+                            f"{errore_precedente}"
+                        )
+                    except Exception as errore_preservazione:
+                        print(
+                            "⚠️ File precedente non valido e non "
+                            "preservabile: "
+                            f"{errore_preservazione}"
+                        )
+
+            # Sostituisce atomicamente il file principale.
+            os.replace(
+                file_temp,
+                self.file_config
+            )
+
+            # Se il principale è scomparso durante la sessione, il nuovo file
+            # diventa l'unica fonte autorevole: anche il backup viene riallineato
+            # per evitare che un recupero futuro resusciti dati scartati.
+            if (
+                file_assente_durante_sessione
+                or not os.path.exists(self.file_backup)
+            ):
+                try:
+                    self._crea_backup_atomico(
+                        self.file_config
+                    )
+                except Exception as errore_backup:
+                    print(
+                        "⚠️ Configurazione salvata, ma non è stato "
+                        f"possibile creare il backup: {errore_backup}"
+                    )
+                    if (
+                        file_assente_durante_sessione
+                        and os.path.exists(self.file_backup)
+                    ):
+                        try:
+                            os.remove(self.file_backup)
+                            print(
+                                "⚠️ Backup precedente rimosso perché non "
+                                "corrisponde più al file ricreato."
+                            )
+                        except OSError as errore_rimozione:
+                            print(
+                                "⚠️ Impossibile rimuovere il backup non "
+                                f"allineato: {errore_rimozione}"
+                            )
+
+            self._file_config_presente_nella_sessione = True
+
+            if azzeramento_richiesto:
+                self.ultimo_esito_salvataggio = ESITO_SALVATAGGIO_AZZERATO
+                gestore = self.gestore_azzeramento_completato
+                if gestore is not None:
+                    try:
+                        gestore()
+                    except Exception as errore_notifica:
+                        print(
+                            "⚠️ Configurazione azzerata, ma la GUI non è "
+                            f"stata aggiornata completamente: {errore_notifica}"
+                        )
+                return False
+
+            print(
+                f"💾 Configurazione salvata in "
+                f"{self.file_config}"
+            )
+            self.ultimo_esito_salvataggio = ESITO_SALVATAGGIO_SALVATO
             return True
-        except Exception as e:
-            print(f"❌ Errore salvataggio configurazione: {e}")
-            # Pulizia: se il .tmp è rimasto orfano, rimuovilo
-            file_temp = self.file_config + ".tmp"
+
+        except Exception as errore:
+            print(
+                f"❌ Errore salvataggio configurazione: "
+                f"{errore}"
+            )
+
             if os.path.exists(file_temp):
                 try:
                     os.remove(file_temp)
                 except OSError:
-                    pass  # Non critico: verrà sovrascritto al prossimo salvataggio
+                    pass
+
+            if fotografia_prima_azzeramento is not None:
+                self.config_data = fotografia_prima_azzeramento
+
+            self.ultimo_esito_salvataggio = ESITO_SALVATAGGIO_ERRORE
             return False
 
-    # =================================================================
-    # STORICO ASSEGNAZIONI — Aggiunta con layout completo
-    # =================================================================
-
-    def aggiungi_assegnazione_storico(self, nome_assegnazione: str, coppie: List[tuple], trio=None, configurazione_aula=None, file_origine=None, report_completo=None, studente_fisso=None, gruppo_adiacente_fisso=None, nome_adiacente_fisso=None, genere_misto=False):
-        """
-        Aggiunge una nuova assegnazione allo storico con layout completo.
-
-        Args:
-            studente_fisso: Oggetto Student con posizione FISSO (o None)
-            gruppo_adiacente_fisso: Tupla (s1, s2, info) della coppia adiacente al FISSO (o None).
-                NOTA: questa coppia è stata rimossa da coppie_formate durante l'assegnazione,
-                quindi va gestita separatamente sia per il salvataggio che per la blacklist.
-            nome_adiacente_fisso: Nome "Cognome Nome" dello studente in col 1 (adiacente diretto).
-                Fonte di verità per il contatore. Funziona sia con coppia che con trio adiacente.
-        """
-
-        # Crea struttura base assegnazione
-        nuova_assegnazione = {
-            "data": datetime.now().strftime("%Y-%m-%d"),
-            "ora": datetime.now().strftime("%H:%M"),
+    @staticmethod
+    def _valida_metadati_nuova_assegnazione(
+            storico, *, nome_assegnazione: str, nome_classe: str,
+            file_origine: str, generazione: str, modo: str,
+            data_creazione: str, progressivo: int, abbinamenti: str) -> None:
+        """Verifica il contratto corrente prima di mutare Storico e rotazioni."""
+        testi = {
             "nome": nome_assegnazione,
-            "file_origine": file_origine if file_origine else "Non specificato"
+            "classe": nome_classe,
+            "file_origine": file_origine,
+            "data_creazione": data_creazione,
+            "abbinamenti": abbinamenti,
+        }
+        for etichetta, valore in testi.items():
+            if not isinstance(valore, str) or not valore.strip():
+                raise ValueError(
+                    f"Il campo «{etichetta}» della nuova assegnazione è obbligatorio."
+                )
+        if generazione not in {"mensile", "annuale"}:
+            raise ValueError("La generazione deve essere «mensile» oppure «annuale».")
+        if modo not in {"coppie", "terzetti"}:
+            raise ValueError("La geometria deve essere «coppie» oppure «terzetti».")
+        if not isinstance(progressivo, int) or isinstance(progressivo, bool) or progressivo < 1:
+            raise ValueError("Il progressivo della nuova assegnazione non è valido.")
+
+        chiave = (file_origine, generazione, modo, progressivo)
+        for assegnazione in storico:
+            esistente = (
+                assegnazione["file_origine"],
+                assegnazione["generazione"],
+                assegnazione["modo"],
+                assegnazione["progressivo"],
+            )
+            if esistente == chiave:
+                raise ValueError(
+                    "Il progressivo è già presente nella stessa serie dello Storico."
+                )
+
+    # Storico in modalità a coppie
+
+    def aggiungi_assegnazione_storico(
+            self, nome_assegnazione: str, coppie: List[tuple], trio=None,
+            configurazione_aula=None, *, file_origine: str,
+            report_completo=None, studente_fisso=None,
+            gruppo_adiacente_fisso=None, nome_adiacente_fisso=None,
+            genere_misto=False, statistiche_generali=None,
+            metadati_casualita=None, nome_classe: str,
+            generazione: str, data_creazione: str, progressivo: int,
+            abbinamenti: str, salva_subito: bool = True):
+        """Registra nello Storico un'assegnazione della modalità a coppie.
+
+        Salva layout, opzioni e diagnostica disponibili, quindi aggiorna coppie,
+        trio e contatore del vicino diretto del FISSO.
+        """
+
+        if configurazione_aula is None:
+            raise ValueError(
+                "Il formato corrente richiede la configurazione dell'aula."
+            )
+        self._valida_metadati_nuova_assegnazione(
+            self.config_data["storico_assegnazioni"],
+            nome_assegnazione=nome_assegnazione,
+            nome_classe=nome_classe,
+            file_origine=file_origine,
+            generazione=generazione,
+            modo="coppie",
+            data_creazione=data_creazione,
+            progressivo=progressivo,
+            abbinamenti=abbinamenti,
+        )
+
+        configurazione_precedente = (
+            copy.deepcopy(self.config_data) if salva_subito else None
+        )
+
+        nuova_assegnazione = {
+            "data_creazione": data_creazione,
+            "nome": nome_assegnazione,
+            "classe": nome_classe,
+            "file_origine": file_origine,
+            "generazione": generazione,
+            "modo": "coppie",
+            "progressivo": int(progressivo),
+            "abbinamenti": abbinamenti,
+        }
+        if metadati_casualita:
+            nuova_assegnazione["casualita"] = metadati_casualita
+        if statistiche_generali:
+            nuova_assegnazione["statistiche_generali"] = [
+                dict(riga) for riga in statistiche_generali
+            ]
+
+        num_studenti = len(coppie) * 2 + (3 if trio else 0) + (1 if studente_fisso else 0)
+        if gruppo_adiacente_fisso:
+            num_studenti += 2
+
+        nuova_assegnazione["configurazione_aula"] = {
+            "num_file": configurazione_aula.num_righe - 2,  # esclude le due righe degli arredi
+            "posti_per_fila": self._calcola_posti_per_fila(configurazione_aula),
+            "modalita_trio": self._determina_modalita_trio_salvata(trio, configurazione_aula),
+            "num_studenti": num_studenti,
+            "num_righe": configurazione_aula.num_righe,
+            "num_colonne": configurazione_aula.num_colonne,
+            "ha_fisso": studente_fisso is not None,
+            "larghezza_blocco_sx": getattr(configurazione_aula, 'larghezza_blocco_sx', 2),
+            # Fotografia dell’opzione usata da questa assegnazione;
+            # non diventa un valore predefinito per sessioni successive.
+            "genere_misto": genere_misto,
         }
 
-        # Salva configurazione aula se disponibile
-        if configurazione_aula:
-            # Calcola num_studenti corretto: coppie*2 + trio(3) + fisso(1)
-            num_studenti = len(coppie) * 2 + (3 if trio else 0) + (1 if studente_fisso else 0)
-            # Se c'è un FISSO con coppia adiacente, quella coppia è fuori da 'coppie'
-            # quindi vanno aggiunti i 2 studenti della coppia adiacente
-            if gruppo_adiacente_fisso:
-                num_studenti += 2
+        nuova_assegnazione["layout"] = self._estrai_layout_da_configurazione(
+            configurazione_aula, coppie, trio, studente_fisso=studente_fisso,
+            gruppo_adiacente_fisso=gruppo_adiacente_fisso,
+            nome_adiacente_fisso=nome_adiacente_fisso,
+        )
 
-            nuova_assegnazione["configurazione_aula"] = {
-                "num_file": configurazione_aula.num_righe - 2,  # -2 per elementi fissi
-                "posti_per_fila": self._calcola_posti_per_fila(configurazione_aula),
-                "modalita_trio": self._determina_modalita_trio_salvata(trio, configurazione_aula),
-                "num_studenti": num_studenti,
-                "num_righe": configurazione_aula.num_righe,  # Salva dimensioni esatte
-                "num_colonne": configurazione_aula.num_colonne,
-                # Salva metadati FISSO per ricostruzione layout
-                "ha_fisso": studente_fisso is not None,
-                "larghezza_blocco_sx": getattr(configurazione_aula, 'larghezza_blocco_sx', 2),
-                # Salva preferenza genere misto (per-classe, non globale).
-                # Al ricaricamento della stessa classe, il valore viene
-                # ripristinato da _controlla_classe_gia_elaborata().
-                "genere_misto": genere_misto
-            }
+        if report_completo:
+            nuova_assegnazione["report_completo"] = report_completo
 
-            # Estrae layout completo (coordinate di ogni studente)
-            nuova_assegnazione["layout"] = self._estrai_layout_da_configurazione(
-                configurazione_aula, coppie, trio, studente_fisso=studente_fisso,
-                gruppo_adiacente_fisso=gruppo_adiacente_fisso,
-                nome_adiacente_fisso=nome_adiacente_fisso
-            )
-
-            # Salva report completo se disponibile
-            if report_completo:
-                nuova_assegnazione["report_completo"] = report_completo
-
-        # Aggiungi allo storico
         self.config_data["storico_assegnazioni"].append(nuova_assegnazione)
 
-        # Aggiorna sistema penalità per rotazione (coppie + trio + FISSO)
         self._aggiorna_coppie_da_evitare(
             coppie, trio, studente_fisso=studente_fisso,
             gruppo_adiacente_fisso=gruppo_adiacente_fisso,
             nome_adiacente_fisso=nome_adiacente_fisso
         )
 
-        self.salva_configurazione()
+        if salva_subito:
+            if self.salva_configurazione():
+                return True
+            if self.ultimo_esito_salvataggio != ESITO_SALVATAGGIO_AZZERATO:
+                self.config_data = configurazione_precedente
+            return False
+        return True
 
-    # =================================================================
-    # CALCOLO POSTI PER FILA — Dalla configurazione aula
-    # =================================================================
+    # Storico in modalità a terzetti
+
+    def aggiungi_assegnazione_storico_terzetti(
+            self, nome_assegnazione, gruppi, configurazione_aula, *,
+            file_origine: str, report_completo=None, studente_fisso=None,
+            genere_misto=False, posizione_blocco_finale=None,
+            preferenza_resto2='coppia', statistiche_generali=None,
+            metadati_casualita=None, nome_classe: str, generazione: str,
+            data_creazione: str, progressivo: int, abbinamenti: str,
+            salva_subito: bool = True):
+        """Registra nello Storico un'assegnazione della modalità a terzetti.
+
+        La voce conserva i gruppi ordinati come fonte delle adiacenze, il layout
+        grafico e i metadati necessari alla ricostruzione. Storico e blacklist
+        vengono aggiornati soltanto quando la disposizione è accettata.
+        """
+        self._valida_metadati_nuova_assegnazione(
+            self.config_data["storico_assegnazioni"],
+            nome_assegnazione=nome_assegnazione,
+            nome_classe=nome_classe,
+            file_origine=file_origine,
+            generazione=generazione,
+            modo="terzetti",
+            data_creazione=data_creazione,
+            progressivo=progressivo,
+            abbinamenti=abbinamenti,
+        )
+
+        # L’ordine dei membri è quello fisico da sinistra a destra ed è
+        # la fonte da cui si ricavano le adiacenze consecutive.
+        gruppi_salvati = []
+        for gruppo in gruppi:
+            gruppi_salvati.append({
+                "tipo": gruppo.tipo,  # tipo e ordine del gruppo
+                "membri": [s.get_nome_completo() for s in gruppo.membri],
+            })
+
+        num_studenti = sum(len(g["membri"]) for g in gruppi_salvati)
+
+        # Il nome del FISSO permette di marcarne il posto nel layout.
+        nome_fisso = (studente_fisso.get_nome_completo()
+                      if studente_fisso is not None else None)
+
+        # Associa a ogni studente il tipo del proprio gruppo.
+        tipo_per_nome = {}
+        for g in gruppi_salvati:
+            for nome in g["membri"]:
+                tipo_per_nome[nome] = g["tipo"]
+
+        layout = []
+        righe_con_banchi = set()  # file effettive con banchi
+        for riga in range(configurazione_aula.num_righe):
+            for colonna in range(configurazione_aula.num_colonne):
+                posto = configurazione_aula.griglia[riga][colonna]
+                if posto.tipo == 'banco':
+                    righe_con_banchi.add(riga)
+                    if posto.occupato_da:
+                        # Converte l’identificatore interno nel nome leggibile.
+                        nome = nome_completo_da_identificatore(posto.occupato_da)
+                        layout.append({
+                            "studente": nome,
+                            "riga": riga,
+                            "colonna": colonna,
+                            "tipo": tipo_per_nome.get(nome, "gruppo"),
+                            "fisso": (nome == nome_fisso),
+                        })
+
+        # Conta le file che contengono davvero banchi. I posti per fila sono
+        # il valore nominale usato dalla geometria corrente.
+        configurazione_precedente = (
+            copy.deepcopy(self.config_data) if salva_subito else None
+        )
+
+        nuova_assegnazione = {
+            "data_creazione": data_creazione,
+            "nome": nome_assegnazione,
+            "classe": nome_classe,
+            "file_origine": file_origine,
+            "generazione": generazione,
+            "modo": "terzetti",
+            "progressivo": int(progressivo),
+            "abbinamenti": abbinamenti,
+            "gruppi": gruppi_salvati,
+            "layout": layout,
+            "configurazione_aula": {
+                "modalita": "terzetti",
+                "num_file": len(righe_con_banchi),
+                "posti_per_fila": configurazione_aula.terzetti_per_fila * 3,
+                "num_studenti": num_studenti,
+                "num_righe": configurazione_aula.num_righe,
+                "num_colonne": configurazione_aula.num_colonne,
+                "ha_fisso": studente_fisso is not None,
+                "studente_fisso": nome_fisso,
+                "genere_misto": genere_misto,
+                "larghezza_blocco_sx": configurazione_aula.larghezza_blocco_sx,
+                "terzetti_per_fila": configurazione_aula.terzetti_per_fila,
+                "tipo_blocco_finale": configurazione_aula.tipo_blocco_finale,
+                "fila_blocco_finale": configurazione_aula.fila_blocco_finale,
+                "posizione_blocco_finale": posizione_blocco_finale,
+                "preferenza_resto2": preferenza_resto2,
+            },
+        }
+        if metadati_casualita:
+            nuova_assegnazione["casualita"] = metadati_casualita
+        if statistiche_generali:
+            nuova_assegnazione["statistiche_generali"] = [
+                dict(riga) for riga in statistiche_generali
+            ]
+
+        if report_completo:
+            nuova_assegnazione["report_completo"] = report_completo
+
+        self.config_data["storico_assegnazioni"].append(nuova_assegnazione)
+
+        # La blacklist registra tutte le coppie consecutive dei gruppi,
+        # compresa l’adiacenza del FISSO; gli estremi non sono vicini.
+        adiacenze = []
+        for g in gruppi_salvati:
+            membri = g["membri"]
+            adiacenze.extend(zip(membri, membri[1:]))
+        if adiacenze:
+            aggiorna_blacklist_terzetti(self, adiacenze)
+
+        if salva_subito:
+            if self.salva_configurazione():
+                return True
+            if self.ultimo_esito_salvataggio != ESITO_SALVATAGGIO_AZZERATO:
+                self.config_data = configurazione_precedente
+            return False
+        return True
+
+    # Metadati e ricostruzione dei layout
 
     def _calcola_posti_per_fila(self, configurazione_aula):
-        """
-        Calcola il numero di posti per fila dalla configurazione aula.
-
-        Args:
-            configurazione_aula: Oggetto ConfigurazioneAula
-
-        Returns:
-            int: Numero di posti per fila (banchi in una singola fila)
-        """
-        # Conta i banchi nella prima fila di banchi (riga 2, dopo elementi fissi)
+        """Conta i posti disponibili nella prima fila di banchi."""
         if len(configurazione_aula.griglia) > 2:
             prima_fila_banchi = configurazione_aula.griglia[2]
             posti_contati = sum(1 for posto in prima_fila_banchi if posto.tipo == 'banco')
             return posti_contati
 
-        # Fallback: ritorna 6 se non riesce a calcolare
         return 6
 
-    # =================================================================
-    # MODALITÀ TRIO — Determina posizione trio (prima/ultima/centro)
-    # =================================================================
 
     def _determina_modalita_trio_salvata(self, trio, configurazione_aula):
-        """
-        Determina in quale posizione è stato piazzato il trio (prima/ultima/centro).
-
-        Args:
-            trio: Lista di 3 studenti (o None se numero pari)
-            configurazione_aula: Oggetto ConfigurazioneAula
-
-        Returns:
-            str: "prima", "ultima", "centro" o None se numero pari
-        """
+        """Restituisce la posizione del trio nella griglia salvata."""
         if not trio:
             return None
 
-        # Cerca il trio nella griglia per determinare in quale fila è stato messo
         trio_nomi = {f"{s.cognome}_{s.nome}" for s in trio}
 
         banchi_per_fila = configurazione_aula.get_banchi_per_fila()
 
         for idx_fila, banchi_fila in enumerate(banchi_per_fila):
-            # Conta quanti studenti del trio sono in questa fila
             studenti_trio_in_fila = 0
             for banco in banchi_fila:
                 if banco.occupato_da and banco.occupato_da in trio_nomi:
                     studenti_trio_in_fila += 1
 
-            # Se tutti e 3 i membri del trio sono in questa fila
             if studenti_trio_in_fila == 3:
-                # Determina se è prima, ultima o centro
                 if idx_fila == 0:
                     return "prima"
                 elif idx_fila == len(banchi_per_fila) - 1:
@@ -275,32 +1540,15 @@ class ConfigurazioneApp:
                 else:
                     return "centro"
 
-        # Fallback: non dovrebbe mai succedere
         return "auto"
 
-    # =================================================================
-    # ESTRAZIONE LAYOUT — Coordinate di ogni studente dalla griglia
-    # =================================================================
 
     def _estrai_layout_da_configurazione(self, configurazione_aula, coppie, trio,
                                          studente_fisso=None, gruppo_adiacente_fisso=None,
                                          nome_adiacente_fisso=None):
-        """
-        Estrae il layout completo con coordinate di ogni studente.
-
-        Args:
-            configurazione_aula: Oggetto ConfigurazioneAula
-            coppie: Lista di tuple (studente1, studente2, info)
-            trio: Lista di 3 studenti (o None)
-            studente_fisso: Studente con posizione FISSO (o None)
-            gruppo_adiacente_fisso: Coppia adiacente al FISSO (s1, s2, info) o None
-
-        Returns:
-            list: Lista di dict con posizione e info di ogni studente
-        """
+        """Serializza coordinate e relazioni degli studenti presenti nell'aula."""
         layout = []
 
-        # Mappa per identificare i compagni
         mappa_coppie = {}
         for studente1, studente2, info in coppie:
             nome1 = studente1.get_nome_completo()
@@ -308,7 +1556,6 @@ class ConfigurazioneApp:
             mappa_coppie[nome1] = {"tipo": "coppia", "compagno": nome2, "info": info}
             mappa_coppie[nome2] = {"tipo": "coppia", "compagno": nome1, "info": info}
 
-        # Mappa per coppia adiacente al FISSO (era stata rimossa da coppie_formate)
         if gruppo_adiacente_fisso:
             s1_adj = gruppo_adiacente_fisso[0]
             s2_adj = gruppo_adiacente_fisso[1]
@@ -318,7 +1565,6 @@ class ConfigurazioneApp:
             mappa_coppie[nome1_adj] = {"tipo": "coppia", "compagno": nome2_adj, "info": info_adj}
             mappa_coppie[nome2_adj] = {"tipo": "coppia", "compagno": nome1_adj, "info": info_adj}
 
-        # Mappa per trio
         mappa_trio = {}
         if trio:
             nomi_trio = [s.get_nome_completo() for s in trio]
@@ -331,95 +1577,98 @@ class ConfigurazioneApp:
                     "compagni_trio": [n for n in nomi_trio if n != nome]
                 }
 
-        # Mappa per studente FISSO
         mappa_fisso = {}
         if studente_fisso:
             nome_fisso = studente_fisso.get_nome_completo()
             mappa_fisso[nome_fisso] = {
                 "tipo": "fisso",
-                "adiacente": nome_adiacente_fisso  # Fonte di verità (funziona per coppia E trio)
+                "adiacente": nome_adiacente_fisso  # valido per coppia e trio
             }
 
-        # Estrae coordinate da griglia
         for riga_idx, riga in enumerate(configurazione_aula.griglia):
             for col_idx, posto in enumerate(riga):
                 if posto.tipo == 'banco' and posto.occupato_da:
-                    # Converte ID "Cognome_Nome" in "Cognome Nome"
-                    nome_completo = posto.occupato_da.replace('_', ' ')
+                    nome_completo = nome_completo_da_identificatore(posto.occupato_da)
 
-                    # Determina tipo abbinamento
                     info_studente = {
                         "studente": nome_completo,
                         "riga": riga_idx,
                         "colonna": col_idx
                     }
 
-                    # Aggiunge info fisso, trio o coppia (in ordine di priorità)
                     if nome_completo in mappa_fisso:
                         info_studente.update(mappa_fisso[nome_completo])
                     elif nome_completo in mappa_trio:
                         info_studente.update(mappa_trio[nome_completo])
                     elif nome_completo in mappa_coppie:
                         info_studente.update(mappa_coppie[nome_completo])
-                        # Salva anche il punteggio della coppia
                         info_studente["punteggio"] = mappa_coppie[nome_completo]["info"].get("punteggio_totale", 0)
 
                     layout.append(info_studente)
 
         return layout
 
-    # =================================================================
-    # RICOSTRUZIONE LAYOUT — Da storico a griglia visiva
-    # =================================================================
+    # Ricostruzione del layout salvato
 
     def ricostruisci_layout_da_storico(self, indice_assegnazione):
-        """
-        Ricostruisce il layout completo di un'assegnazione storica.
+        """Ricostruisce la piantina di un'assegnazione salvata.
 
-        Args:
-            indice_assegnazione (int): Indice dell'assegnazione nello storico (0-based)
-
-        Returns:
-            tuple: (ConfigurazioneAula ricostruita, dict dati_assegnazione) oppure (None, None) se errore
+        Restituisce ``(configurazione_aula, assegnazione)`` oppure
+        ``(None, None)`` quando i dati non permettono la ricostruzione.
         """
         try:
-            # Verifica indice valido
             storico = self.config_data.get("storico_assegnazioni", [])
             if indice_assegnazione < 0 or indice_assegnazione >= len(storico):
                 print(f"❌ Indice {indice_assegnazione} non valido (storico ha {len(storico)} elementi)")
                 return None, None
 
-            # Ottiene dati assegnazione
             assegnazione = storico[indice_assegnazione]
-
-            # Verifica che abbia il layout
-            if "layout" not in assegnazione or "configurazione_aula" not in assegnazione:
-                print(f"⚠️ Assegnazione '{assegnazione.get('nome', 'Senza nome')}' in formato vecchio - impossibile ricostruire layout")
-                return None, None
-
             config_aula_data = assegnazione["configurazione_aula"]
             layout_data = assegnazione["layout"]
 
-            print(f"🔄 Ricostruzione layout: {assegnazione.get('nome', 'Senza nome')}")
+            print(f"🔄 Ricostruzione layout: {assegnazione['nome']}")
             print(f"   📊 Configurazione: {config_aula_data['num_file']} file x {config_aula_data['posti_per_fila']} posti")
             print(f"   👥 Studenti: {config_aula_data['num_studenti']}")
 
-            # Crea nuova configurazione aula vuota
             from moduli.aula import ConfigurazioneAula, PostoAula
-            config_ricostruita = ConfigurazioneAula(f"Layout {assegnazione.get('nome', 'Storico')}")
+            config_ricostruita = ConfigurazioneAula(f"Layout {assegnazione['nome']}")
 
-            # Usa le dimensioni ESATTE salvate (non ricalcolare)
-            num_righe_salvate = config_aula_data.get('num_righe')
-            num_colonne_salvate = config_aula_data.get('num_colonne')
+            num_righe_salvate = config_aula_data['num_righe']
+            num_colonne_salvate = config_aula_data['num_colonne']
 
-            if num_righe_salvate and num_colonne_salvate:
-                # Ricostruisce griglia con dimensioni esatte
+            # Le voci a terzetti ricreano la geometria dedicata; quelle a coppie
+            # usano le dimensioni salvate.
+            if assegnazione["modo"] == "terzetti":
+                print(f"   🧩 Voce TERZETTI: geometria ricreata con crea_layout_terzetti")
+                config_ricostruita.crea_layout_terzetti(
+                    config_aula_data['num_studenti'],
+                    terzetti_per_fila=config_aula_data['terzetti_per_fila'],
+                    # In assenza del blocco finale la posizione non incide
+                    # sulla geometria ricostruita.
+                    posizione_blocco_finale=(
+                        config_aula_data['posizione_blocco_finale'] or 'ultima'
+                    ),
+                    ha_fisso=config_aula_data['ha_fisso'],
+                    preferenza_resto2=config_aula_data['preferenza_resto2'],
+                )
+                # Le dimensioni ricreate devono coincidere con quelle salvate:
+                # una divergenza indica dati incoerenti.
+                if (
+                    config_ricostruita.num_righe != num_righe_salvate
+                    or config_ricostruita.num_colonne != num_colonne_salvate
+                ):
+                    raise ValueError(
+                        "La geometria a terzetti ricreata non coincide con "
+                        "le dimensioni salvate"
+                    )
+
+            else:
+                # Ricostruisce la griglia usando le dimensioni esatte salvate.
                 print(f"   🎯 Usando dimensioni esatte: {num_righe_salvate} righe × {num_colonne_salvate} colonne")
 
                 config_ricostruita.num_righe = num_righe_salvate
                 config_ricostruita.num_colonne = num_colonne_salvate
 
-                # Inizializza griglia vuota con dimensioni esatte
                 config_ricostruita.griglia = []
                 for r in range(num_righe_salvate):
                     riga = []
@@ -427,38 +1676,51 @@ class ConfigurazioneApp:
                         riga.append(PostoAula(r, c, 'corridoio'))
                     config_ricostruita.griglia.append(riga)
 
-                # Ricrea elementi fissi (LIM, cattedra, lavagna) nella prima riga
-                # ALLINEAMENTO: Usa le stesse posizioni colonna dei banchi.
-                # Usa larghezza_blocco_sx salvata (nuove assegnazioni) oppure
-                # calcola dalla parità studenti (assegnazioni vecchie senza FISSO).
-                larghezza_sx_salvata = config_aula_data.get('larghezza_blocco_sx')
-                if larghezza_sx_salvata:
-                    larghezza_blocco = larghezza_sx_salvata
-                else:
-                    ha_trio_storico = (config_aula_data.get('num_studenti', 0) % 2 == 1)
-                    larghezza_blocco = 3 if ha_trio_storico else 2
+                larghezza_blocco = config_aula_data['larghezza_blocco_sx']
 
-                # Usa il metodo centralizzato di ConfigurazioneAula per calcolare le posizioni
-                posizioni_arredi = config_ricostruita._calcola_posizioni_fila_normale(larghezza_blocco)
-                config_ricostruita.griglia[0][posizioni_arredi[0]] = PostoAula(0, posizioni_arredi[0], 'lim')
-                config_ricostruita.griglia[0][posizioni_arredi[1]] = PostoAula(0, posizioni_arredi[1], 'lim')
-                config_ricostruita.griglia[0][posizioni_arredi[2]] = PostoAula(0, posizioni_arredi[2], 'cattedra')
-                config_ricostruita.griglia[0][posizioni_arredi[3]] = PostoAula(0, posizioni_arredi[3], 'cattedra')
-                config_ricostruita.griglia[0][posizioni_arredi[4]] = PostoAula(0, posizioni_arredi[4], 'lavagna')
-                config_ricostruita.griglia[0][posizioni_arredi[5]] = PostoAula(0, posizioni_arredi[5], 'lavagna')
+                # Ricava dalla geometria salvata quanti blocchi-coppia erano
+                # presenti nel layout live. Non usa direttamente
+                # ``posti_per_fila``: nelle file speciali con FISSO/trio quel
+                # metadato può includere i posti aggiuntivi del blocco sinistro
+                # e non rappresentare il numero di blocchi degli arredi.
+                delta_blocchi = num_colonne_salvate - larghezza_blocco + 3
+                if delta_blocchi < 9 or delta_blocchi % 3 != 0:
+                    raise ValueError(
+                        "Geometria a coppie non riconducibile al formato corrente"
+                    )
+                num_blocchi_arredi = delta_blocchi // 3
+                posti_geometrici = num_blocchi_arredi * 2
 
-                # Ricrea TUTTI i banchi dalle posizioni salvate nel layout
-                # (verranno popolati con studenti subito dopo)
+                posizioni_arredi = config_ricostruita._calcola_posizioni_fila_normale(
+                    larghezza_blocco, posti_geometrici)
+                blocchi_arredi = [
+                    (posizioni_arredi[i], posizioni_arredi[i + 1])
+                    for i in range(0, len(posizioni_arredi), 2)
+                    if posizioni_arredi[i + 1] < num_colonne_salvate
+                ]
+                if len(blocchi_arredi) < 3:
+                    raise ValueError(
+                        "Geometria degli arredi non valida nella voce di Storico"
+                    )
+
+                blocco_lim = blocchi_arredi[0]
+                blocco_cattedra = blocchi_arredi[len(blocchi_arredi) // 2]
+                blocco_lavagna = blocchi_arredi[-1]
+                for colonna in blocco_lim:
+                    config_ricostruita.griglia[0][colonna] = PostoAula(0, colonna, 'lim')
+                for colonna in blocco_cattedra:
+                    config_ricostruita.griglia[0][colonna] = PostoAula(0, colonna, 'cattedra')
+                for colonna in blocco_lavagna:
+                    config_ricostruita.griglia[0][colonna] = PostoAula(0, colonna, 'lavagna')
+
                 for studente_info in layout_data:
                     riga = studente_info["riga"]
                     colonna = studente_info["colonna"]
 
-                    # Crea banco in questa posizione se non esiste già
                     if riga < num_righe_salvate and colonna < num_colonne_salvate:
                         if config_ricostruita.griglia[riga][colonna].tipo == 'corridoio':
                             config_ricostruita.griglia[riga][colonna] = PostoAula(riga, colonna, 'banco')
 
-                # Conta posti disponibili
                 posti_contati = 0
                 for riga in config_ricostruita.griglia:
                     for posto in riga:
@@ -468,28 +1730,15 @@ class ConfigurazioneApp:
                 config_ricostruita.posti_disponibili = posti_contati
                 print(f"   ✅ Griglia ricostruita: {posti_contati} banchi totali")
 
-            else:
-                # FALLBACK: Se mancano dimensioni esatte, usa metodo standard
-                print(f"   ⚠️ Dimensioni esatte non disponibili, uso metodo standard")
-                config_ricostruita.crea_layout_standard(
-                    num_studenti=config_aula_data['num_studenti'],
-                    num_file=config_aula_data['num_file'],
-                    posti_per_fila=config_aula_data['posti_per_fila'],
-                    posizione_trio=config_aula_data.get('modalita_trio'),
-                    ha_fisso=config_aula_data.get('ha_fisso', False)  # propaga flag FISSO
-                )
 
-            # Popola la griglia con gli studenti nelle posizioni salvate
             for studente_info in layout_data:
                 nome_studente = studente_info["studente"]
                 riga = studente_info["riga"]
                 colonna = studente_info["colonna"]
 
-                # Il nome arriva dal JSON già nel formato "Cognome Nome" leggibile.
-                # Lo salviamo così com'è in occupato_da (senza riconvertire in ID).
+                # Il JSON conserva già il nome completo in forma leggibile.
                 id_univoco = nome_studente
 
-                # Assegna studente al banco
                 if riga < len(config_ricostruita.griglia) and colonna < len(config_ricostruita.griglia[riga]):
                     posto = config_ricostruita.griglia[riga][colonna]
                     if posto.tipo == 'banco':
@@ -501,7 +1750,6 @@ class ConfigurazioneApp:
 
             print(f"✅ Layout ricostruito con successo!")
 
-            # Restituisce configurazione ricostruita + dati originali assegnazione
             return config_ricostruita, assegnazione
 
         except Exception as e:
@@ -510,29 +1758,18 @@ class ConfigurazioneApp:
             traceback.print_exc()
             return None, None
 
-    # =================================================================
-    # BLACKLIST COPPIE — Aggiornamento per sistema rotazione
-    # =================================================================
+    # Aggiornamento delle rotazioni in modalità a coppie
 
     def _aggiorna_coppie_da_evitare(self, nuove_coppie: List[tuple], trio=None,
                                     studente_fisso=None, gruppo_adiacente_fisso=None,
                                     nome_adiacente_fisso=None):
+        """Aggiorna blacklist e contatori della modalità a coppie.
+
+        Registra le coppie normali, le adiacenze consecutive del trio, la coppia
+        collocata accanto al FISSO e il suo vicino diretto.
         """
-        Aggiorna il conteggio delle coppie già utilizzate nella blacklist.
-        Formato unico: {"tipo": "coppia", "studenti": [nome1, nome2], "volte_usata": N}
 
-        CON FISSO: gestisce anche la coppia adiacente (rimossa da coppie_formate)
-        e aggiorna il contatore studenti_vicino_fisso_contatore.
-
-        Args:
-            nome_adiacente_fisso: Nome "Cognome Nome" dello studente in col 1.
-                Fonte di verità per il contatore, funziona sia per coppia che trio.
-        """
-        print(f"🔍 DEBUG: Elaboro {len(nuove_coppie)} coppie e trio={trio is not None}, fisso={studente_fisso is not None}")
-        print(f"🔍 DEBUG: Elementi esistenti in coppie_da_evitare: {len(self.config_data['coppie_da_evitare'])}")
-
-        # Crea mappa indicizzata delle coppie esistenti per ricerca veloce
-        # chiave = tuple(sorted([nome1, nome2])), valore = riferimento al dict nella lista
+        # Indicizza le coppie esistenti per aggiornare i contatori in O(1).
         coppie_esistenti = {}
         for item in self.config_data["coppie_da_evitare"]:
             studenti = item.get("studenti", [])
@@ -540,32 +1777,25 @@ class ConfigurazioneApp:
                 chiave = tuple(sorted(studenti))
                 coppie_esistenti[chiave] = item
 
-        print(f"🔍 DEBUG: Coppie esistenti trovate: {len(coppie_esistenti)}")
-
-        # Elabora tutte le coppie normali
         for studente1, studente2, _ in nuove_coppie:
             chiave = tuple(sorted([studente1.get_nome_completo(), studente2.get_nome_completo()]))
 
             if chiave in coppie_esistenti:
-                # Coppia già nota: incrementa contatore
                 coppie_esistenti[chiave]["volte_usata"] += 1
             else:
-                # Nuova coppia: aggiungi in formato unico
                 nuova_voce = {
                     "tipo": "coppia",
                     "studenti": [chiave[0], chiave[1]],
                     "volte_usata": 1
                 }
                 self.config_data["coppie_da_evitare"].append(nuova_voce)
-                coppie_esistenti[chiave] = nuova_voce  # Aggiorna mappa per lookup successivi
+                coppie_esistenti[chiave] = nuova_voce
 
-        # Elabora il trio se presente: salva come 2 coppie virtuali adiacenti
+        # Nel trio contano soltanto le due adiacenze consecutive.
         if trio and len(trio) == 3:
-            print(f"🔄 DEBUG: Elaboro trio come coppie virtuali: {[s.get_nome_completo() for s in trio]}")
 
             studente1, studente2, studente3 = trio
 
-            # Le coppie virtuali sono quelle fisicamente adiacenti: [1-2] e [2-3]
             coppie_virtuali = [
                 (studente1.get_nome_completo(), studente2.get_nome_completo()),
                 (studente2.get_nome_completo(), studente3.get_nome_completo())
@@ -576,11 +1806,9 @@ class ConfigurazioneApp:
                 print(f"   📝 Coppia virtuale {idx}: {chiave[0]} + {chiave[1]}")
 
                 if chiave in coppie_esistenti:
-                    # Coppia virtuale già esistente: incrementa contatore
                     coppie_esistenti[chiave]["volte_usata"] += 1
                     print(f"   ✅ Aggiornata: {chiave[0]} + {chiave[1]} (ora {coppie_esistenti[chiave]['volte_usata']} volte)")
                 else:
-                    # Nuova coppia virtuale: aggiungi con origine "trio"
                     nuova_voce = {
                         "tipo": "coppia",
                         "studenti": [chiave[0], chiave[1]],
@@ -591,7 +1819,7 @@ class ConfigurazioneApp:
                     coppie_esistenti[chiave] = nuova_voce
                     print(f"   🆕 Nuova coppia virtuale aggiunta: {chiave[0]} + {chiave[1]}")
 
-            # Aggiorna contatore trio per rotazione equa (UNA SOLA VOLTA, FUORI DAL LOOP)
+            # Ogni componente del trio riceve un solo incremento.
             for studente in trio:
                 nome_studente = studente.get_nome_completo()
                 if nome_studente not in self.config_data["studenti_trio_contatore"]:
@@ -600,13 +1828,11 @@ class ConfigurazioneApp:
                 self.config_data["studenti_trio_contatore"][nome_studente] += 1
                 print(f"   📊 {nome_studente}: ora {self.config_data['studenti_trio_contatore'][nome_studente]} volte nel trio")
 
-        # === GESTIONE COPPIA ADIACENTE AL FISSO ===
-        # La coppia adiacente è stata rimossa da coppie_formate durante l'assegnazione,
-        # quindi va aggiunta qui come coppia normale nella blacklist.
+        # La coppia accanto al FISSO vive fuori da ``coppie_formate`` e
+        # deve quindi essere registrata separatamente.
         if gruppo_adiacente_fisso:
             s1_fisso, s2_fisso = gruppo_adiacente_fisso[0], gruppo_adiacente_fisso[1]
             chiave_adiacente = tuple(sorted([s1_fisso.get_nome_completo(), s2_fisso.get_nome_completo()]))
-            print(f"📌 DEBUG: Elaboro coppia adiacente al FISSO: {chiave_adiacente[0]} + {chiave_adiacente[1]}")
 
             if chiave_adiacente in coppie_esistenti:
                 coppie_esistenti[chiave_adiacente]["volte_usata"] += 1
@@ -621,13 +1847,9 @@ class ConfigurazioneApp:
                 coppie_esistenti[chiave_adiacente] = nuova_voce
                 print(f"   🆕 Nuova coppia adiacente FISSO aggiunta in blacklist")
 
-        # === AGGIORNAMENTO CONTATORE VICINO FISSO ===
-        # Traccia SOLO lo studente in col 1 (adiacente diretto), NON tutto il gruppo.
-        # Usa nome_adiacente_fisso come fonte di verità (impostato da
-        # _assegna_gruppo_adiacente_fisso nell'algoritmo). Funziona sia quando
-        # il gruppo adiacente è una coppia sia quando è un trio.
+        # Il contatore dedicato riguarda solo il vicino diretto del FISSO,
+        # non gli altri membri dell’eventuale gruppo adiacente.
         if studente_fisso and nome_adiacente_fisso:
-            # Inizializza contatore se non esiste nel config
             if "studenti_vicino_fisso_contatore" not in self.config_data:
                 self.config_data["studenti_vicino_fisso_contatore"] = {}
 
@@ -637,29 +1859,20 @@ class ConfigurazioneApp:
             contatore[nome_adiacente_fisso] += 1
             print(f"   📌 Contatore vicino FISSO: {nome_adiacente_fisso} → {contatore[nome_adiacente_fisso]} volte")
 
-    # =================================================================
-    # RICOSTRUZIONE BLACKLIST — Da storico dopo eliminazione
-    # =================================================================
+    # Ricostruzione delle blacklist dallo Storico
 
     def _ricostruisci_blacklist_da_storico(self):
-        """
-        Ricostruisce completamente blacklist e contatori da storico assegnazioni.
-        UTILIZZO: Dopo eliminazione assegnazione per garantire coerenza.
-
-        LOGICA:
-        1. Azzera blacklist e contatori (trio + vicino_fisso)
-        2. Ri-elabora ogni assegnazione rimasta nello storico
-        3. Ricostruisce blacklist da zero usando logica esistente
-        """
+        """Ricalcola blacklist e contatori dalle assegnazioni rimaste nello Storico."""
         print(f"🔄 RICOSTRUZIONE BLACKLIST: Inizio elaborazione Storico...")
 
-        # STEP 1: Azzera completamente blacklist e TUTTI i contatori
+        # Riparte da strutture vuote per entrambe le modalità e per tutti
+        # i contatori derivati.
         self.config_data["coppie_da_evitare"] = []
+        self.config_data[CHIAVE_BLACKLIST_PER_MODO["terzetti"]] = []
         self.config_data["studenti_trio_contatore"] = {}
         self.config_data["studenti_vicino_fisso_contatore"] = {}
-        print(f"   ✅ Blacklist e contatori (trio + vicino_fisso) azzerati")
+        print(f"   ✅ Blacklist (coppie + terzetti) e contatori azzerati")
 
-        # STEP 2: Ottiene storico assegnazioni rimaste
         storico_rimasto = self.config_data["storico_assegnazioni"]
         num_assegnazioni = len(storico_rimasto)
 
@@ -669,83 +1882,84 @@ class ConfigurazioneApp:
 
         print(f"   📋 Elaborazione {num_assegnazioni} assegnazioni rimaste...")
 
-        # STEP 3: Ri-elabora ogni assegnazione per ricostruire blacklist
         for idx, assegnazione in enumerate(storico_rimasto, 1):
-            nome_assegnazione = assegnazione.get("nome", f"Assegnazione {idx}")
+            nome_assegnazione = assegnazione["nome"]
             print(f"   🔄 Elaboro: {nome_assegnazione}")
 
-            # ============================================================
-            # Estrae coppie, trio e fisso dall'assegnazione.
-            # Il formato CORRENTE salva i dati nel campo "layout" (ogni
-            # studente con tipo/compagno/coordinate). Il vecchio campo
-            # "abbinamenti" è usato solo come fallback per compatibilità.
-            # ============================================================
+            # Le voci a terzetti si ricostruiscono dai gruppi ordinati.
+            # Il ``continue`` impedisce che il loro layout alimenti anche
+            # la blacklist delle coppie.
+            if assegnazione["modo"] == "terzetti":
+                adiacenze = []
+                for gruppo in assegnazione["gruppi"]:
+                    membri = gruppo["membri"]
+                    adiacenze.extend(zip(membri, membri[1:]))
+                if adiacenze:
+                    aggiorna_blacklist_terzetti(self, adiacenze)
+                print(f"      ✅ Voce terzetti: {len(adiacenze)} adiacenze ricostruite")
+                continue  # evita contaminazioni fra blacklist
+
+            # Le disposizioni a coppie vengono ricostruite dal layout salvato.
             coppie_da_elaborare = []
             trio_da_elaborare = None
             studente_fisso_fittizio = None
             gruppo_adiacente_fittizio = None
 
-            layout = assegnazione.get("layout", [])
+            layout = assegnazione["layout"]
 
-            if layout:
-                # === Legge dal campo "layout" ===
-                # Ricostruisce coppie uniche (ogni coppia ha 2 voci nel layout)
-                coppie_processate = set()
-                trio_nomi = []
+            coppie_processate = set()
+            trio_nomi = []
 
-                for studente_info in layout:
-                    tipo = studente_info.get("tipo")
-                    nome = studente_info.get("studente", "")
+            for studente_info in layout:
+                tipo = studente_info["tipo"]
+                nome = studente_info["studente"]
 
-                    if tipo == "coppia":
-                        compagno = studente_info.get("compagno", "")
-                        if nome and compagno:
-                            chiave = tuple(sorted([nome, compagno]))
-                            if chiave not in coppie_processate:
-                                coppie_processate.add(chiave)
-                                s1 = type('Student', (), {'get_nome_completo': lambda self, n=chiave[0]: n})()
-                                s2 = type('Student', (), {'get_nome_completo': lambda self, n=chiave[1]: n})()
-                                coppie_da_elaborare.append((s1, s2, {}))
+                if tipo == "coppia":
+                    compagno = studente_info["compagno"]
+                    if nome and compagno:
+                        chiave = tuple(sorted([nome, compagno]))
+                        if chiave not in coppie_processate:
+                            coppie_processate.add(chiave)
+                            s1 = type('Student', (), {'get_nome_completo': lambda self, n=chiave[0]: n})()
+                            s2 = type('Student', (), {'get_nome_completo': lambda self, n=chiave[1]: n})()
+                            coppie_da_elaborare.append((s1, s2, {}))
 
-                    elif tipo == "trio":
-                        trio_nomi.append(nome)
+                elif tipo == "trio":
+                    trio_nomi.append(nome)
 
-                    elif tipo == "fisso":
-                        nome_adiacente = studente_info.get("adiacente", "")
-                        if nome:
-                            studente_fisso_fittizio = type('Student', (), {
-                                'get_nome_completo': lambda self, n=nome: n
-                            })()
-                        if nome_adiacente:
-                            s_adj = type('Student', (), {
-                                'get_nome_completo': lambda self, n=nome_adiacente: n
-                            })()
-                            s_dummy = type('Student', (), {
-                                'get_nome_completo': lambda self: "RICOSTRUZIONE_DUMMY"
-                            })()
-                            gruppo_adiacente_fittizio = (s_adj, s_dummy, {})
-                            print(f"      📌 FISSO ricostruito: {nome}, adiacente: {nome_adiacente}")
+                elif tipo == "fisso":
+                    nome_adiacente = studente_info["adiacente"]
+                    if nome:
+                        studente_fisso_fittizio = type('Student', (), {
+                            'get_nome_completo': lambda self, n=nome: n
+                        })()
+                    if nome_adiacente:
+                        s_adj = type('Student', (), {
+                            'get_nome_completo': lambda self, n=nome_adiacente: n
+                        })()
+                        s_dummy = type('Student', (), {
+                            'get_nome_completo': lambda self: "RICOSTRUZIONE_DUMMY"
+                        })()
+                        gruppo_adiacente_fittizio = (s_adj, s_dummy, {})
+                        print(f"      📌 FISSO ricostruito: {nome}, adiacente: {nome_adiacente}")
 
-                # Ricostruisce trio se trovati 3 studenti di tipo "trio"
-                if len(trio_nomi) == 3:
-                    trio_fittizio = []
-                    for nome_trio in trio_nomi:
-                        s = type('Student', (), {'get_nome_completo': lambda self, n=nome_trio: n})()
-                        trio_fittizio.append(s)
-                    trio_da_elaborare = trio_fittizio
+            if len(trio_nomi) == 3:
+                trio_fittizio = []
+                for nome_trio in trio_nomi:
+                    s = type('Student', (), {
+                        'get_nome_completo': lambda self, n=nome_trio: n
+                    })()
+                    trio_fittizio.append(s)
+                trio_da_elaborare = trio_fittizio
 
-            # STEP 4: Applica la logica esistente per aggiornare blacklist
-            # NOTA: per la ricostruzione, la coppia adiacente al FISSO è GIÀ inclusa
-            # nelle coppie normali (è stata salvata come tipo "coppia" in abbinamenti).
-            # Qui passiamo gruppo_adiacente_fittizio SOLO per aggiornare il contatore
-            # vicino_fisso, NON per raddoppiare la coppia nella blacklist.
+            # Riusa la stessa funzione di aggiornamento. La coppia accanto
+            # al FISSO è già compresa fra le coppie del layout.
             if coppie_da_elaborare or trio_da_elaborare:
                 self._aggiorna_coppie_da_evitare(coppie_da_elaborare, trio_da_elaborare)
                 print(f"      ✅ Elaborati: {len(coppie_da_elaborare)} coppie" +
                       (f" + 1 trio" if trio_da_elaborare else ""))
 
-            # Aggiorna contatore vicino_fisso separatamente
-            # (la coppia è già nella blacklist come coppia normale)
+            # Il contatore del vicino diretto viene ricostruito separatamente.
             if studente_fisso_fittizio and gruppo_adiacente_fittizio:
                 nome_adiacente = gruppo_adiacente_fittizio[0].get_nome_completo()
                 if "studenti_vicino_fisso_contatore" not in self.config_data:
@@ -756,12 +1970,15 @@ class ConfigurazioneApp:
                 contatore[nome_adiacente] += 1
                 print(f"      📌 Contatore vicino FISSO ricostruito: {nome_adiacente} → {contatore[nome_adiacente]}")
 
-        # STEP 5: Statistiche finali
         num_coppie_blacklist = len(self.config_data["coppie_da_evitare"])
+        # Riepiloga separatamente le blacklist delle due modalità.
+        num_adiacenze_terzetti = len(
+            self.config_data[CHIAVE_BLACKLIST_PER_MODO["terzetti"]])
         num_studenti_trio = len(self.config_data["studenti_trio_contatore"])
-        num_studenti_vicino = len(self.config_data.get("studenti_vicino_fisso_contatore", {}))
+        num_studenti_vicino = len(self.config_data["studenti_vicino_fisso_contatore"])
 
         print(f"   📊 RICOSTRUZIONE COMPLETATA:")
         print(f"      • Coppie in blacklist: {num_coppie_blacklist}")
+        print(f"      • Adiacenze terzetti in blacklist: {num_adiacenze_terzetti}")
         print(f"      • Studenti con contatore trio: {num_studenti_trio}")
         print(f"      • Studenti con contatore vicino FISSO: {num_studenti_vicino}")

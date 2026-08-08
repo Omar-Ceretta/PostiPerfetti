@@ -1,0 +1,21 @@
+# Classe: Piccola(14) (14 studenti)
+# Formato: Cognome;Nome;Genere;Posizione;Incompatibilità;Affinità
+# Genere: M/F (in caso di attivazione del flag "Genere misto" l'abbinamento [maschio][femmina] diventa un vincolo FORTE)
+# Posizione: NORMALE (= vincolo neutro) / PRIMA (= VINCOLO OBBLIGATORIO) / ULTIMA (= vincolo soft) / FISSO (= posizione fissa primo banco)
+# Vincoli "Incompatibilità": Cognome Nome:livello (1-3, dove 1= vincolo neutro, 2 = vincolo soft, 3 = VINCOLO OBBLIGATORIO)
+# Vincoli "Affinità": Cognome Nome:livello (1-3, dove 1 = vincolo neutro, 2 = vincolo soft, 3 = vincolo FORTE)
+
+Albano;Sara;F;PRIMA;Bruni Marco:2,Conti Elsa:1;Dal Maso Luca:2
+Bruni;Marco;M;NORMALE;Albano Sara:2,Dal Maso Luca:3;Esposito Gaia:2
+Conti;Elsa;F;ULTIMA;Albano Sara:1,Fabbri Nico:2;Greco Mara:2
+Dal Maso;Luca;M;NORMALE;Bruni Marco:3;Albano Sara:2
+Esposito;Gaia;F;ULTIMA;Fabbri Nico:3;Bruni Marco:2,Greco Mara:1
+Fabbri;Nico;M;NORMALE;Conti Elsa:2,Esposito Gaia:3;Iori Dario:1
+Greco;Mara;F;NORMALE;Lenzi Tea:2;Conti Elsa:2,Esposito Gaia:1
+Iori;Dario;M;NORMALE;Lenzi Tea:3;Fabbri Nico:1,Marra Eva:2
+Lenzi;Tea;F;NORMALE;Greco Mara:2,Iori Dario:3;Nava Pino:1
+Marra;Eva;F;NORMALE;Olivi Rocco:2;Iori Dario:2
+Nava;Pino;M;NORMALE;Olivi Rocco:1;Lenzi Tea:1,Pertini Aldo:2
+Olivi;Rocco;M;NORMALE;Marra Eva:2,Nava Pino:1;
+Pertini;Aldo;M;NORMALE;;Nava Pino:2,Rizzo Anna:1
+Rizzo;Anna;F;NORMALE;;Pertini Aldo:1

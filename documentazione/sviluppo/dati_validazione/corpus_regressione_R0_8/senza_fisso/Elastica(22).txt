@@ -1,0 +1,29 @@
+# Classe: Elastica(22) (22 studenti)
+# Formato: Cognome;Nome;Genere;Posizione;Incompatibilità;Affinità
+# Genere: M/F (in caso di attivazione del flag "Genere misto" l'abbinamento [maschio][femmina] diventa un vincolo FORTE)
+# Posizione: NORMALE (= vincolo neutro) / PRIMA (= VINCOLO OBBLIGATORIO) / ULTIMA (= vincolo soft) / FISSO (= posizione fissa primo banco)
+# Vincoli "Incompatibilità": Cognome Nome:livello (1-3, dove 1= vincolo neutro, 2 = vincolo soft, 3 = VINCOLO OBBLIGATORIO)
+# Vincoli "Affinità": Cognome Nome:livello (1-3, dove 1 = vincolo neutro, 2 = vincolo soft, 3 = vincolo FORTE)
+
+Achilli;Marco;M;NORMALE;;Bonato Sara:1
+Bianco;Eleonora;F;NORMALE;;Zorzi Giacomo:1
+Bonato;Sara;F;NORMALE;;Achilli Marco:1
+Caron;Luca;M;NORMALE;Drago Elena:1;
+Conti;Samuele;M;NORMALE;;
+Drago;Elena;F;NORMALE;Caron Luca:1;Fabris Anna:2
+Esposito;Giulia;F;NORMALE;;Galli Tommaso:1
+Fabris;Anna;F;NORMALE;;Drago Elena:2
+Galli;Tommaso;M;NORMALE;;Esposito Giulia:1
+Innocenti;Sofia;F;ULTIMA;Lombardi Davide:1;
+Leoni;Matteo;M;NORMALE;;Marchetti Chiara:1
+Lombardi;Davide;M;ULTIMA;Innocenti Sofia:1;
+Marchetti;Chiara;F;NORMALE;;Leoni Matteo:1
+Negri;Riccardo;M;NORMALE;;
+Orsini;Beatrice;F;NORMALE;Perin Nicola:2;
+Perin;Nicola;M;NORMALE;Orsini Beatrice:2;
+Quaglia;Martina;F;ULTIMA;;Rossi Filippo:1
+Rossi;Filippo;M;NORMALE;;Quaglia Martina:1
+Sartori;Aurora;F;NORMALE;;
+Tonon;Alessandro;M;NORMALE;Vitale Greta:1;
+Vitale;Greta;F;NORMALE;Tonon Alessandro:1;
+Zorzi;Giacomo;M;NORMALE;;Bianco Eleonora:1

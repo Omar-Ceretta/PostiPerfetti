@@ -1,271 +1,294 @@
-    # =================================================================
+# -*- coding: utf-8 -*-
 """
-    «PostiPerfetti» v. 2.0 — Programma per l'assegnazione automatica
-    dei posti degli allievi in una classe scolastica,
-    con gestione di vincoli, affinità, incompatibilità,
-    rotazione allievi e storico assegnazioni.
+storico_ui.py — interfaccia e consultazione dello Storico.
 
-    Autore: prof. Omar Ceretta — I.C. di Tombolo e Galliera Veneta (PD)
-    Licenza: GNU GPLv3
+Gestisce la tabella delle assegnazioni salvate, i filtri per classe e le
+finestre che mostrano report e piantine. Il popup del layout viene riutilizzato
+anche per l'anteprima delle assegnazioni annuali non ancora salvate.
 
-    ▣ Questo software è libero: puoi usarlo, copiarlo, studiarlo
-    e redistribuirlo liberamente.
-    ▣ Se lo modifichi e redistribuisci, sei tenuto a mantenere
-    l'attribuzione al creatore originale e a rendere pubblico
-    il codice sorgente delle tue modifiche con la stessa licenza GPLv3.
-    ▣ Questo programma è distribuito «così com'è», senza alcuna
-    garanzia espressa o implicita.
-"""
-    # =================================================================
-"""
-    Interfaccia dello storico assegnazioni.
-
-    Contiene:
-    • PopupLayoutStorico (QDialog)  → Finestra popup per layout storico
-    • StoricoUIMixin               → 8 metodi storico per FinestraPostiPerfetti
-
-    PopupLayoutStorico è una classe standalone (QDialog) che mostra il layout
-    grafico di un'assegnazione salvata nello storico, con possibilità di
-    esportare in Excel o TXT.
-
-    StoricoUIMixin è un mixin che aggiunge a FinestraPostiPerfetti i metodi
-    per gestire la tab Storico:
-    • _aggiorna_info_storico()              → Aggiorna label contatore storico
-    • _aggiorna_tabella_storico()           → Popola tabella con assegnazioni
-    • _on_storico_nome_modificato()         → Salva rinomina assegnazione
-    • _popola_filtro_classi()               → Popola dropdown filtro statistiche
-    • _elimina_assegnazione()               → Elimina un'assegnazione dallo storico
-    • _visualizza_dettagli_assegnazione()   → Mostra report completo in dialog
-    • _genera_report_da_layout()            → Genera report fallback dal layout
-    • _visualizza_layout_storico()          → Apre PopupLayoutStorico
+Parte di «PostiPerfetti».
+Autore: prof. Omar Ceretta — I.C. di Tombolo e Galliera Veneta (PD).
+Licenza: GNU GPLv3; software distribuito senza garanzie.
 """
 
+import copy
 import os
+from html import escape
 
 from PySide6.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QGridLayout,
-    QWidget, QLabel, QPushButton, QGroupBox,
+    QWidget, QLabel, QGroupBox,
     QScrollArea, QTextEdit, QTableWidgetItem,
-    QMessageBox, QFileDialog
+    QMessageBox, QFileDialog, QSizePolicy
 )
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QFont, QColor, QTextCharFormat, QTextCursor
 
-# Importa funzioni di utilità e tema
-from moduli.utilita import pulisci_nome_file, mostra_popup_file_salvato
+from moduli.percorsi import get_export_path
+from moduli.lingua import quantita
+from moduli.utilita import (
+    pulisci_nome_file,
+    mostra_popup_file_salvato,
+    PATTERN_EVIDENZIAZIONE_REPORT,
+    adatta_finestra_allo_schermo,
+    applica_icona, applica_stile_pulsante_popup, applica_icona_finestra,
+    crea_bottone, crea_popup_semantico, mostra_popup_semantico,
+)
+from moduli.statistiche_generali import applica_formattazione_statistiche_generali
+from moduli.esportazione import sostituisci_nome_assegnazione_report
 from moduli.tema import C
+from moduli.configurazione import (
+    ESITO_SALVATAGGIO_AZZERATO,
+    ESITO_SALVATAGGIO_ERRORE,
+)
 
-# =============================================================================
-# POPUP LAYOUT STORICO — Visualizzazione grafica assegnazione salvata
-# =============================================================================
+
+_NOTA_T4_VISIBILE = "Riutilizzo ammesso per completare l’assegnazione."
+
+
+def _rimuovi_nota_t4_da_report(testo: str) -> str:
+    """Nasconde dal report il dettaglio interno del quarto tentativo.
+
+    Il filtro vale anche per report già conservati nello Storico: non modifica
+    i dati salvati, ma impedisce che una nota tecnica dismessa ricompaia in
+    Dettagli o in un TXT esportato dal popup Layout.
+    """
+    righe_visibili = []
+    for riga in str(testo or "").splitlines():
+        contenuto = riga.strip().lstrip("•- \t").strip()
+        if (
+            contenuto == _NOTA_T4_VISIBILE
+            or contenuto.startswith("Penalità blacklist T4")
+        ):
+            continue
+        righe_visibili.append(riga)
+    return "\n".join(righe_visibili)
+
+
+def _descrivi_abbinamenti(assegnazione: dict) -> str:
+    """Restituisce la descrizione fisica salvata con l'assegnazione."""
+    return assegnazione["abbinamenti"]
+
+
+def _crea_bottone_tematico(
+    testo: str,
+    prefisso_colore: str,
+    *,
+    tooltip: str = "",
+    altezza: int = 40,
+    larghezza: int | None = None,
+    font_size: int = 13,
+    padding: str = "8px 20px",
+):
+    """Crea un pulsante dello Storico usando la palette semantica attiva."""
+    bottone = crea_bottone(
+        testo,
+        C(f"{prefisso_colore}_bg"),
+        C(f"{prefisso_colore}_hover"),
+        tooltip=tooltip,
+        altezza_min=altezza,
+        font_size=font_size,
+        padding=padding,
+        colore_testo=C(f"{prefisso_colore}_txt"),
+        colore_bordo=C(f"{prefisso_colore}_bordo"),
+    )
+    if larghezza is not None:
+        bottone.setMinimumWidth(larghezza)
+    return bottone
+
 
 class PopupLayoutStorico(QDialog):
-    """
-    Finestra popup per visualizzare il layout di un'assegnazione storica.
-    Mostra la griglia dell'aula con studenti posizionati + bottoni export.
-    """
+    """Mostra la piantina di un’assegnazione salvata o in anteprima."""
 
     def __init__(self, parent, config_app, indice_assegnazione):
-        """
-        Inizializza il popup.
-
-        Args:
-            parent: Finestra parent (FinestraPostiPerfetti)
-            config_app: Oggetto ConfigurazioneApp
-            indice_assegnazione: Indice dell'assegnazione nello storico
-        """
+        """Ricostruisce e apre il layout individuato nello Storico."""
         super().__init__(parent)
 
         self.parent_window = parent
         self.config_app = config_app
         self.indice_assegnazione = indice_assegnazione
 
-        # Ricostruisce il layout
         self.config_ricostruita, self.dati_assegnazione = self.config_app.ricostruisci_layout_da_storico(indice_assegnazione)
 
         if not self.config_ricostruita or not self.dati_assegnazione:
-            # Mostra errore e chiudi popup
-            QMessageBox.warning(
+            mostra_popup_semantico(
                 parent,
-                "Errore ricostruzione",
-                "❌ Impossibile ricostruire il layout.\n\n"
-                "Possibili cause:\n"
-                "• dati JSON corrotti\n\n"
-                "Questa assegnazione non può essere visualizzata."
+                "Layout non disponibile",
+                "Impossibile ricostruire il layout dell'assegnazione.",
+                "triangle-alert",
+                testo_informativo=(
+                    "I dati dello Storico potrebbero essere incompleti o danneggiati. "
+                    "Questa assegnazione non può essere visualizzata."
+                ),
             )
-            self.reject()  # Chiude il popup
+            self.reject()
             return
 
-        # Setup interfaccia
         self._setup_ui()
         self._applica_stile()
 
+    @classmethod
+    def da_configurazione(cls, parent, config_app, configurazione_aula, dati_assegnazione):
+        """Crea il popup per un’assegnazione ancora in memoria.
+
+        L’anteprima annuale non possiede ancora un indice nello Storico: riceve quindi
+        la configurazione dell’aula e i metadati direttamente dal chiamante.
+        """
+        # L’anteprima non ha ancora una voce nello Storico: inizializza il
+        # QDialog senza eseguire il costruttore che richiede un indice.
+        popup = cls.__new__(cls)
+        QDialog.__init__(popup, parent)
+
+        popup.parent_window = parent
+        popup.config_app = config_app
+        popup.indice_assegnazione = None
+        popup.config_ricostruita = configurazione_aula
+        popup.dati_assegnazione = dati_assegnazione
+        # In anteprima l’utente può soltanto consultare e chiudere il popup.
+        popup.modalita_anteprima = True
+
+        popup._setup_ui()
+        popup._applica_stile()
+        return popup
+
     def _setup_ui(self):
-        """Crea l'interfaccia del popup."""
-        # Configurazione finestra
-        nome_assegnazione = self.dati_assegnazione.get('nome', 'Assegnazione Storico')
-        data_assegnazione = self.dati_assegnazione.get('data', 'N/A')
+        """Costruisce intestazione, griglia e comandi del popup."""
+        nome_assegnazione = self.dati_assegnazione.get(
+            "nome", "Assegnazione Storico"
+        )
 
-        self.setWindowTitle(f"🔍 Layout assegnazione - {nome_assegnazione} - {data_assegnazione}")
-        self.setMinimumSize(1200, 750)
-        self.resize(1200, 750)  # Imposta anche dimensione iniziale - CONFIGURABILE
+        self.setWindowTitle(f"Layout assegnazione - {nome_assegnazione}")
+        applica_icona_finestra(self, "layout-grid")
+        adatta_finestra_allo_schermo(
+            self,
+            larghezza_ideale=1200,
+            altezza_ideale=750,
+            larghezza_minima=760,
+            altezza_minima=480,
+        )
 
-        # Layout principale verticale
         layout_principale = QVBoxLayout(self)
 
-        # === HEADER: Informazioni assegnazione ===
         header_widget = self._crea_header()
         layout_principale.addWidget(header_widget)
 
-        # === GRIGLIA AULA (scrollabile) ===
         scroll_area = QScrollArea()
         scroll_area.setWidgetResizable(True)
 
         widget_griglia = QWidget()
         self.layout_griglia = QGridLayout(widget_griglia)
 
-        # Popola la griglia con il layout ricostruito
         self._popola_griglia_aula()
 
         scroll_area.setWidget(widget_griglia)
         layout_principale.addWidget(scroll_area)
 
-        # === FOOTER: Bottoni export ===
         footer_widget = self._crea_footer()
         layout_principale.addWidget(footer_widget)
 
     def _crea_header(self):
-        """Crea il widget header con info assegnazione."""
-        header = QGroupBox("📋 Informazioni assegnazione")
+        """Crea il riepilogo essenziale dell'assegnazione."""
+        header = QGroupBox("Informazioni assegnazione")
         layout = QVBoxLayout(header)
 
-        # Nome assegnazione
-        label_nome = QLabel(f"<b>Nome:</b> {self.dati_assegnazione.get('nome', 'N/A')}")
-        label_nome.setStyleSheet("font-size: 13px;")
-        layout.addWidget(label_nome)
+        label_classe = QLabel(
+            f"<b>Classe:</b> "
+            f"{escape(str(self.dati_assegnazione['classe']))}"
+        )
+        label_classe.setStyleSheet("font-size: 13px;")
 
-        # Data e ora
-        data = self.dati_assegnazione.get('data', 'N/A')
-        ora = self.dati_assegnazione.get('ora', 'N/A')
-        label_data = QLabel(f"<b>Data/Ora:</b> {data} - {ora}")
-        layout.addWidget(label_data)
+        label_data = QLabel(
+            f"<b>Data creazione:</b> "
+            f"{escape(str(self.dati_assegnazione['data_creazione']))}"
+        )
 
-        # File origine
-        file_origine = self.dati_assegnazione.get('file_origine', 'Non specificato')
-        label_file = QLabel(f"<b>File origine:</b> {file_origine}")
-        layout.addWidget(label_file)
+        label_assegnazione = QLabel(
+            f"<b>Assegnazione:</b> "
+            f"{escape(str(self.dati_assegnazione['nome']))}"
+        )
 
-        # Configurazione aula
-        config_aula = self.dati_assegnazione.get('configurazione_aula', {})
-        num_file = config_aula.get('num_file', '?')
-        posti_fila = config_aula.get('posti_per_fila', '?')
-        num_studenti = config_aula.get('num_studenti', '?')
-        label_config = QLabel(f"<b>Configurazione:</b> {num_file} file × {posti_fila} posti - {num_studenti} studenti")
-        layout.addWidget(label_config)
+        label_abbinamenti = QLabel(
+            f"<b>Abbinamenti:</b> "
+            f"{escape(str(_descrivi_abbinamenti(self.dati_assegnazione)))}"
+        )
+
+        for etichetta in (
+                label_classe, label_data, label_assegnazione,
+                label_abbinamenti):
+            etichetta.setTextFormat(Qt.RichText)
+            etichetta.setWordWrap(True)
+            layout.addWidget(etichetta)
 
         return header
 
     def _crea_footer(self):
-        """Crea il widget footer con bottoni export."""
+        """Crea i comandi disponibili per storico o anteprima."""
         footer = QWidget()
         layout = QHBoxLayout(footer)
 
-        # Bottone Export Excel
-        btn_excel = QPushButton("📊 Esporta Excel")
-        btn_excel.setMinimumHeight(45)
-        btn_excel.setStyleSheet(f"""
-            QPushButton {{
-                background-color: {C("accento")};
-                color: white;
-                font-size: 14px;
-                font-weight: bold;
-                border-radius: 6px;
-                padding: 10px 20px;
-            }}
-            QPushButton:hover {{
-                background-color: {C("accento_hover")};
-            }}
-        """)
+        if getattr(self, 'modalita_anteprima', False):
+            btn_chiudi = _crea_bottone_tematico(
+                "Chiudi", "storico_btn_neutro", altezza=45, font_size=14
+            )
+            applica_icona(btn_chiudi, "x", 18)
+            btn_chiudi.clicked.connect(self.close)
+            layout.addWidget(btn_chiudi)
+            return footer
+
+        btn_excel = _crea_bottone_tematico(
+            "Esporta Excel", "btn_excel", altezza=45, font_size=14
+        )
+        applica_icona(btn_excel, "table-2", 18)
         btn_excel.clicked.connect(self._esporta_excel)
         layout.addWidget(btn_excel)
 
-        # Bottone Export Report TXT
-        btn_report = QPushButton("📋 Salva Report assegnazione (.txt)")
-        btn_report.setMinimumHeight(45)
-        btn_report.setStyleSheet(f"""
-            QPushButton {{
-                background-color: {C("btn_excel_bg")};
-                color: white;
-                font-size: 14px;
-                font-weight: bold;
-                border-radius: 6px;
-                padding: 10px 20px;
-            }}
-            QPushButton:hover {{
-                background-color: {C("btn_excel_hover")};
-            }}
-        """)
+        btn_report = _crea_bottone_tematico(
+            "Salva Report assegnazione (.txt)",
+            "btn_export",
+            altezza=45,
+            font_size=14,
+        )
+        applica_icona(btn_report, "file-down", 18)
         btn_report.clicked.connect(self._salva_report_txt)
         layout.addWidget(btn_report)
 
-        # Bottone Chiudi
-        btn_chiudi = QPushButton("❌ Chiudi")
-        btn_chiudi.setMinimumHeight(45)
-        btn_chiudi.setStyleSheet(f"""
-            QPushButton {{
-                background-color: {C("btn_grigio_bg")};
-                color: white;
-                font-size: 14px;
-                font-weight: bold;
-                border-radius: 6px;
-                padding: 10px 20px;
-            }}
-            QPushButton:hover {{
-                background-color: {C("btn_grigio_hover")};
-            }}
-        """)
+        btn_chiudi = _crea_bottone_tematico(
+            "Chiudi", "storico_btn_neutro", altezza=45, font_size=14
+        )
+        applica_icona(btn_chiudi, "x", 18)
         btn_chiudi.clicked.connect(self.close)
         layout.addWidget(btn_chiudi)
 
         return footer
 
     def _popola_griglia_aula(self):
-        """Popola la griglia con il layout ricostruito."""
-        # Pulisce layout esistente
+        """Disegna la configurazione ricostruita nella griglia del popup."""
         while self.layout_griglia.count():
             child = self.layout_griglia.takeAt(0)
             if child.widget():
                 child.widget().deleteLater()
 
-        # Ricrea griglia dal layout ricostruito
-        # Arredi (LIM, CAT, LAV) in basso, ultima fila banchi in alto
-        # IMPORTANTE: Salta le righe completamente vuote (solo corridoio)
-        # per evitare "buchi" visivi tra le file di banchi e gli arredi
+        # Le righe vuote non devono creare spazi fra banchi e arredi.
         griglia_invertita = list(reversed(self.config_ricostruita.griglia))
-        riga_display = 0  # Contatore separato per le righe del QGridLayout
+        riga_display = 0
         for riga in griglia_invertita:
-            # Verifica se la riga ha almeno un elemento visibile
             ha_contenuto = any(posto.tipo != 'corridoio' for posto in riga)
             if not ha_contenuto:
-                continue  # Salta righe completamente vuote
+                continue
 
             for col_idx, posto in enumerate(riga):
-                # --- MERGE VISIVO ARREDI (come nell'Excel) ---
-                # Stessa logica di _aggiorna_visualizzazione_aula() in postiperfetti.py:
-                # gli arredi sono 2 PostoAula consecutivi → una sola cella larga 2 colonne
+                # Ogni arredo occupa due celle logiche ma viene mostrato come
+                # un unico widget largo due colonne.
                 if posto.tipo in ('cattedra', 'lim', 'lavagna'):
                     cella_precedente = riga[col_idx - 1] if col_idx > 0 else None
                     is_prima_cella = (cella_precedente is None
                                       or cella_precedente.tipo != posto.tipo)
                     if is_prima_cella:
-                        # Prima cella della coppia → widget merged largo 2 colonne
                         widget_posto = self.parent_window.crea_widget_posto(
                             posto, merged=True)
                         self.layout_griglia.addWidget(
-                            widget_posto, riga_display, col_idx, 1, 2)  # colspan=2
-                    # else: seconda cella → coperta dal colspan=2 della prima
+                            widget_posto, riga_display, col_idx, 1, 2)
                 else:
-                    # Banchi e corridoi: rendering normale (1 widget per cella)
                     widget_posto = self.parent_window.crea_widget_posto(posto)
                     self.layout_griglia.addWidget(
                         widget_posto, riga_display, col_idx)
@@ -273,7 +296,7 @@ class PopupLayoutStorico(QDialog):
             riga_display += 1
 
     def _applica_stile(self):
-        """Applica il tema attivo al popup layout storico."""
+        """Applica al popup il tema attivo."""
         self.setStyleSheet(f"""
             QDialog {{
                 background-color: {C("sfondo_principale")};
@@ -306,108 +329,113 @@ class PopupLayoutStorico(QDialog):
         """)
 
     def _esporta_excel(self):
-        """Esporta il layout ricostruito in formato Excel."""
+        """Esporta in Excel la piantina mostrata nel popup.
+
+        Per i terzetti usa direttamente la griglia ricostruita; per le coppie
+        ricrea il contenitore richiesto dall’esportatore. Titolo e nome proposto
+        derivano dall'assegnazione selezionata.
+        """
         try:
-            # Suggerisce nome file basato su nome assegnazione salvato
             nome_assegnazione = self.dati_assegnazione.get('nome', 'Assegnazione')
             nome_pulito = pulisci_nome_file(nome_assegnazione)
             nome_suggerito = f"{nome_pulito}.xlsx"
 
-            # Dialog salvataggio file
             file_path, _ = QFileDialog.getSaveFileName(
                 self,
                 "Esporta Layout in Excel",
-                nome_suggerito,
+                get_export_path(nome_suggerito),
                 "File Excel (*.xlsx);;Tutti i file (*)"
             )
 
             if file_path:
-                # Crea file Excel riutilizzando metodo esistente
-                # NOTA: Il metodo crea_file_excel della parent window richiede un AssegnatorePosti
-                # ma noi abbiamo solo ConfigurazioneAula - dobbiamo creare un oggetto fittizio
+                # I terzetti esportano la stessa griglia già mostrata; il modo
+                # a coppie richiede invece il contenitore storico ricostruito.
+                if self.dati_assegnazione["modo"] == "terzetti":
+                    class _SorgenteAulaTerzetti:
+                        """Espone all’esportatore la configurazione dell’aula."""
+                        pass
+                    sorgente = _SorgenteAulaTerzetti()
+                    sorgente.configurazione_aula = self.config_ricostruita
+                else:
+                    sorgente = self._crea_assegnatore_fittizio()
 
-                # Crea AssegnatorePosti fittizio con dati ricostruiti
-                assegnatore_fittizio = self._crea_assegnatore_fittizio()
+                self.parent_window.crea_file_excel(
+                    file_path,
+                    sorgente,
+                    nome_assegnazione=nome_assegnazione,
+                )
 
-                # Chiama metodo esistente per creare Excel
-                self.parent_window.crea_file_excel(file_path, assegnatore_fittizio)
-
-                mostra_popup_file_salvato(self, "Export completato", "✅ File Excel salvato con successo!", file_path)
+                mostra_popup_file_salvato(self, "Esportazione completata", "File Excel salvato con successo!", file_path)
 
         except Exception as e:
-            QMessageBox.critical(
+            mostra_popup_semantico(
                 self,
-                "Errore Export",
-                f"❌ Errore durante l'export Excel:\n{str(e)}"
+                "Esportazione Excel non riuscita",
+                "Non è stato possibile creare il file Excel.",
+                "circle-x",
+                testo_informativo=str(e),
             )
 
     def _salva_report_txt(self):
-        """Salva il report testuale dell'assegnazione."""
+        """Salva su file il report associato all’assegnazione."""
         try:
-            # Suggerisce nome file basato su nome assegnazione salvato
             nome_assegnazione = self.dati_assegnazione.get('nome', 'Assegnazione')
             nome_pulito = pulisci_nome_file(nome_assegnazione)
             nome_suggerito = f"{nome_pulito}.txt"
 
-            # Dialog salvataggio file
             file_path, _ = QFileDialog.getSaveFileName(
                 self,
                 "Salva Report (.txt)",
-                nome_suggerito,
+                get_export_path(nome_suggerito),
                 "File di testo (*.txt);;Tutti i file (*)"
             )
 
             if file_path:
-                # Genera report testuale
                 report = self._genera_report_testuale()
 
-                # Salva su file
                 with open(file_path, 'w', encoding='utf-8') as f:
                     f.write(report)
 
-                mostra_popup_file_salvato(self, "Report salvato", "✅ Report testuale salvato con successo!", file_path)
+                mostra_popup_file_salvato(self, "Report salvato", "Report testuale salvato con successo!", file_path)
 
         except Exception as e:
-            QMessageBox.critical(
+            mostra_popup_semantico(
                 self,
-                "Errore salvataggio",
-                f"❌ Errore durante il salvataggio:\n{str(e)}"
+                "Salvataggio Report non riuscito",
+                "Non è stato possibile salvare il Report.",
+                "circle-x",
+                testo_informativo=str(e),
             )
 
     def _crea_assegnatore_fittizio(self):
-        """
-        Crea un oggetto AssegnatorePosti fittizio per riutilizzare crea_file_excel.
-        Estrae le informazioni dal layout ricostruito.
+        """Ricostruisce il contenitore richiesto dall’export delle coppie.
+
+        Le coppie e l’eventuale trio vengono ricavati dal layout salvato.
         """
         from moduli.algoritmo import AssegnatorePosti
 
         assegnatore = AssegnatorePosti()
         assegnatore.configurazione_aula = self.config_ricostruita
 
-        # Estrae coppie e trio dal layout salvato
         layout_data = self.dati_assegnazione.get('layout', [])
 
-        # Ricostruisce coppie (serve per statistiche Excel)
         coppie_ricostruite = []
         trio_ricostruito = None
 
-        # Mappa studenti per tipo abbinamento
         studenti_per_tipo = {}
         for studente_info in layout_data:
             nome = studente_info['studente']
             studenti_per_tipo[nome] = studente_info
 
-        # Ricostruisce coppie
         coppie_processate = set()
         for nome_studente, info in studenti_per_tipo.items():
             if info.get('tipo') == 'coppia':
                 compagno = info.get('compagno')
-                # Evita duplicati (coppia A-B = coppia B-A)
+                # Le due righe speculari del layout rappresentano una sola coppia.
                 coppia_key = tuple(sorted([nome_studente, compagno]))
                 if coppia_key not in coppie_processate:
                     coppie_processate.add(coppia_key)
 
-                    # Crea oggetti Student fittizi
                     from moduli.studenti import Student
                     parti1 = nome_studente.split(' ', 1)
                     parti2 = compagno.split(' ', 1)
@@ -415,7 +443,6 @@ class PopupLayoutStorico(QDialog):
                     s1 = Student(parti1[0], parti1[1] if len(parti1) > 1 else '', 'M')
                     s2 = Student(parti2[0], parti2[1] if len(parti2) > 1 else '', 'F')
 
-                    # Info punteggio (se disponibile)
                     punteggio = info.get('punteggio', 0)
                     info_coppia = {
                         'punteggio_totale': punteggio,
@@ -425,7 +452,6 @@ class PopupLayoutStorico(QDialog):
 
                     coppie_ricostruite.append((s1, s2, info_coppia))
 
-        # Ricostruisce trio se presente
         trio_nomi = []
         for nome_studente, info in studenti_per_tipo.items():
             if info.get('tipo') == 'trio':
@@ -434,7 +460,7 @@ class PopupLayoutStorico(QDialog):
         if len(trio_nomi) == 3:
             from moduli.studenti import Student
             trio_studenti = []
-            for nome in sorted(trio_nomi):  # Ordina per avere sempre stesso ordine
+            for nome in sorted(trio_nomi):
                 parti = nome.split(' ', 1)
                 s = Student(parti[0], parti[1] if len(parti) > 1 else '', 'M')
                 trio_studenti.append(s)
@@ -444,135 +470,50 @@ class PopupLayoutStorico(QDialog):
         assegnatore.trio_identificato = trio_ricostruito
         assegnatore.studenti_singoli = []
 
-        # Statistiche fittizie (non abbiamo i dati originali)
-        assegnatore.stats = {
-            'coppie_ottimali': 0,
-            'coppie_accettabili': len(coppie_ricostruite),
-            'coppie_problematiche': 0,
-            'coppie_riutilizzate': 0
-        }
+        # Il report ricostruito usa il testo salvato per la qualità; qui serve
+        # soltanto la chiave letta da ``conta_riutilizzate``.
+        assegnatore.stats = {'coppie_riutilizzate': 0}
 
         return assegnatore
 
     def _genera_report_testuale(self):
-        """Genera il report testuale completo dell'assegnazione."""
-        # Usa il report completo salvato se disponibile
-        if "report_completo" in self.dati_assegnazione:
-            return self.dati_assegnazione["report_completo"]
+        """Restituisce il report completo richiesto dal formato corrente."""
+        report = str(self.dati_assegnazione["report_completo"]).strip()
+        if not report:
+            raise ValueError("La voce dello Storico contiene un Report vuoto.")
+        return _rimuovi_nota_t4_da_report(report)
 
-        # FALLBACK: Genera report basilare dal layout
-        report = []
-
-        # Header
-        report.append("═" * 70)
-        report.append("🎓 REPORT ASSEGNAZIONE AUTOMATICA POSTI")
-        report.append("═" * 70)
-
-        # Informazioni base
-        report.append(f"Classe: {self.dati_assegnazione.get('nome', 'N/A')}")
-        report.append(f"File origine: {self.dati_assegnazione.get('file_origine', 'Non specificato')}")
-        report.append(f"Data/Ora: {self.dati_assegnazione.get('data', 'N/A')} {self.dati_assegnazione.get('ora', 'N/A')}")
-
-        # Configurazione aula
-        config = self.dati_assegnazione.get('configurazione_aula', {})
-        report.append(f"Studenti elaborati: {config.get('num_studenti', 'N/A')}")
-        report.append("")
-
-        # Layout salvato
-        layout_data = self.dati_assegnazione.get('layout', [])
-
-        # Conta tipi abbinamenti
-        num_coppie = len([s for s in layout_data if s.get('tipo') == 'coppia']) // 2
-        num_trio = len([s for s in layout_data if s.get('tipo') == 'trio'])
-
-        report.append("📊 STATISTICHE GENERALI")
-        report.append("─" * 70)
-        report.append(f"Coppie totali: {num_coppie}")
-        if num_trio > 0:
-            report.append(f"Trio formato: 1 ({num_trio} studenti)")
-        report.append("")
-
-        # Lista abbinamenti
-        report.append("💥 ABBINAMENTI FORMATI")
-        report.append("─" * 70)
-
-        # Coppie
-        coppie_mostrate = set()
-        idx_coppia = 1
-        for studente_info in layout_data:
-            if studente_info.get('tipo') == 'coppia':
-                nome = studente_info['studente']
-                compagno = studente_info.get('compagno', '?')
-                coppia_key = tuple(sorted([nome, compagno]))
-
-                if coppia_key not in coppie_mostrate:
-                    coppie_mostrate.add(coppia_key)
-                    punteggio = studente_info.get('punteggio', 'N/A')
-                    report.append(f"{idx_coppia:2d}. {nome} + {compagno}")
-                    report.append(f"    Punteggio: {punteggio}")
-                    report.append("")
-                    idx_coppia += 1
-
-        # Trio
-        if num_trio > 0:
-            trio_studenti = [s['studente'] for s in layout_data if s.get('tipo') == 'trio']
-            if len(trio_studenti) == 3:
-                report.append("💥 TRIO FORMATO")
-                report.append("─" * 70)
-                report.append(f"Trio: {' + '.join(trio_studenti)}")
-                report.append("")
-
-        report.append("═" * 70)
-
-        return "\n".join(report)
-
-# =============================================================================
-# MIXIN STORICO UI — Metodi per la gestione della tab Storico
-# =============================================================================
 
 class StoricoUIMixin:
-    """
-    Mixin che aggiunge la gestione della tab Storico a FinestraPostiPerfetti.
+    """Aggiunge alla finestra principale la gestione della scheda Storico.
 
-    Attributi usati da self (devono esistere nella classe principale):
-        - self.config_app                (ConfigurazioneApp)
-        - self.label_storico             (QLabel)
-        - self.tabella_storico           (QTableWidget)
-        - self.filtro_classe_combo       (QComboBox)
-        - self.btn_export_excel          (QPushButton)
-        - self.btn_export_report_txt     (QPushButton)
-        - self.text_report               (QTextEdit)
+    Popola la tabella, rinomina ed elimina le voci, aggiorna il filtro delle classi
+    e apre report o piantine delle assegnazioni selezionate.
     """
 
-    # =================================================================
-    # AGGIORNAMENTO INFO STORICO — Label contatore + stato
-    # =================================================================
 
     def _aggiorna_info_storico(self):
-        """Aggiorna le informazioni sullo storico delle assegnazioni."""
+        """Aggiorna il riepilogo e la tabella dello Storico."""
         storico = self.config_app.config_data["storico_assegnazioni"]
         num_assegnazioni = len(storico)
 
         if num_assegnazioni == 0:
             self.label_storico.setText("Storico: nessuna assegnazione precedente")
         else:
-            ultima_data = storico[-1]["data"] if storico else "N/A"
-            self.label_storico.setText(f"Storico: {num_assegnazioni} assegnazioni (ultima: {ultima_data})")
+            ultima_data = storico[-1]["data_creazione"] if storico else "N/A"
+            self.label_storico.setText(
+                "Storico: "
+                f"{quantita(num_assegnazioni, 'assegnazione', 'assegnazioni')} "
+                f"(ultima creazione: {ultima_data})"
+            )
 
-        # Aggiorna anche la tabella dello storico
         self._aggiorna_tabella_storico()
 
-    # =================================================================
-    # TABELLA STORICO — Popolamento con dati + bottoni azione
-    # =================================================================
 
     def _aggiorna_tabella_storico(self):
-        """Aggiorna la tabella dello storico nelle tab."""
+        """Popola la tabella con dati e comandi delle assegnazioni salvate."""
         storico = self.config_app.config_data["storico_assegnazioni"]
 
-        # --- Gestione placeholder storico vuoto ---
-        # Se non ci sono assegnazioni: mostra il messaggio centrato,
-        # nasconde la tabella. Viceversa quando ci sono dati.
         if storico:
             self.label_storico_vuoto.setVisible(False)
             self.tabella_storico.setVisible(True)
@@ -580,139 +521,144 @@ class StoricoUIMixin:
             self.label_storico_vuoto.setVisible(True)
             self.tabella_storico.setVisible(False)
 
-        # Blocca il segnale cellChanged durante il popolamento
-        # per evitare che scatti per ogni setItem()
+        # Evita che il popolamento venga interpretato come rinomina manuale.
         self.tabella_storico.blockSignals(True)
 
         self.tabella_storico.setRowCount(len(storico))
 
         for row, assegnazione in enumerate(storico):
-            # Colonna "Data" — NON editabile (solo visualizzazione)
-            item_data = QTableWidgetItem(f"{assegnazione['data']} {assegnazione['ora']}")
+            item_data = QTableWidgetItem(assegnazione["data_creazione"])
             item_data.setFlags(item_data.flags() & ~Qt.ItemIsEditable)
+            item_data.setTextAlignment(Qt.AlignLeft | Qt.AlignVCenter)
             self.tabella_storico.setItem(row, 0, item_data)
 
-            # Colonna "Nome" — editabile (l'utente può rinominarla)
-            self.tabella_storico.setItem(row, 1, QTableWidgetItem(assegnazione['nome']))
+            item_nome = QTableWidgetItem(assegnazione['nome'])
+            item_nome.setTextAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+            self.tabella_storico.setItem(row, 1, item_nome)
 
-            # Conta abbinamenti dal campo "layout"
-            layout = assegnazione.get('layout', [])
+            testo_abbinamenti = _descrivi_abbinamenti(assegnazione)
 
-            if layout:
-                # Conta coppie (ogni coppia ha 2 studenti nel layout)
-                studenti_coppia = [s for s in layout if s.get('tipo') == 'coppia']
-                num_coppie = len(studenti_coppia) // 2  # Diviso 2 perché ogni coppia = 2 studenti
-
-                # Conta trio (3 studenti nel layout)
-                studenti_trio = [s for s in layout if s.get('tipo') == 'trio']
-                num_trio = 1 if len(studenti_trio) == 3 else 0
-
-                if num_trio > 0:
-                    testo_abbinamenti = f"{num_coppie} coppie + {num_trio} trio"
-                else:
-                    testo_abbinamenti = f"{num_coppie} coppie"
-            else:
-                # Assegnazione senza layout (non dovrebbe succedere con nuovo formato)
-                testo_abbinamenti = "Formato non supportato"
-
-            # Colonna "Abbinamenti" — NON editabile (dato calcolato)
             item_abbinamenti = QTableWidgetItem(testo_abbinamenti)
             item_abbinamenti.setFlags(item_abbinamenti.flags() & ~Qt.ItemIsEditable)
+            item_abbinamenti.setTextAlignment(Qt.AlignLeft | Qt.AlignVCenter)
             self.tabella_storico.setItem(row, 2, item_abbinamenti)
 
-            # Container per bottoni azioni multiple
             widget_azioni = QWidget()
+            widget_azioni.setObjectName("contenitoreAzioniStorico")
+            widget_azioni.setAutoFillBackground(True)
+            # Un QTableWidget non dipinge il fondo dell'item sotto un cell widget.
+            # La trasparenza mostrava quindi lo sfondo principale (#2B2B2B nel
+            # tema scuro, #F0F2F5 nel chiaro), creando l'effetto di un box
+            # appoggiato sulla riga. Il contenitore usa esplicitamente lo stesso
+            # sfondo delle altre celle della tabella.
+            widget_azioni.setStyleSheet(
+                "QWidget#contenitoreAzioniStorico {"
+                f" background-color: {C('sfondo_pannello')};"
+                " border: none; margin: 0px; padding: 0px; }"
+            )
+            widget_azioni.setSizePolicy(
+                QSizePolicy.Policy.Expanding,
+                QSizePolicy.Policy.Expanding,
+            )
+
             layout_azioni = QHBoxLayout(widget_azioni)
-            layout_azioni.setContentsMargins(2, 2, 2, 2)
+            layout_azioni.setContentsMargins(6, 4, 6, 4)
+            layout_azioni.setSpacing(6)
+            layout_azioni.setAlignment(Qt.AlignVCenter)
 
-            # Bottone Elimina
-            btn_elimina = QPushButton("🗑 Elimina")
-            btn_elimina.setToolTip("Rimuove definitivamente questa assegnazione dallo storico")
-            btn_elimina.setMinimumHeight(35)  # Altezza sufficiente per il testo
-            btn_elimina.setMinimumWidth(110)   # Larghezza sufficiente per il testo
-            btn_elimina.setStyleSheet(f"""
-                QPushButton {{
-                    background-color: {C("btn_rosso_bg")};
-                    color: white;
-                    font-weight: bold;
-                    border-radius: 4px;
-                    padding: 4px 10px;
-                }}
-                QPushButton:hover {{
-                    background-color: {C("btn_rosso_hover")};
-                }}
-            """)
-            btn_elimina.clicked.connect(lambda checked, idx=row: self._elimina_assegnazione(idx))
-            layout_azioni.addWidget(btn_elimina)
+            btn_elimina = _crea_bottone_tematico(
+                "Elimina",
+                "storico_btn_elimina",
+                tooltip="Rimuove definitivamente questa assegnazione dallo storico",
+                altezza=32,
+                larghezza=110,
+                font_size=12,
+                padding="2px 9px",
+            )
+            applica_icona(btn_elimina, "trash-2", 15)
+            btn_elimina.setFixedHeight(32)
+            btn_elimina.clicked.connect(
+                lambda checked, idx=row: self._elimina_assegnazione(idx)
+            )
+            layout_azioni.addWidget(btn_elimina, alignment=Qt.AlignVCenter)
 
-            # Bottone Dettagli - dimensioni e colori ottimizzati
-            btn_dettagli = QPushButton("👁 Dettagli")
-            btn_dettagli.setToolTip("Visualizza il Report completo di questa assegnazione")
-            btn_dettagli.setMinimumHeight(35)  # Altezza sufficiente per il testo
-            btn_dettagli.setMinimumWidth(110)   # Larghezza sufficiente per il testo
-            btn_dettagli.setStyleSheet(f"""
-                QPushButton {{
-                    background-color: {C("btn_blu_bg")};
-                    color: white;
-                    font-weight: bold;
-                    border-radius: 4px;
-                    padding: 4px 10px;
-                }}
-                QPushButton:hover {{
-                    background-color: {C("btn_blu_hover")};
-                }}
-            """)
-            btn_dettagli.clicked.connect(lambda checked, idx=row: self._visualizza_dettagli_assegnazione(idx))
-            layout_azioni.addWidget(btn_dettagli)
+            btn_dettagli = _crea_bottone_tematico(
+                "Dettagli",
+                "storico_btn_dettagli",
+                tooltip="Visualizza il Report completo di questa assegnazione",
+                altezza=32,
+                larghezza=110,
+                font_size=12,
+                padding="2px 9px",
+            )
+            applica_icona(btn_dettagli, "list", 15)
+            btn_dettagli.setFixedHeight(32)
+            btn_dettagli.clicked.connect(
+                lambda checked, idx=row: self._visualizza_dettagli_assegnazione(idx)
+            )
+            layout_azioni.addWidget(btn_dettagli, alignment=Qt.AlignVCenter)
 
-            # Bottone Visualizza Layout
-            btn_layout = QPushButton("🔍 Layout")
-            btn_layout.setToolTip("Visualizza il Layout grafico di questa assegnazione")
-            btn_layout.setMinimumHeight(35)  # Altezza sufficiente per il testo
-            btn_layout.setMinimumWidth(110)   # Larghezza sufficiente per il testo
-            btn_layout.setStyleSheet(f"""
-                QPushButton {{
-                    background-color: {C("accento")};
-                    color: white;
-                    font-weight: bold;
-                    border-radius: 4px;
-                    padding: 4px 10px;
-                }}
-                QPushButton:hover {{
-                    background-color: {C("accento_hover")};
-                }}
-            """)
-            btn_layout.clicked.connect(lambda checked, idx=row: self._visualizza_layout_storico(idx))
-            layout_azioni.addWidget(btn_layout)
+            btn_layout = _crea_bottone_tematico(
+                "Layout",
+                "storico_btn_layout",
+                tooltip="Visualizza il Layout grafico di questa assegnazione",
+                altezza=32,
+                larghezza=110,
+                font_size=12,
+                padding="2px 9px",
+            )
+            applica_icona(btn_layout, "layout-grid", 15)
+            btn_layout.setFixedHeight(32)
+            btn_layout.clicked.connect(
+                lambda checked, idx=row: self._visualizza_layout_storico(idx)
+            )
+            layout_azioni.addWidget(btn_layout, alignment=Qt.AlignVCenter)
 
-            layout_azioni.addStretch()  # Spinge i bottoni a sinistra
+            layout_azioni.addStretch()
             self.tabella_storico.setCellWidget(row, 3, widget_azioni)
 
         self.tabella_storico.resizeColumnsToContents()
-        # Altezza righe calcolata automaticamente in base al contenuto.
-        # Usiamo setMinimumSectionSize (non setDefaultSectionSize) per
-        # garantire un minimo leggibile, ma lasciando a Qt la libertà
-        # di espandere la riga se il DPI scaling lo richiede.
-        self.tabella_storico.verticalHeader().setMinimumSectionSize(50)
-        self.tabella_storico.resizeRowsToContents()
+        # Il padding globale degli item sottrae spazio al rettangolo realmente
+        # disponibile per il cell widget. Pulsanti compatti da 32 px e margini
+        # verticali da 4 px lasciano un margine di sicurezza anche con DPI e font
+        # diversi; la riga resta abbastanza alta da centrare le celle testuali.
+        altezza_riga = 60
+        self.tabella_storico.verticalHeader().setMinimumSectionSize(altezza_riga)
+        self.tabella_storico.verticalHeader().setDefaultSectionSize(altezza_riga)
+        for row in range(self.tabella_storico.rowCount()):
+            self.tabella_storico.setRowHeight(row, altezza_riga)
 
-        # Sblocca il segnale cellChanged (popolamento completato)
         self.tabella_storico.blockSignals(False)
 
-    # =================================================================
-    # RINOMINA ASSEGNAZIONE — Salvataggio modifica nome nella tabella
-    # =================================================================
+
+    def _riallinea_gui_dopo_azzeramento_storico(self) -> None:
+        """Rende coerente la GUI quando il file di stato viene azzerato."""
+        self.sessione.mensile.scollega_dallo_storico()
+        self._aggiorna_info_storico()
+        self._popola_filtro_classi()
+        self._aggiorna_statistiche()
+        self.btn_export_excel.setEnabled(False)
+        self.btn_export_excel.setToolTip(
+            "Salva prima l'assegnazione nello Storico per abilitare l'esportazione."
+        )
+        self.btn_export_report_txt.setEnabled(False)
+        self.btn_export_report_txt.setToolTip(
+            "Salva prima l'assegnazione nello Storico per abilitare l'esportazione."
+        )
+        mostra_popup_semantico(
+            self,
+            "Storico azzerato",
+            "Storico e rotazioni sono ripartiti da zero.",
+            "triangle-alert",
+            testo_informativo=(
+                "La tabella è stata aggiornata. L'eventuale disposizione "
+                "ancora visibile non risulta più salvata nello Storico."
+            ),
+            messaggio_in_grassetto=True,
+        )
 
     def _on_storico_nome_modificato(self, row, column):
-        """
-        Salva la modifica quando l'utente rinomina un'assegnazione
-        nella colonna "Nome" dello Storico.
-
-        Args:
-            row: riga modificata
-            column: colonna modificata (solo colonna 1 = Nome è editabile)
-        """
-        # Solo la colonna "Nome" (indice 1) è editabile
+        """Salva la rinomina effettuata nella colonna Nome."""
         if column != 1:
             return
 
@@ -720,34 +666,74 @@ class StoricoUIMixin:
         if row < 0 or row >= len(storico):
             return
 
-        # Legge il nuovo testo dalla cella
         item = self.tabella_storico.item(row, column)
-        if item:
-            nuovo_nome = item.text().strip()
-            if nuovo_nome:
-                storico[row]["nome"] = nuovo_nome
-                self.config_app.salva_configurazione()
-                print(f"📝 Storico: assegnazione {row} rinominata → '{nuovo_nome}'")
+        if item is None:
+            return
 
-    # =================================================================
-    # FILTRO CLASSI — Dropdown per selezionare classe nelle statistiche
-    # =================================================================
+        nuovo_nome = item.text().strip()
+        if not nuovo_nome:
+            self.tabella_storico.blockSignals(True)
+            item.setText(storico[row]["nome"])
+            self.tabella_storico.blockSignals(False)
+            return
+
+        configurazione_precedente = copy.deepcopy(
+            self.config_app.config_data
+        )
+        storico[row]["nome"] = nuovo_nome
+
+        report_salvato = storico[row].get("report_completo")
+        if report_salvato:
+            storico[row]["report_completo"] = (
+                sostituisci_nome_assegnazione_report(
+                    report_salvato,
+                    nuovo_nome,
+                )
+            )
+
+        if not self.config_app.salva_configurazione():
+            if (
+                self.config_app.ultimo_esito_salvataggio
+                != ESITO_SALVATAGGIO_AZZERATO
+            ):
+                self.config_app.config_data = configurazione_precedente
+                self._aggiorna_tabella_storico()
+            if (
+                self.config_app.ultimo_esito_salvataggio
+                == ESITO_SALVATAGGIO_AZZERATO
+            ):
+                self._riallinea_gui_dopo_azzeramento_storico()
+            elif (
+                self.config_app.ultimo_esito_salvataggio
+                == ESITO_SALVATAGGIO_ERRORE
+            ):
+                mostra_popup_semantico(
+                    self,
+                    "Rinomina non salvata",
+                    "Non è stato possibile aggiornare lo Storico su disco.",
+                    "circle-x",
+                    messaggio_in_grassetto=True,
+                )
+            return
+
+        if self.sessione.mensile.indice_storico == row:
+            self._aggiorna_riga_identificativa_report(nuovo_nome)
+            self.sessione.mensile.rinomina(nuovo_nome)
+
+        print(f"📝 Storico: assegnazione {row} rinominata → '{nuovo_nome}'")
+
 
     def _popola_filtro_classi(self):
-        """
-        Popola il dropdown filtro con tutte le classi presenti nello storico.
-        """
+        """Aggiorna il filtro con le classi presenti nello Storico."""
         self.filtro_classe_combo.clear()
 
         storico = self.config_app.config_data.get("storico_assegnazioni", [])
 
         if not storico:
-            # Nessuna assegnazione - mostra messaggio
-            self.filtro_classe_combo.addItem("📭 Nessuna assegnazione salvata", None)
+            self.filtro_classe_combo.addItem("Nessuna assegnazione salvata", None)
             return
 
-        # Trova tutti i file_origine unici
-        classi_trovate = {}  # {file_origine: conteggio_assegnazioni}
+        classi_trovate = {}
 
         for assegnazione in storico:
             file_origine = assegnazione.get('file_origine', 'File non specificato')
@@ -755,35 +741,25 @@ class StoricoUIMixin:
                 classi_trovate[file_origine] = 0
             classi_trovate[file_origine] += 1
 
-        # Ordina per nome file
         classi_ordinate = sorted(classi_trovate.items())
 
-        # Aggiungi placeholder "Seleziona una classe" (solo se più di una classe).
-        # Con una sola classe, viene selezionata automaticamente.
-        # Il placeholder usa userData = "__placeholder__" come sentinella:
-        # _aggiorna_statistiche() in statistiche.py lo intercetta e mostra
-        # un messaggio invito anziché statistiche mescolate di classi diverse.
+        # La sentinella impedisce di mescolare statistiche di classi diverse.
         if len(classi_ordinate) > 1:
             self.filtro_classe_combo.addItem(
                 "— Seleziona una classe per visualizzare le statistiche —",
                 "__placeholder__"
             )
 
-        # Aggiungi ogni classe trovata
         for file_origine, count in classi_ordinate:
-            # Estrae solo nome file (senza path)
             nome_file = os.path.basename(file_origine) if file_origine else "File non specificato"
             self.filtro_classe_combo.addItem(
-                f"📁 {nome_file} ({count} assegnazioni)",
-                file_origine  # userData = file_origine per filtrare
+                f"{nome_file} ({quantita(count, 'assegnazione', 'assegnazioni')})",
+                file_origine
             )
 
         print(f"📊 Filtro classi popolato: {len(classi_ordinate)} classi trovate")
 
-        # Applica stile del tema attivo al combo filtro.
-        # Va fatto qui (e non solo nel global stylesheet) perché il combo
-        # viene ripopolato dinamicamente: senza questo, al cambio tema
-        # il dropdown mantiene i colori vecchi finché non viene ricreato.
+        # Il menu viene ricreato dinamicamente e deve ricevere subito il tema.
         self.filtro_classe_combo.setStyleSheet(f"""
             QComboBox {{
                 background-color: {C("sfondo_input")};
@@ -801,166 +777,189 @@ class StoricoUIMixin:
             }}
         """)
 
-    # =================================================================
-    # ELIMINAZIONE ASSEGNAZIONE — Con conferma utente
-    # =================================================================
 
     def _elimina_assegnazione(self, indice_assegnazione: int):
-        """
-        Elimina un'assegnazione dallo storico dopo conferma dell'utente.
-
-        Args:
-            indice_assegnazione (int): Indice dell'assegnazione da eliminare
-        """
+        """Elimina una voce confermata e riallinea blacklist e interfaccia."""
         try:
-            # Ottiene i dati dell'assegnazione da eliminare
             storico = self.config_app.config_data["storico_assegnazioni"]
 
             if 0 <= indice_assegnazione < len(storico):
                 assegnazione = storico[indice_assegnazione]
                 nome_assegnazione = assegnazione.get("nome", "Senza nome")
-                data_assegnazione = assegnazione.get("data", "N/A")
+                data_assegnazione = assegnazione.get("data_creazione", "N/A")
 
-                # Conta coppie e trio dal campo "layout" (formato standard)
-                layout = assegnazione.get("layout", [])
-                studenti_coppia = [s for s in layout if s.get("tipo") == "coppia"]
-                num_coppie = len(studenti_coppia) // 2  # Diviso 2: ogni coppia = 2 studenti
-                studenti_trio = [s for s in layout if s.get("tipo") == "trio"]
-                num_trio = 1 if len(studenti_trio) == 3 else 0
-
-                # Crea messaggio dettagliato
-                messaggio_abbinamenti = f"👥 Coppie: {num_coppie}"
-                if num_trio > 0:
-                    messaggio_abbinamenti += f" | Trio: {num_trio}"
-
-                # Chiede conferma all'utente
-                risposta = QMessageBox.question(
-                    self,
-                    "Conferma eliminazione",
-                    f"‼️ Sei sicuro di voler eliminare questa assegnazione?\n\n"
-                    f"📅 Data: {data_assegnazione}\n"
-                    f"📝 Nome: {nome_assegnazione}\n"
-                    f"{messaggio_abbinamenti}\n\n"
-                    f"⚠️ QUESTA AZIONE NON PUÒ ESSERE ANNULLATA!",
-                    QMessageBox.Yes | QMessageBox.No,
-                    QMessageBox.No  # Pulsante predefinito: No (sicurezza)
+                messaggio_abbinamenti = (
+                    "Composizione: " + _descrivi_abbinamenti(assegnazione)
                 )
 
-                if risposta == QMessageBox.Yes:
-                    # Rimuove l'assegnazione dallo storico
+                conferma = crea_popup_semantico(
+                    self,
+                    "Elimina assegnazione",
+                    "Eliminare definitivamente questa assegnazione?",
+                    "triangle-alert",
+                    testo_informativo=(
+                        f"Data creazione: {data_assegnazione}\n"
+                        f"Nome: {nome_assegnazione}\n"
+                        f"{messaggio_abbinamenti}\n\n"
+                        "Questa azione non può essere annullata."
+                    ),
+                )
+                btn_elimina_popup = conferma.addButton(
+                    "Elimina", QMessageBox.AcceptRole
+                )
+                applica_icona(btn_elimina_popup, "trash-2", 18)
+                applica_stile_pulsante_popup(
+                    btn_elimina_popup, "distruttivo"
+                )
+                btn_annulla_popup = conferma.addButton(
+                    "Annulla", QMessageBox.RejectRole
+                )
+                applica_icona(btn_annulla_popup, "x", 18)
+                conferma.setDefaultButton(btn_annulla_popup)
+                conferma.exec()
+
+                if conferma.clickedButton() == btn_elimina_popup:
+                    configurazione_precedente = copy.deepcopy(
+                        self.config_app.config_data
+                    )
                     del self.config_app.config_data["storico_assegnazioni"][indice_assegnazione]
 
-                    # NUOVO: Ricostruisce blacklist per coerenza dopo eliminazione
                     print(f"🔄 Eliminazione assegnazione: avvio ricostruzione blacklist...")
+                    # Dopo l’eliminazione le blacklist devono riflettere soltanto
+                    # le assegnazioni ancora presenti.
                     self.config_app._ricostruisci_blacklist_da_storico()
                     print(f"✅ Blacklist ricostruita - coerenza garantita")
 
-                    # Salva immediatamente la configurazione aggiornata
-                    self.config_app.salva_configurazione()
+                    if not self.config_app.salva_configurazione():
+                        if (
+                            self.config_app.ultimo_esito_salvataggio
+                            != ESITO_SALVATAGGIO_AZZERATO
+                        ):
+                            self.config_app.config_data = configurazione_precedente
+                            self._aggiorna_tabella_storico()
+                            self._aggiorna_info_storico()
+                            self._popola_filtro_classi()
+                        if (
+                            self.config_app.ultimo_esito_salvataggio
+                            == ESITO_SALVATAGGIO_AZZERATO
+                        ):
+                            self._riallinea_gui_dopo_azzeramento_storico()
+                        elif (
+                            self.config_app.ultimo_esito_salvataggio
+                            == ESITO_SALVATAGGIO_ERRORE
+                        ):
+                            mostra_popup_semantico(
+                                self,
+                                "Eliminazione non salvata",
+                                "Non è stato possibile aggiornare lo Storico su disco.",
+                                "circle-x",
+                                messaggio_in_grassetto=True,
+                            )
+                        return
 
-                    # Aggiorna l'interfaccia
-                    self._aggiorna_info_storico()  # Aggiorna contatore e stato
-                    self._popola_filtro_classi()   # Riallinea il combo Statistiche
+                    risultato_corrente_eliminato = (
+                        self.sessione.mensile.indice_storico
+                        == indice_assegnazione
+                    )
+                    self.sessione.mensile.aggiorna_indice_dopo_eliminazione(
+                        indice_assegnazione
+                    )
+                    # StatoMensile effettua atomicamente anche lo scollegamento
+                    # quando viene eliminata proprio la voce corrente.
 
-                    # Messaggio di conferma
-                    QMessageBox.information(
+                    self._aggiorna_info_storico()
+                    self._popola_filtro_classi()
+
+                    mostra_popup_semantico(
                         self,
-                        "Eliminazione completata",
-                        f"✅ Assegnazione '{nome_assegnazione}' eliminata con successo."
+                        "Assegnazione eliminata",
+                        "L'assegnazione è stata rimossa dallo Storico.",
+                        "circle-check",
+                        testo_informativo=nome_assegnazione,
                     )
 
-                    # Disabilita i bottoni export: l'assegnazione a cui si
-                    # riferivano potrebbe essere quella appena eliminata,
-                    # e il nome suggerito per il file verrebbe preso da
-                    # una voce diversa dello storico (fuorviante).
-                    # L'utente può riesportare dopo aver salvato di nuovo.
-                    self.btn_export_excel.setEnabled(False)
-                    self.btn_export_excel.setToolTip(
-                        "Salva prima l'assegnazione nello Storico per abilitare l'export."
-                    )
-                    self.btn_export_report_txt.setEnabled(False)
-                    self.btn_export_report_txt.setToolTip(
-                        "Salva prima l'assegnazione nello Storico per abilitare l'export."
-                    )
+                    # Gli export vanno disabilitati soltanto se la voce rimossa
+                    # era quella collegata al risultato attualmente mostrato.
+                    if risultato_corrente_eliminato:
+                        self.btn_export_excel.setEnabled(False)
+                        self.btn_export_excel.setToolTip(
+                            "Salva prima l'assegnazione nello Storico per abilitare l'esportazione."
+                        )
+                        self.btn_export_report_txt.setEnabled(False)
+                        self.btn_export_report_txt.setToolTip(
+                            "Salva prima l'assegnazione nello Storico per abilitare l'esportazione."
+                        )
 
             else:
-                # Errore: indice non valido
-                QMessageBox.warning(
+                mostra_popup_semantico(
                     self,
-                    "Errore",
-                    "Impossibile eliminare: assegnazione non trovata."
+                    "Assegnazione non trovata",
+                    "Non è possibile eliminare la voce selezionata.",
+                    "triangle-alert",
+                    testo_informativo=(
+                        "Aggiorna lo Storico e riprova."
+                    ),
                 )
 
         except Exception as e:
-            # Gestione errori imprevisti
-            QMessageBox.critical(
+            mostra_popup_semantico(
                 self,
-                "Errore eliminazione",
-                f"Si è verificato un errore durante l'eliminazione:\n{str(e)}"
+                "Eliminazione non riuscita",
+                "Si è verificato un errore durante l'eliminazione.",
+                "circle-x",
+                testo_informativo=str(e),
             )
 
-    # =================================================================
-    # DETTAGLI ASSEGNAZIONE — Visualizza report completo in dialog
-    # =================================================================
 
     def _visualizza_dettagli_assegnazione(self, indice_assegnazione: int):
-        """
-        Visualizza i dettagli completi di un'assegnazione storica in una finestra separata.
-
-        Args:
-            indice_assegnazione (int): Indice dell'assegnazione da visualizzare
-        """
+        """Mostra il report completo di un’assegnazione salvata."""
         try:
-            # Ottiene i dati dell'assegnazione
             storico = self.config_app.config_data["storico_assegnazioni"]
 
             if 0 <= indice_assegnazione < len(storico):
                 assegnazione = storico[indice_assegnazione]
 
-                # Usa il report completo salvato se disponibile
-                if "report_completo" in assegnazione:
-                    dettagli = assegnazione["report_completo"]
-                else:
-                    # Fallback: genera report basilare dal layout
-                    dettagli = self._genera_report_da_layout(assegnazione)
+                dettagli = _rimuovi_nota_t4_da_report(
+                    assegnazione["report_completo"]
+                )
+                if not dettagli.strip():
+                    raise ValueError(
+                        "La voce dello Storico contiene un Report vuoto."
+                    )
 
-                # Crea dialog custom ridimensionabile
                 dialog = QDialog(self)
-                dialog.setWindowTitle(f"📋 Dettagli assegnazione - {assegnazione.get('nome', 'Senza nome')}")
-                dialog.setMinimumSize(1150, 800)  # CONFIGURABILE
-                dialog.resize(1150, 800)  # CONFIGURABILE
+                dialog.setWindowTitle(
+                    f"Report — {assegnazione['nome']}"
+                )
+                applica_icona_finestra(dialog, "list")
+                adatta_finestra_allo_schermo(
+                    dialog,
+                    larghezza_ideale=1200,
+                    altezza_ideale=750,
+                    larghezza_minima=760,
+                    altezza_minima=480,
+                )
 
-                # Layout verticale
                 layout = QVBoxLayout(dialog)
 
-                # TextEdit in sola lettura per il report
                 text_edit = QTextEdit()
                 text_edit.setPlainText(dettagli)
                 text_edit.setReadOnly(True)
-                # Usa una famiglia di font monospace con fallback cross-platform
-                # "Consolas" → Windows | "Courier New" → macOS | "DejaVu Sans Mono" → Linux
                 font_mono = QFont()
-                font_mono.setFamily("Consolas")           # Tentativo 1: Windows
-                font_mono.setStyleHint(QFont.Monospace)   # Fallback automatico Qt al monospace del sistema
+                font_mono.setFamily("Consolas")
+                font_mono.setStyleHint(QFont.Monospace)
                 font_mono.setPointSize(10)
                 text_edit.setFont(font_mono)
                 layout.addWidget(text_edit)
 
-                # === EVIDENZIAZIONE COPPIE RIUTILIZZATE ===
 
-                # Formato ocra/giallo grassetto
                 formato_ocra = QTextCharFormat()
                 formato_ocra.setForeground(QColor(C("testo_ocra")))
                 formato_ocra.setFontWeight(QFont.Bold)
 
-                # Pattern da evidenziare
-                patterns_da_evidenziare = ["Coppia già usata", "BLACKLISTATA_SOFT", "RIUTILIZZATA"]
-
-                # Se il report contiene coppie riutilizzate > 0, evidenzia
-                # anche la riga di riepilogo nella sezione statistiche.
-                # Controlla che NON sia "Coppie riutilizzate: 0" (quella resta normale).
-                if "Coppie riutilizzate:" in dettagli and "Coppie riutilizzate: 0" not in dettagli:
-                    patterns_da_evidenziare.append("Coppie riutilizzate:")
+                # Le note di riuso seguono pattern testuali; le statistiche
+                # generali usano invece i metadati strutturati salvati.
+                patterns_da_evidenziare = list(PATTERN_EVIDENZIAZIONE_REPORT)
 
                 for pattern in patterns_da_evidenziare:
                     cursore = text_edit.textCursor()
@@ -971,63 +970,38 @@ class StoricoUIMixin:
                         cursore = text_edit.document().find(pattern, cursore)
                         if cursore.isNull():
                             break
-                        # Seleziona l'intera riga e applica formato ocra
                         cursore.movePosition(QTextCursor.StartOfBlock, QTextCursor.MoveAnchor)
                         cursore.movePosition(QTextCursor.EndOfBlock, QTextCursor.KeepAnchor)
                         cursore.setCharFormat(formato_ocra)
 
-                # Riporta il cursore all'inizio
+                applica_formattazione_statistiche_generali(
+                    text_edit, assegnazione.get("statistiche_generali", []))
+
                 cursore_iniziale = text_edit.textCursor()
                 cursore_iniziale.movePosition(QTextCursor.Start)
                 text_edit.setTextCursor(cursore_iniziale)
 
-                # === FOOTER DIALOG: Salva Report + Chiudi ===
                 footer_dettagli = QHBoxLayout()
                 footer_dettagli.setSpacing(12)
 
-                # --- Bottone Salva Report ---
-                # Salva il report testuale come file .txt con QFileDialog
-                btn_salva_report = QPushButton("💾 Salva Report assegnazione (.txt)")
-                btn_salva_report.setMinimumHeight(40)
-                btn_salva_report.setStyleSheet(f"""
-                    QPushButton {{
-                        background-color: {C("btn_blu_bg")};
-                        color: white;
-                        font-size: 13px;
-                        font-weight: bold;
-                        border-radius: 6px;
-                        padding: 8px 20px;
-                    }}
-                    QPushButton:hover {{
-                        background-color: {C("btn_blu_hover")};
-                    }}
-                """)
+                btn_salva_report = _crea_bottone_tematico(
+                    "Salva Report assegnazione (.txt)",
+                    "btn_export",
+                    altezza=40,
+                    font_size=13,
+                )
+                applica_icona(btn_salva_report, "file-down", 18)
 
-                # Funzione di salvataggio (closure: cattura text_edit e assegnazione)
                 def _salva_report_dettagli():
-                    """Salva il report della finestra Dettagli come file .txt."""
+                    """Salva il report visualizzato come file di testo."""
                     try:
-                        # Costruisce nome suggerito: "NomeClasse_-_Report_-_Assegnazione_XX_-_data.txt"
                         nome_ass = assegnazione.get('nome', 'Assegnazione')
-                        file_origine = assegnazione.get('file_origine', '')
-                        # Estrae nome classe dal file origine (senza estensione .txt)
-                        nome_classe = os.path.splitext(file_origine)[0] if file_origine else nome_ass
-
-                        # nome_ass contiene già "Classe2D - Assegnazione 02 - 21/03/2026"
-                        # Rimuoviamo il prefisso "Classe2D - " per evitare ridondanza
-                        prefisso_classe = nome_classe + " - "
-                        nome_senza_classe = nome_ass
-                        if nome_senza_classe.startswith(prefisso_classe):
-                            nome_senza_classe = nome_senza_classe[len(prefisso_classe):]
-
-                        nome_classe_pulito = pulisci_nome_file(nome_classe)
-                        nome_parte_pulita = pulisci_nome_file(nome_senza_classe)
-                        nome_suggerito = f"{nome_classe_pulito}_-_Report_-_{nome_parte_pulita}.txt"
+                        nome_suggerito = f"{pulisci_nome_file(nome_ass)}.txt"
 
                         file_path, _ = QFileDialog.getSaveFileName(
                             dialog,
                             "Salva Report assegnazione (.txt)",
-                            nome_suggerito,
+                            get_export_path(nome_suggerito),
                             "File di testo (*.txt);;Tutti i file (*)"
                         )
 
@@ -1037,41 +1011,31 @@ class StoricoUIMixin:
                                 f.write(report_testo)
                             mostra_popup_file_salvato(
                                 dialog, "Report salvato",
-                                "✅ Report assegnazione salvato con successo!",
+                                "Report assegnazione salvato con successo!",
                                 file_path
                             )
 
                     except Exception as e:
-                        QMessageBox.critical(
-                            dialog, "Errore salvataggio",
-                            f"❌ Errore durante il salvataggio:\n{str(e)}"
+                        mostra_popup_semantico(
+                            dialog,
+                            "Salvataggio Report non riuscito",
+                            "Non è stato possibile salvare il Report.",
+                            "circle-x",
+                            testo_informativo=str(e),
                         )
 
                 btn_salva_report.clicked.connect(_salva_report_dettagli)
                 footer_dettagli.addWidget(btn_salva_report)
 
-                # --- Bottone Chiudi ---
-                btn_chiudi = QPushButton("✅ Chiudi")
-                btn_chiudi.setMinimumHeight(40)
-                btn_chiudi.setStyleSheet(f"""
-                    QPushButton {{
-                        background-color: {C("accento")};
-                        color: white;
-                        font-size: 13px;
-                        font-weight: bold;
-                        border-radius: 6px;
-                        padding: 8px 20px;
-                    }}
-                    QPushButton:hover {{
-                        background-color: {C("accento_hover")};
-                    }}
-                """)
+                btn_chiudi = _crea_bottone_tematico(
+                    "Chiudi", "storico_btn_neutro", altezza=40, font_size=13
+                )
+                applica_icona(btn_chiudi, "x", 18)
                 btn_chiudi.clicked.connect(dialog.close)
                 footer_dettagli.addWidget(btn_chiudi)
 
                 layout.addLayout(footer_dettagli)
 
-                # Applica tema attivo al dialog dettagli
                 dialog.setStyleSheet(f"""
                     QDialog {{
                         background-color: {C("sfondo_principale")};
@@ -1086,106 +1050,40 @@ class StoricoUIMixin:
                     }}
                 """)
 
-                # Mostra dialog
                 dialog.exec()
 
             else:
-                QMessageBox.warning(self, "Errore", "Assegnazione non trovata.")
+                mostra_popup_semantico(
+                    self,
+                    "Assegnazione non trovata",
+                    "Il Report selezionato non è più disponibile.",
+                    "triangle-alert",
+                    testo_informativo="Aggiorna lo Storico e riprova.",
+                )
 
         except Exception as e:
-            QMessageBox.critical(self, "Errore", f"Errore nella visualizzazione:\n{str(e)}")
+            mostra_popup_semantico(
+                self,
+                "Report non disponibile",
+                "Non è stato possibile visualizzare il Report.",
+                "circle-x",
+                testo_informativo=str(e),
+            )
 
-    # =================================================================
-    # REPORT DA LAYOUT — Fallback se manca il report completo salvato
-    # =================================================================
-
-    def _genera_report_da_layout(self, assegnazione: dict) -> str:
-        """
-        Genera un report basilare dal campo 'layout' (fallback se manca report_completo).
-
-        Args:
-            assegnazione (dict): Dati dell'assegnazione
-
-        Returns:
-            str: Report formattato
-        """
-        report = []
-
-        # Header
-        report.append(f"📋 DETTAGLI ASSEGNAZIONE")
-        report.append("=" * 40)
-        report.append(f"📝 Nome: {assegnazione.get('nome', 'Senza nome')}")
-        report.append(f"📅 Data: {assegnazione.get('data', 'N/A')}")
-        report.append(f"🕐 Ora: {assegnazione.get('ora', 'N/A')}")
-        report.append(f"📁 File origine: {assegnazione.get('file_origine', 'Non specificato')}")
-
-        # Layout
-        layout = assegnazione.get('layout', [])
-
-        if layout:
-            # Conta coppie e trio
-            studenti_coppia = [s for s in layout if s.get('tipo') == 'coppia']
-            studenti_trio = [s for s in layout if s.get('tipo') == 'trio']
-
-            num_coppie = len(studenti_coppia) // 2
-            num_trio = 1 if len(studenti_trio) == 3 else 0
-
-            report.append(f"👥 Coppie: {num_coppie}")
-            if num_trio > 0:
-                report.append(f"👥 Trio: {num_trio}")
-            report.append("")
-
-            # Lista abbinamenti
-            report.append("💫 ABBINAMENTI FORMATI:")
-            report.append("-" * 20)
-
-            # Mostra coppie
-            coppie_mostrate = set()
-            idx = 1
-            for studente_info in layout:
-                if studente_info.get('tipo') == 'coppia':
-                    nome = studente_info['studente']
-                    compagno = studente_info.get('compagno', '?')
-                    coppia_key = tuple(sorted([nome, compagno]))
-
-                    if coppia_key not in coppie_mostrate:
-                        coppie_mostrate.add(coppia_key)
-                        report.append(f"{idx:2d}. {nome} + {compagno}")
-                        idx += 1
-
-            # Mostra trio
-            if num_trio > 0:
-                trio_studenti = [s['studente'] for s in layout if s.get('tipo') == 'trio']
-                if len(trio_studenti) == 3:
-                    report.append("")
-                    report.append(f"TRIO: {' + '.join(trio_studenti)}")
-        else:
-            report.append("")
-            report.append("⚠️ Nessun layout disponibile")
-
-        return "\n".join(report)
-
-    # =================================================================
-    # VISUALIZZA LAYOUT STORICO — Apre il popup PopupLayoutStorico
-    # =================================================================
 
     def _visualizza_layout_storico(self, indice_assegnazione):
-        """
-        Apre il popup per visualizzare il layout grafico di un'assegnazione storica.
-
-        Args:
-            indice_assegnazione (int): Indice dell'assegnazione nello storico
-        """
+        """Apre la piantina grafica dell’assegnazione selezionata."""
         try:
-            # Crea e mostra il popup
             popup = PopupLayoutStorico(self, self.config_app, indice_assegnazione)
-            popup.exec()  # Mostra come dialog modale
+            popup.exec()
 
         except Exception as e:
-            QMessageBox.critical(
+            mostra_popup_semantico(
                 self,
-                "Errore Visualizzazione",
-                f"❌ Errore durante l'apertura del layout:\n{str(e)}"
+                "Layout non disponibile",
+                "Non è stato possibile aprire il layout dell'assegnazione.",
+                "circle-x",
+                testo_informativo=str(e),
             )
             import traceback
             traceback.print_exc()

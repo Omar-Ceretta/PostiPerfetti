@@ -1,0 +1,25 @@
+# Classe: Terzetti-regolare(18) (18 studenti)
+# Formato: Cognome;Nome;Genere;Posizione;Incompatibilità;Affinità
+# Genere: M/F (in caso di attivazione del flag "Genere misto" l'abbinamento [maschio][femmina] diventa un vincolo FORTE)
+# Posizione: NORMALE (= vincolo neutro) / PRIMA (= VINCOLO OBBLIGATORIO) / ULTIMA (= vincolo soft) / FISSO (= posizione fissa primo banco)
+# Vincoli "Incompatibilità": Cognome Nome:livello (1-3, dove 1= vincolo neutro, 2 = vincolo soft, 3 = VINCOLO OBBLIGATORIO)
+# Vincoli "Affinità": Cognome Nome:livello (1-3, dove 1 = vincolo neutro, 2 = vincolo soft, 3 = vincolo FORTE)
+
+CasoF01;Test;F;NORMALE;CasoM03 Test:3,CasoF02 Test:3;CasoM01 Test:2
+CasoM01;Test;M;NORMALE;CasoM03 Test:3,CasoF02 Test:3,CasoM10 Test:2;CasoF01 Test:2,CasoM04 Test:2,CasoM06 Test:1,CasoM05 Test:3
+CasoM02;Test;M;NORMALE;CasoM05 Test:1;CasoF03 Test:3
+CasoM03;Test;M;PRIMA;CasoF01 Test:3,CasoF02 Test:3,CasoM01 Test:3,CasoM10 Test:3;
+CasoM04;Test;M;ULTIMA;CasoM05 Test:2;CasoM01 Test:2
+CasoM05;Test;M;NORMALE;CasoM04 Test:2,CasoM02 Test:1;CasoM01 Test:3
+CasoF02;Test;F;NORMALE;CasoF01 Test:3,CasoM03 Test:3,CasoM01 Test:3;
+CasoF03;Test;F;NORMALE;CasoF04 Test:3;CasoM02 Test:3
+CasoM06;Test;M;NORMALE;;CasoM01 Test:1
+CasoF04;Test;F;NORMALE;CasoF03 Test:3;
+CasoM07;Test;M;NORMALE;CasoM10 Test:3;
+CasoM08;Test;M;NORMALE;CasoM09 Test:3;
+CasoM09;Test;M;NORMALE;CasoM08 Test:3;
+CasoF05;Test;F;NORMALE;;
+CasoM10;Test;M;NORMALE;CasoM01 Test:2,CasoM03 Test:3,CasoM07 Test:3;
+CasoM11;Test;M;NORMALE;;
+CasoF06;Test;F;NORMALE;;
+CasoF07;Test;F;NORMALE;;

@@ -1,6 +1,6 @@
-![«PostiPerfetti»](moduli/postiperfetti_logo.png)
+![«PostiPerfetti»](risorse/icone/postiperfetti_logo.png)
 
-# 📖 «PostiPerfetti» 📖
+# «PostiPerfetti»
 
 > [!IMPORTANT]
 >
@@ -8,7 +8,7 @@
 >
 > ✅ Per funzionare, esso **richiede la creazione di un file ".txt" con i dati essenziali degli alunni (*cognome*, *nome*, *genere*)**. Tramite alcune funzioni intuitive sarà poi possibile aggiungere una serie di informazioni e vincoli ('affinità' e 'incompatibilità' fra allievi, loro 'posizione' rispetto alla cattedra, eventuale preferenza per 'coppie miste M+F') per ottenere **UNA DISTRIBUZIONE DEGLI ALLIEVI QUANTO PIÙ IN LINEA CON I DESIDERATA DELL'INSEGNANTE**.
 >
-> ✅ Gli allievi verranno distribuiti "a due a due" in modo automatizzato, in un numero di coppie e di file di banchi personalizzabile secondo le esigenze. **Le assegnazioni richiedono in genere da qualche secondo a due/tre minuti** (a seconda del numero e della rigidità dei "vincoli" che si sono predisposti).
+> ✅ Gli allievi possono essere distribuiti automaticamente secondo la geometria scelta: **a coppie oppure a terzetti**, con l’eventuale blocco finale necessario a sistemare il resto della classe. Il numero di file e di posti per fila è adattabile alle esigenze dell’aula. **Una singola assegnazione richiede in genere da pochi secondi a qualche minuto.** Il tempo dipende in parte dal numero di "vincoli" impostati, ma soprattutto dalla **grandezza della classe** e da **quante assegnazioni sono già state salvate** nello Storico: più vicinanze sono già state sperimentate, più diventa impegnativo trovarne di nuove.
 >
 > ✅ **«PostiPerfetti» non ha alcun accesso alla rete, pertanto non invia nessun dato a terzi**. Lavorando esclusivamente in locale, ogni informazione è quindi mantenuta al sicuro all'interno del pc del docente.
 
@@ -16,7 +16,7 @@
 
 > [!NOTE]
 >
-> A seconda delle tue preferenze, per usare l'interfaccia puoi selezionare un **🌚 Tema scuro** o un **☀️ Tema chiaro**, che apparirà come nei seguenti screenshot (clicca per allargare le immagini):
+> A seconda delle tue preferenze, per usare l'interfaccia puoi selezionare un **🌙 Tema scuro** o un **☀️ Tema chiaro**, che apparirà come nei seguenti screenshot (clicca per allargare le immagini):
 > 
 > [![Schermata "Editor" con 'Tema scuro'](screens/000_editor-scuro.png)](https://raw.githubusercontent.com/Omar-Ceretta/PostiPerfetti/refs/heads/main/screens/000_editor-scuro.png)
 > 
@@ -51,7 +51,15 @@
 
 > [!TIP]
 >
-> ### 2 ~ Imposta la POSIZIONE
+> ### 2 ~ Carica il file appena creato
+
+**Clicca sul pulsante "📝 Seleziona classe"** per scegliere e caricare nel programma il file .txt che hai appena creato, in modo da poter aggiungere - grazie al programma stesso - tutti i vincoli necessari per gli studenti.
+
+> [!TIP]
+>
+> 
+>
+> ### 3 ~ Imposta la POSIZIONE
 
 Per ogni studente, **usa il menu a tendina per selezionarne la *posizione***:
 
@@ -68,16 +76,17 @@ Per ogni studente, **usa il menu a tendina per selezionarne la *posizione***:
 >
 > **Come funziona:**
 > - Lo studente FISSO viene **sempre assegnato al primo banco a sinistra della prima fila**, vicino alla cattedra. La sua posizione non cambia da una rotazione all'altra.
-> - **L'algoritmo sceglie automaticamente il compagno migliore** da affiancargli, selezionando quello con la massima compatibilità. Il compagno affiancato avrà a sua volta un altro compagno al banco adiacente: in questo modo, se l'allievo BES dovesse temporaneamente uscire dall'aula, il compagno non resta isolato. Ad ogni nuova rotazione, **il compagno accanto al FISSO cambia**, garantendo equità e varietà nei turni.
+> - **L'algoritmo sceglie automaticamente il vicino diretto del FISSO**, bilanciando affinità, incompatibilità, vincoli di posizione, composizione dei gruppi e rotazioni già registrate nello Storico. Favorisce un allievo mai utilizzato prima in quel ruolo, tuttavia, quando tutti i candidati leciti sono già stati impiegati oppure altri vincoli lo rendono necessario, può riutilizzarne uno, segnalandolo esplicitamente nel Report. Anche nelle disposizioni "a coppie" il vicino diretto del FISSO avrà a sua volta un altro compagno al banco adiacente: in questo modo, se l'allievo BES dovesse temporaneamente uscire dall'aula, il compagno non resta isolato.
+
 > - **NOTA 1: è possibile designare al massimo 1 studente FISSO** per classe.
 >
-> - **NOTA 2: senza studente FISSO, la gestione del 'trio' (banco da 3) si attiva quando gli studenti sono in numero dispari** (es. 17, 19, 21...). **Con uno studente FISSO, la logica si inverte**: il FISSO occupa 1 posto da solo e i rimanenti N−1 studenti vengono distribuiti in coppie. Il 'trio' si forma quindi quando la classe è in **numero pari** (es. 16, 18, 20...).
+> - **NOTA 2: la gestione del resto del gruppo classe dipende dalla geometria scelta.** In modalità **A coppie**, senza FISSO il trio si forma quando la classe è in numero dispari; con un FISSO, i rimanenti N−1 studenti sono distribuiti a coppie, perciò il trio si forma quando la classe è in numero pari. In modalità **A terzetti**, invece, il FISSO è membro del primo terzetto: il "blocco finale" dipende dal resto della divisione del numero degli studenti per 3 — nessun blocco se il resto è 0, un quartetto se è 1, una coppia (oppure due quartetti, se selezionati) se è 2.
 >
 > - **NOTA 3:** quando uno studente è impostato come FISSO, le sezioni "Incompatibilità" e "Affinità" nella sua scheda vengono **disabilitate**. Per influenzare chi gli siederà accanto, è sufficiente impostare i vincoli **sugli altri studenti** (ad es. impostando una "*Affinità di livello 3*" nelle schede dei compagni desiderati).
 
 > [!TIP]
 >
-> ### 3 ~ Aggiungi le INCOMPATIBILITÀ
+> ### 4 ~ Aggiungi le INCOMPATIBILITÀ
 
 **Se è il caso di tenere SEPARATI alcuni allievi** (che in banco assieme rischierebbero di distrarsi o disturbare), **è consigliabile stabilire tra loro una "incompatibilità"**. 
 
@@ -96,7 +105,7 @@ Clicca su **"➕ Aggiungi INCOMPATIBILITÀ"** nella scheda dello studente. Appar
 
 > [!TIP]
 >
-> ### 4 ~ Aggiungi le AFFINITÀ
+> ### 5 ~ Aggiungi le AFFINITÀ
 
 **Se è il caso di tenere UNITI certi allievi** (per "bilanciarne" i livelli e promuovere la collaborazione, per facilitare l'integrazione o altre ragioni), **è utile stabilire tra loro una "affinità"**. 
 
@@ -114,23 +123,23 @@ I 3 livelli indicano quanto è desiderabile che i due studenti stiano vicini:
 
 > [!TIP]
 >
-> ### 5 ~ BIDIREZIONALITÀ automatica
+> ### 6 ~ BIDIREZIONALITÀ automatica
 
 **Non devi preoccuparti di ripetere i vincoli.** Se imposti "D'Annunzio Gabriele incompatibile con Deledda Grazia (livello 3)", l'Editor aggiungerà **automaticamente** "Deledda Grazia incompatibile con D'Annunzio Gabriele (livello 3)". Lo stesso vale per le affinità, per le modifiche di livello e per le rimozioni.
 
 > [!TIP]
 >
-> ### 6 ~ Rimuovere un vincolo
+> ### 7 ~ Rimuovere un vincolo
 
 Clicca il bottone **"Rimuovi"** accanto al vincolo da eliminare. Il vincolo speculare sull'altro studente verrà rimosso automaticamente.
 
 > [!TIP]
 >
-> ### 7 ~ Verifica e salva
+> ### 8 ~ Verifica e salva
 
 - Clicca su **"👁️ Preview file generato"** per vedere un'anteprima del file .txt che verrà creato.
 
-- Clicca su **"💾 SALVA e CARICA classe"** per salvare il file .txt della classe.
+- Clicca su **"💾 SALVA e CARICA"** per salvare il file .txt della classe.
 
 - La classe verrà caricata nel programma, **pronta per avviare le assegnazioni.**
 
@@ -156,7 +165,7 @@ Clicca il bottone **"Rimuovi"** accanto al vincolo da eliminare. Il vincolo spec
 
 ### 🔷 **Passo 2 — Configura le opzioni:** 
 
-I box **"Configurazione aula"**, **"Opzioni vincoli"** e **"Rotazione automatica"** diventano attivi solo dopo aver caricato una classe con "💾 SALVA e CARICA classe".
+I box **"Configurazione aula"**, **"Opzioni vincoli"** e **"Rotazione automatica"** diventano attivi solo dopo aver caricato una classe con "💾 SALVA e CARICA".
 
 - **"Configurazione aula"**: il programma calcola automaticamente il numero minimo di file necessarie per la tua classe. Puoi comunque modificarlo manualmente con i pulsanti + e −. Verrai avvertito in caso di 'posti insufficienti'.
 
@@ -184,6 +193,16 @@ Quando il file della classe sarà pronto e caricato, clicca su **"🚀 Assegna i
 - 💬 Al termine dell'elaborazione apparirà un **POPUP di riepilogo con le statistiche degli abbinamenti** creati. 
 - ❗ Eventuali **coppie riutilizzate** saranno evidenziate in **colore ocra**.
 
+> [!TIP]
+>
+> ### 🗓️ Modalità "Annuale" (opzionale)
+>
+> Di norma il programma assegna i posti per **un mese alla volta** (impostazione predefinita: *"Mensile (un mese)"*). Se preferisci, puoi scegliere **"Annuale (più mesi)"**: comparirà una casella in cui indicare **quanti mesi generare** (fino a 10, cioè un intero anno scolastico). I mesi verranno aggiunti in coda a quelli eventualmente già salvati nello Storico. Con un solo clic su **"🚀 Assegna i posti!"** il programma prepara tutti quei mesi in fila, uno dopo l'altro, sempre cercando di non ripetere le coppie da un mese all'altro.
+>
+> Al termine si apre un'**anteprima** che ti mostra l'intera annata **mese per mese**, con le coppie formate. Solo se ti convince, clicchi su **"✅ Accetta e salva nello Storico"** e tutti i mesi vengono salvati in ordine; altrimenti clicchi su **"🗑 Scarta"** e **non viene salvato nulla** (lo "Storico" resta esattamente com'era). Mentre il programma lavora puoi sempre fermarlo con il pulsante **"⛔ Annulla"**.
+>
+> ⏳ **Quanto tempo richiede e perché conviene** — Preparare un'intera annata richiede **da pochi minuti fino a un massimo di una decina** per le classi più difficili. È tempo ben speso: non solo ottieni in un colpo solo (nella maggior parte dei casi) **tutti i mesi dell'anno** — e, quando proprio non è possibile, comunque **diversi mesi** — ma soprattutto **l'algoritmo può vagliare molte più combinazioni** rispetto all'assegnazione mese per mese: prova tante "annate" diverse e ti propone quella con **meno ripetizioni di coppie**.
+
 ------
 
 > [!NOTE]
@@ -210,7 +229,23 @@ La Tab "🏫 AULA" mostra la disposizione grafica dell'aula. Gli arredi (LIM, ca
 
 - **💾 Salva assegnazione**: salva la distribuzione degli allievi appena ottenuta nello "Storico" del programma, per consultarla in futuro e per memorizzare le coppie formate.
 - **📊 Esporta Excel**: genera **un file .xlsx liberamente modificabile a seconda delle proprie esigenze**, con un layout ottimizzato per la stampa in A4.
-- **📋 Esporta report .txt**: salva il report testuale completo con le caratteristiche degli abbinamenti effettuati.
+- **📋 Esporta Report**: salva in formato `.txt` il report testuale completo con le caratteristiche degli abbinamenti effettuati.
+
+
+**✋ SPOSTARE I BANCHI A MANO (drag & drop) — da usare con cautela!**
+
+Nella Tab "🏫 Aula" **puoi scambiare due studenti trascinando con il mouse un banco sopra un altro**: i due si scambiano di posto. Lo studente **FISSO resta sempre al suo posto**, mentre tutti gli altri banchi (trio compreso) sono spostabili.
+
+**⚠️ Usa questa funzione solo se DAVVERO necessario.** L'assegnazione automatica bilancia *contemporaneamente* tutti i vincoli e consulta lo "Storico" per non ripetere coppie già formate. **Uno spostamento manuale rischia di vanificare questo lavoro** e può reintrodurre proprio ciò che l'algoritmo aveva evitato: **coppie già usate in passato**, accostamenti meno equilibrati, oppure un compagno del FISSO già capitato in precedenza.
+
+**🛡️ Il programma comunque ti protegge:**
+• se uno scambio creasse una **incompatibilità ASSOLUTA (livello 3)**, lo **blocca** e ti avvisa;
+• se nascessero problemi più lievi (incompatibilità di livello 1-2, coppia non mista, allontanamento dalla prima fila di chi ce l'ha come vincolo), ti **chiede conferma** prima di procedere;
+• "Report" e "Statistiche" vengono **ricalcolati** sulla nuova disposizione: una coppia riutilizzata nata da uno scambio fatto con il mouse comparirebbe comunque evidenziata in **ocra**.
+
+**💾 Per conservare le modifiche** usa "💾 Salva assegnazione": fino ad allora l'avviso "*Disposizione modificata a mano*" te lo ricorda. Le assegnazioni ritoccate vengono **contrassegnate nello "Storico" con il simbolo ✋**, così distingui sempre a colpo d'occhio quelle "automatiche" da quelle "ritoccate".
+
+💡 **Consiglio:** preferisci sempre l'assegnazione automatica e ricorri al *drag & drop* solo per **aggiustamenti puntuali e indispensabili**. Ricorda che ogni scambio salvato entra a tutti gli effetti nello "Storico" delle coppie.
 
 ### 🍀 La Tab "📊 REPORT"
 
@@ -248,7 +283,7 @@ La Tab "📊 STATISTICHE" analizza l'intero "Storico" della classe (o di più cl
 
 1. **Prepara tramite "✏️ Editor studenti" il file .txt della classe** con tutti i dati necessari (inclusa l'eventuale posizione FISSO per studente BES).
 
-2. **Seleziona il file della classe** con "💾 SALVA e CARICA classe". Il programma **calcolerà il numero di file di banchi necessarie**.
+2. **Seleziona il file della classe** con "💾 SALVA e CARICA". Il programma **calcolerà il numero di file di banchi necessarie**.
 
 3. Verifica la configurazione aula e, se necessario, modifica 'File di banchi' e/o 'Posti per fila'.
 
@@ -267,11 +302,15 @@ La Tab "📊 STATISTICHE" analizza l'intero "Storico" della classe (o di più cl
 
 **NOTA**: nel caso tu non abbia salvato in tempo i file Excel delle varie assegnazioni, potrai sempre farlo in un secondo momento, accedendo alla tab "📚 STORICO" e cliccando sul pulsante "🔍 Layout".
 
+💡 **In alternativa al mese-per-mese**, con la modalità **"Annuale"** (vedi sezione [3]) puoi generare **l'intero anno in un'unica volta** e rivederlo prima di salvarlo: comodo a settembre per impostare da subito tutte le rotazioni.
+
 > [!NOTE]
 >
-> ### ⚙️ Modifica dei vincoli in corso d'anno
+> ### ⚙️ Modifica dei vincoli o del numero di allievi in corso d'anno
 >
-> Se le dinamiche della classe dovessero cambiare, modifica con "✏️ Editor studenti" il file .txt della classe - aggiornando 'posizione', 'incompatibilità' e 'affinità' - e poi salvalo.
+> Se le dinamiche della classe dovessero cambiare, modifica con "✏️ Editor studenti" il file .txt della classe - aggiornando 'posizione', 'incompatibilità' e 'affinità' - e poi salvalo. Lo stesso vale se cambia il **numero di allievi** (un nuovo iscritto o un trasferimento).
+>
+> ⚠️ **Importante:** se hai già generato e salvato nello "Storico" delle assegnazioni che **non hai ancora usato davvero in classe**, è necessario **eliminarle** (pulsante "🗑️ Elimina" nella tab "📚 STORICO") prima di rigenerare. Così il programma — sia in modalità "Mensile" sia "Annuale" — **non eviterà coppie che in realtà non si sono mai sedute insieme**, ma soltanto quelle realmente già sperimentate.
 
 ------
 
@@ -281,17 +320,17 @@ La Tab "📊 STATISTICHE" analizza l'intero "Storico" della classe (o di più cl
 
 | **Problema**                                            | **Soluzione**                                                |
 | ------------------------------------------------------- | ------------------------------------------------------------ |
-| 💬 Popup che segnala errore al caricamento del file .txt | Il programma verifica che la sintassi di ogni riga sia corretta e propone in automatico gli **aggiustamenti necessari**, avvisando con un 'popup'. È consigliabile, in questi casi, rivedere la correttezza dei dati degli allievi nella tab "✏️ Editor studenti". |
+| 💬 Popup che segnala errore al caricamento del file .txt | Il programma controlla rigorosamente la struttura e i vincoli del file e applica automaticamente soltanto le **correzioni sicure**. Se trova dati ambigui o non validi, rifiuta il nuovo file. Leggi il dettaglio del popup, correggi il file `.txt` e selezionalo nuovamente; le contraddizioni modificabili in "✏️ Editor studenti" devono essere risolte prima del salvataggio. |
 | 🚫 Studente "non trovato" nei vincoli                    | Il nome nei vincoli deve corrispondere **esattamente** a Cognome + Nome (es: `Pasolini Pier Paolo`, non `Pasolini Pier`). |
-| ❗ TROPPE COPPIE RIUTILIZZATE                            | Con molti vincoli di incompatibilità (livello 3), le combinazioni possibili si riducono. **Valuta se qualche vincolo di livello 3 può diventare livello 2.** |
-| ‼️ L'ASSEGNAZIONE FALLISCE IN TUTTI I TENTATIVI          | I vincoli assoluti creano una situazione matematicamente impossibile da risolvere. **Riduci il numero di incompatibilità di 'livello 3', di posizione 'PRIMA' oppure rimuovi il vincolo di 'genere misto'.** |
+| ❗ TROPPE COPPIE RIUTILIZZATE                            | Dipende soprattutto dalla **dimensione della classe**: meno alunni significa meno combinazioni possibili, perciò dopo qualche mese è matematicamente inevitabile riusare qualche coppia. Non è un errore di impostazione. Declassare qualche incompatibilità di livello 3 a livello 2 può dare un po' di respiro, ma NON elimina questo limite. |
+| ‼️ L'ASSEGNAZIONE FALLISCE IN TUTTI I TENTATIVI | La combinazione di vincoli e la geometria scelta (Coppie / Terzetti) potrebbe non ammettere una soluzione, oppure i limiti temporali della ricerca potrebbero non aver consentito di trovarla. Controlla soprattutto le **incompatibilità assolute** (livello 3) e gli studenti con posizione **PRIMA**. Se questi ultimi non entrano tutti nella prima fila, considera di ridurne il numero oppure aumenta i posti per fila (se la disposizione dell'aula lo consente). In modalità terzetti, quando l'opzione è disponibile, prova anche a cambiare la composizione del blocco restante (**1 coppia / 2 quartetti**). |
 | 🔴 Impossibile impostare vincoli per studente FISSO      | È normale: la scheda dello studente FISSO disabilita incompatibilità e affinità. Per influenzare chi gli siederà accanto, imposta i vincoli **nella scheda degli altri studenti**. |
 
 ------
 
 ------
 
-![](moduli/postiperfetti_icon.png)
+![](risorse/icone/postiperfetti_icon.png)
 
 «PostiPerfetti» — Sviluppato in Python dal prof. Omar Ceretta
 

@@ -1,0 +1,9 @@
+run_id,pair_id,condizione,modalita,seed_principale,studente,genere,posizione,e_fisso,riusi_coinvolgenti,prime_ripetizioni,seconde_ripetizioni,terze_o_ulteriori,mesi_con_riusi,compagni_distinti,incarichi_vicino_fisso,mesi_vicino_fisso
+run_3ad01c2d9201d0b9ff0684c1,pair_1c5364920138c910bace0891,senza_fisso,coppie,123456789,A Test,M,NORMALE,false,0,0,0,0,[],2,0,[]
+run_3ad01c2d9201d0b9ff0684c1,pair_1c5364920138c910bace0891,senza_fisso,coppie,123456789,B Test,F,NORMALE,false,0,0,0,0,[],2,0,[]
+run_3ad01c2d9201d0b9ff0684c1,pair_1c5364920138c910bace0891,senza_fisso,coppie,123456789,C Test,M,NORMALE,false,0,0,0,0,[],2,0,[]
+run_3ad01c2d9201d0b9ff0684c1,pair_1c5364920138c910bace0891,senza_fisso,coppie,123456789,D Test,F,NORMALE,false,0,0,0,0,[],2,0,[]
+run_e00a90482bd6d6815690a9b1,pair_1c5364920138c910bace0891,con_fisso,coppie,123456789,A Test,M,FISSO,true,1,1,0,0,[2],1,0,[]
+run_e00a90482bd6d6815690a9b1,pair_1c5364920138c910bace0891,con_fisso,coppie,123456789,B Test,F,NORMALE,false,1,1,0,0,[2],1,2,"[1,2]"
+run_e00a90482bd6d6815690a9b1,pair_1c5364920138c910bace0891,con_fisso,coppie,123456789,C Test,M,NORMALE,false,1,1,0,0,[2],1,0,[]
+run_e00a90482bd6d6815690a9b1,pair_1c5364920138c910bace0891,con_fisso,coppie,123456789,D Test,F,NORMALE,false,1,1,0,0,[2],1,0,[]

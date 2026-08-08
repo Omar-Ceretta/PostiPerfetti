@@ -1,0 +1,610 @@
+{
+  "classe": "Test",
+  "cronologia_adiacenze": [
+    {
+      "canale_rotazione": "coppie",
+      "coinvolge_fisso": false,
+      "distanze_interne": [
+        1
+      ],
+      "mesi_occorrenza": [
+        1,
+        2
+      ],
+      "numero_occorrenze_annata": 2,
+      "numero_occorrenze_totali_finali": 2,
+      "studenti": [
+        "C Test",
+        "D Test"
+      ],
+      "usi_storico_iniziale": 0
+    },
+    {
+      "canale_rotazione": "vicino_fisso",
+      "coinvolge_fisso": true,
+      "distanze_interne": [
+        1
+      ],
+      "mesi_occorrenza": [
+        1,
+        2
+      ],
+      "numero_occorrenze_annata": 2,
+      "numero_occorrenze_totali_finali": 2,
+      "studenti": [
+        "A Test",
+        "B Test"
+      ],
+      "usi_storico_iniziale": 0
+    }
+  ],
+  "genere_misto": {
+    "adiacenze_miste_ottenute_totali": 4,
+    "flag_attivo": false,
+    "massimo_ammissibile_totale": 4,
+    "massimo_geometrico_totale": 4,
+    "mesi": [
+      {
+        "adiacenze_miste_ottenute": 2,
+        "adiacenze_stesso_genere": 0,
+        "firma_template": "83b5192702ae59b9aef07b8d2a463330a20c99c17d90d1fa7524a817f124a289",
+        "gruppi_non_pienamente_misti": [],
+        "massimo_ammissibile": {
+          "durata_secondi": 0.00015891400016698753,
+          "esatto": true,
+          "motivo_mancanza": null,
+          "nodi_visitati": 2,
+          "testimone": [
+            [
+              "A Test",
+              "B Test"
+            ],
+            [
+              "C Test",
+              "D Test"
+            ]
+          ],
+          "valore": 2
+        },
+        "massimo_geometrico": {
+          "durata_secondi": 5.1512000027287286e-05,
+          "esatto": true,
+          "motivo_mancanza": null,
+          "nodi_visitati": 4,
+          "testimone": [
+            [
+              "M",
+              "F"
+            ],
+            [
+              "F",
+              "M"
+            ]
+          ],
+          "valore": 2
+        },
+        "mese": 1
+      },
+      {
+        "adiacenze_miste_ottenute": 2,
+        "adiacenze_stesso_genere": 0,
+        "firma_template": "83b5192702ae59b9aef07b8d2a463330a20c99c17d90d1fa7524a817f124a289",
+        "gruppi_non_pienamente_misti": [],
+        "massimo_ammissibile": {
+          "durata_secondi": 0.00015891400016698753,
+          "esatto": true,
+          "motivo_mancanza": null,
+          "nodi_visitati": 2,
+          "testimone": [
+            [
+              "A Test",
+              "B Test"
+            ],
+            [
+              "C Test",
+              "D Test"
+            ]
+          ],
+          "valore": 2
+        },
+        "massimo_geometrico": {
+          "durata_secondi": 5.1512000027287286e-05,
+          "esatto": true,
+          "motivo_mancanza": null,
+          "nodi_visitati": 4,
+          "testimone": [
+            [
+              "M",
+              "F"
+            ],
+            [
+              "F",
+              "M"
+            ]
+          ],
+          "valore": 2
+        },
+        "mese": 2
+      }
+    ]
+  },
+  "mesi": [
+    {
+      "adiacenze": [
+        {
+          "adiacenza_mista": true,
+          "affinita_livello": 0,
+          "canale_rotazione": "vicino_fisso",
+          "chiave_adiacenza": [
+            "A Test",
+            "B Test"
+          ],
+          "coinvolge_fisso": true,
+          "distanza_mesi": null,
+          "e_riuso": false,
+          "event_id": "event_d119d8ecd7bc7ec7b1e94605",
+          "fascia_ripetizione": "prima_comparsa",
+          "genere_a": "M",
+          "genere_b": "F",
+          "group_id": "group_ec1d1e052001645a43e28f18",
+          "incompatibilita_livello": 0,
+          "mese": 1,
+          "nome_fisso": "A Test",
+          "nome_vicino_fisso": "B Test",
+          "numero_ripetizione": null,
+          "ordine_a": 0,
+          "ordine_b": 1,
+          "run_id": "run_test_coppie_con_fisso",
+          "ruolo": "vicino_fisso",
+          "studente_a": "A Test",
+          "studente_b": "B Test",
+          "ultimo_uso": {
+            "mese_annata": null,
+            "motivo_distanza_non_calcolabile": null,
+            "origine": "nessuno",
+            "riferimento_storico": null
+          },
+          "usi_precedenti_nell_annata": 0,
+          "usi_precedenti_totali": 0
+        },
+        {
+          "adiacenza_mista": true,
+          "affinita_livello": 0,
+          "canale_rotazione": "coppie",
+          "chiave_adiacenza": [
+            "C Test",
+            "D Test"
+          ],
+          "coinvolge_fisso": false,
+          "distanza_mesi": null,
+          "e_riuso": false,
+          "event_id": "event_a6815302274cf513148ea5cf",
+          "fascia_ripetizione": "prima_comparsa",
+          "genere_a": "M",
+          "genere_b": "F",
+          "group_id": "group_8404bb06311e1fd675d3569b",
+          "incompatibilita_livello": 0,
+          "mese": 1,
+          "nome_fisso": null,
+          "nome_vicino_fisso": null,
+          "numero_ripetizione": null,
+          "ordine_a": 0,
+          "ordine_b": 1,
+          "run_id": "run_test_coppie_con_fisso",
+          "ruolo": "coppia_ordinaria",
+          "studente_a": "C Test",
+          "studente_b": "D Test",
+          "ultimo_uso": {
+            "mese_annata": null,
+            "motivo_distanza_non_calcolabile": null,
+            "origine": "nessuno",
+            "riferimento_storico": null
+          },
+          "usi_precedenti_nell_annata": 0,
+          "usi_precedenti_totali": 0
+        }
+      ],
+      "configurazione_aula": {},
+      "gruppi": [
+        {
+          "fila": 0,
+          "funzione": "blocco_fisso",
+          "group_id": "group_ec1d1e052001645a43e28f18",
+          "membri_ordinati": [
+            "A Test",
+            "B Test"
+          ],
+          "posizione_nella_fila": 0,
+          "tipo": "coppia"
+        },
+        {
+          "fila": 1,
+          "funzione": "ordinario",
+          "group_id": "group_8404bb06311e1fd675d3569b",
+          "membri_ordinati": [
+            "C Test",
+            "D Test"
+          ],
+          "posizione_nella_fila": 0,
+          "tipo": "coppia"
+        }
+      ],
+      "mese_finale": 1,
+      "posizione_finale": 1,
+      "posizione_generazione": 1,
+      "riepilogo": {
+        "adiacenze_miste": 2,
+        "adiacenze_stesso_genere": 0,
+        "adiacenze_totali": 2,
+        "affinita_l1": 0,
+        "affinita_l2": 0,
+        "affinita_l3": 0,
+        "incompatibilita_l1": 0,
+        "incompatibilita_l2": 0,
+        "incompatibilita_l3": 0,
+        "prime_ripetizioni": 0,
+        "riusi_totali": 0,
+        "seconde_ripetizioni": 0,
+        "terze_o_ulteriori": 0
+      },
+      "vicino_fisso": {
+        "canale_rotazione": "vicino_fisso",
+        "distanza_mesi": null,
+        "numero_ripetizione": null,
+        "studente": "B Test",
+        "ultimo_mese": null,
+        "ultimo_uso_origine": "nessuno",
+        "usi_precedenti": 0
+      }
+    },
+    {
+      "adiacenze": [
+        {
+          "adiacenza_mista": true,
+          "affinita_livello": 0,
+          "canale_rotazione": "vicino_fisso",
+          "chiave_adiacenza": [
+            "A Test",
+            "B Test"
+          ],
+          "coinvolge_fisso": true,
+          "distanza_mesi": 1,
+          "e_riuso": true,
+          "event_id": "event_2f4a6c5d47d01882620715a4",
+          "fascia_ripetizione": "prima_ripetizione",
+          "genere_a": "M",
+          "genere_b": "F",
+          "group_id": "group_006b578baae74ee8c16eb772",
+          "incompatibilita_livello": 0,
+          "mese": 2,
+          "nome_fisso": "A Test",
+          "nome_vicino_fisso": "B Test",
+          "numero_ripetizione": 1,
+          "ordine_a": 0,
+          "ordine_b": 1,
+          "run_id": "run_test_coppie_con_fisso",
+          "ruolo": "vicino_fisso",
+          "studente_a": "A Test",
+          "studente_b": "B Test",
+          "ultimo_uso": {
+            "mese_annata": 1,
+            "motivo_distanza_non_calcolabile": null,
+            "origine": "annata_corrente",
+            "riferimento_storico": null
+          },
+          "usi_precedenti_nell_annata": 1,
+          "usi_precedenti_totali": 1
+        },
+        {
+          "adiacenza_mista": true,
+          "affinita_livello": 0,
+          "canale_rotazione": "coppie",
+          "chiave_adiacenza": [
+            "C Test",
+            "D Test"
+          ],
+          "coinvolge_fisso": false,
+          "distanza_mesi": 1,
+          "e_riuso": true,
+          "event_id": "event_9d2862d7b5e04746e53b1a52",
+          "fascia_ripetizione": "prima_ripetizione",
+          "genere_a": "M",
+          "genere_b": "F",
+          "group_id": "group_65d633b38fe19ea7f17ec560",
+          "incompatibilita_livello": 0,
+          "mese": 2,
+          "nome_fisso": null,
+          "nome_vicino_fisso": null,
+          "numero_ripetizione": 1,
+          "ordine_a": 0,
+          "ordine_b": 1,
+          "run_id": "run_test_coppie_con_fisso",
+          "ruolo": "coppia_ordinaria",
+          "studente_a": "C Test",
+          "studente_b": "D Test",
+          "ultimo_uso": {
+            "mese_annata": 1,
+            "motivo_distanza_non_calcolabile": null,
+            "origine": "annata_corrente",
+            "riferimento_storico": null
+          },
+          "usi_precedenti_nell_annata": 1,
+          "usi_precedenti_totali": 1
+        }
+      ],
+      "configurazione_aula": {},
+      "gruppi": [
+        {
+          "fila": 0,
+          "funzione": "blocco_fisso",
+          "group_id": "group_006b578baae74ee8c16eb772",
+          "membri_ordinati": [
+            "A Test",
+            "B Test"
+          ],
+          "posizione_nella_fila": 0,
+          "tipo": "coppia"
+        },
+        {
+          "fila": 1,
+          "funzione": "ordinario",
+          "group_id": "group_65d633b38fe19ea7f17ec560",
+          "membri_ordinati": [
+            "C Test",
+            "D Test"
+          ],
+          "posizione_nella_fila": 0,
+          "tipo": "coppia"
+        }
+      ],
+      "mese_finale": 2,
+      "posizione_finale": 2,
+      "posizione_generazione": 2,
+      "riepilogo": {
+        "adiacenze_miste": 2,
+        "adiacenze_stesso_genere": 0,
+        "adiacenze_totali": 2,
+        "affinita_l1": 0,
+        "affinita_l2": 0,
+        "affinita_l3": 0,
+        "incompatibilita_l1": 0,
+        "incompatibilita_l2": 0,
+        "incompatibilita_l3": 0,
+        "prime_ripetizioni": 2,
+        "riusi_totali": 2,
+        "seconde_ripetizioni": 0,
+        "terze_o_ulteriori": 0
+      },
+      "vicino_fisso": {
+        "canale_rotazione": "vicino_fisso",
+        "distanza_mesi": 1,
+        "numero_ripetizione": 1,
+        "studente": "B Test",
+        "ultimo_mese": 1,
+        "ultimo_uso_origine": "annata_corrente",
+        "usi_precedenti": 1
+      }
+    }
+  ],
+  "metadati": {
+    "chiavi_finali": [
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0
+      ]
+    ],
+    "chiavi_generazione": [
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0
+      ]
+    ],
+    "numero_eventi": 4,
+    "posizioni_generazione": [
+      1,
+      2
+    ]
+  },
+  "numero_studenti": 4,
+  "ricerca": {
+    "durata_secondi": null,
+    "indice_stagione_vincente": 1,
+    "motivo_arresto": "test_i8",
+    "punteggio_tecnico": [
+      0,
+      0,
+      0
+    ],
+    "stagioni_complete": 1,
+    "stagioni_tentate": 1
+  },
+  "riepilogo": {
+    "adiacenze_miste": 4,
+    "adiacenze_totali": 4,
+    "affinita_l1": 0,
+    "affinita_l2": 0,
+    "affinita_l3": 0,
+    "incompatibilita_l1": 0,
+    "incompatibilita_l2": 0,
+    "incompatibilita_l3": 0,
+    "massimo_individuale": 1,
+    "prime_ripetizioni": 2,
+    "riusi_totali": 2,
+    "seconde_ripetizioni": 0,
+    "studenti_al_massimo": [
+      "A Test",
+      "B Test",
+      "C Test",
+      "D Test"
+    ],
+    "studenti_con_0_riusi": 0,
+    "studenti_con_1_riuso": 4,
+    "studenti_con_2_riusi": 0,
+    "studenti_con_3_o_piu_riusi": 0,
+    "terze_o_ulteriori": 0
+  },
+  "run": {
+    "condizione": "con_fisso",
+    "file_classe": "corpus/con_fisso/Test+fisso.txt",
+    "genere_misto_attivo": false,
+    "metadati": {},
+    "modalita": "coppie",
+    "numero_mesi": 2,
+    "pair_id": "pair_test_i3",
+    "parametri_aula": {
+      "extra": {},
+      "modalita_trio": "centro",
+      "numero_file": 2,
+      "posizione_blocco_finale": "ultima",
+      "posti_per_fila": 6,
+      "preferenza_resto2": "coppia"
+    },
+    "parametri_ricerca": {
+      "budget_secondi": null,
+      "convergenza": 20,
+      "numero_candidati": 1,
+      "numero_stagioni_fisso": 1,
+      "tetto_stagioni": 50
+    },
+    "run_id": "run_test_coppie_con_fisso",
+    "seed_principale": 123456789,
+    "stato_iniziale_id": "stato_cb0869b4ab32aa48673d8ab4"
+  },
+  "serie_mensile": [
+    {
+      "mese": 1,
+      "riepilogo": {
+        "adiacenze_miste": 2,
+        "adiacenze_stesso_genere": 0,
+        "adiacenze_totali": 2,
+        "affinita_l1": 0,
+        "affinita_l2": 0,
+        "affinita_l3": 0,
+        "incompatibilita_l1": 0,
+        "incompatibilita_l2": 0,
+        "incompatibilita_l3": 0,
+        "prime_ripetizioni": 0,
+        "riusi_totali": 0,
+        "seconde_ripetizioni": 0,
+        "terze_o_ulteriori": 0
+      },
+      "vicino_fisso": "B Test"
+    },
+    {
+      "mese": 2,
+      "riepilogo": {
+        "adiacenze_miste": 2,
+        "adiacenze_stesso_genere": 0,
+        "adiacenze_totali": 2,
+        "affinita_l1": 0,
+        "affinita_l2": 0,
+        "affinita_l3": 0,
+        "incompatibilita_l1": 0,
+        "incompatibilita_l2": 0,
+        "incompatibilita_l3": 0,
+        "prime_ripetizioni": 2,
+        "riusi_totali": 2,
+        "seconde_ripetizioni": 0,
+        "terze_o_ulteriori": 0
+      },
+      "vicino_fisso": "B Test"
+    }
+  ],
+  "snapshot_iniziale": {
+    "coppie": [],
+    "sha256": "725cbe0d2167568d515e1da7e6dbeabf99c35d316994eb1c4f16a8377d4ae6a8",
+    "terzetti": [],
+    "vicini_fisso": []
+  },
+  "stato": "completo",
+  "studente_fisso": "A Test",
+  "studenti": [
+    {
+      "compagni_distinti": 1,
+      "e_fisso": true,
+      "genere": "M",
+      "incarichi_vicino_fisso": 0,
+      "mesi_con_riusi": [
+        2
+      ],
+      "mesi_vicino_fisso": [],
+      "posizione": "FISSO",
+      "prime_ripetizioni": 1,
+      "riusi_coinvolgenti": 1,
+      "seconde_ripetizioni": 0,
+      "studente": "A Test",
+      "terze_o_ulteriori": 0
+    },
+    {
+      "compagni_distinti": 1,
+      "e_fisso": false,
+      "genere": "F",
+      "incarichi_vicino_fisso": 2,
+      "mesi_con_riusi": [
+        2
+      ],
+      "mesi_vicino_fisso": [
+        1,
+        2
+      ],
+      "posizione": "NORMALE",
+      "prime_ripetizioni": 1,
+      "riusi_coinvolgenti": 1,
+      "seconde_ripetizioni": 0,
+      "studente": "B Test",
+      "terze_o_ulteriori": 0
+    },
+    {
+      "compagni_distinti": 1,
+      "e_fisso": false,
+      "genere": "M",
+      "incarichi_vicino_fisso": 0,
+      "mesi_con_riusi": [
+        2
+      ],
+      "mesi_vicino_fisso": [],
+      "posizione": "NORMALE",
+      "prime_ripetizioni": 1,
+      "riusi_coinvolgenti": 1,
+      "seconde_ripetizioni": 0,
+      "studente": "C Test",
+      "terze_o_ulteriori": 0
+    },
+    {
+      "compagni_distinti": 1,
+      "e_fisso": false,
+      "genere": "F",
+      "incarichi_vicino_fisso": 0,
+      "mesi_con_riusi": [
+        2
+      ],
+      "mesi_vicino_fisso": [],
+      "posizione": "NORMALE",
+      "prime_ripetizioni": 1,
+      "riusi_coinvolgenti": 1,
+      "seconde_ripetizioni": 0,
+      "studente": "D Test",
+      "terze_o_ulteriori": 0
+    }
+  ],
+  "versioni": {
+    "codice": "non_specificata",
+    "corpus": "R0.1",
+    "osservatore": "1.0.0",
+    "protocollo": "0.1",
+    "schema": "0.1.0",
+    "strategia": "C1"
+  }
+}

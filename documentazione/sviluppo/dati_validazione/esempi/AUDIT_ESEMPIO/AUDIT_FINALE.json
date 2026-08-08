@@ -1,0 +1,193 @@
+{
+  "contratto": "R0.1",
+  "controlli": [
+    {
+      "codice": "RACCOLTA_STRUTTURALE",
+      "descrizione": "La raccolta supera la validazione I9/I10",
+      "dettagli": [],
+      "gravita": "errore",
+      "superato": true
+    },
+    {
+      "codice": "MANIFESTO",
+      "descrizione": "Il manifesto SHA-256 copre tutti i file",
+      "dettagli": [],
+      "gravita": "errore",
+      "superato": true
+    },
+    {
+      "codice": "OUTPUT_O1_O2_O5_O7",
+      "descrizione": "Protocollo, indice, CSV, validazione e manifesto sono presenti",
+      "dettagli": [],
+      "gravita": "errore",
+      "superato": true
+    },
+    {
+      "codice": "PROTOCOLLO_R0_1",
+      "descrizione": "Protocollo C1 leggibile e versionato",
+      "dettagli": [],
+      "gravita": "errore",
+      "superato": true
+    },
+    {
+      "codice": "MATRICE_COMPLETA",
+      "descrizione": "Tutti i run espliciti sono completi",
+      "dettagli": [
+        "run completi=2/2"
+      ],
+      "gravita": "errore",
+      "superato": true
+    },
+    {
+      "codice": "OUTPUT_RUN_run_3ad01c2d9201d0b9ff0684c1",
+      "descrizione": "Il run completo contiene JSON, Markdown e validazione",
+      "dettagli": [],
+      "gravita": "errore",
+      "superato": true
+    },
+    {
+      "codice": "ANNATA_VALIDA",
+      "descrizione": "ANNATA.json supera la validazione autonoma",
+      "dettagli": [],
+      "gravita": "errore",
+      "superato": true
+    },
+    {
+      "codice": "EVENTI_COMPLETI",
+      "descrizione": "Gli eventi conservano identità, ruolo, livelli e cronologia",
+      "dettagli": [],
+      "gravita": "errore",
+      "superato": true
+    },
+    {
+      "codice": "STUDENTI_COMPLETI",
+      "descrizione": "Il riepilogo per studente espone distribuzione dei riusi e FISSO",
+      "dettagli": [],
+      "gravita": "errore",
+      "superato": true
+    },
+    {
+      "codice": "LIVELLI_SEPARATI",
+      "descrizione": "Incompatibilità e affinità restano separate per livello",
+      "dettagli": [],
+      "gravita": "errore",
+      "superato": true
+    },
+    {
+      "codice": "GENERE_MISTO",
+      "descrizione": "Flag, massimi esatti e risultato ottenuto sono presenti",
+      "dettagli": [],
+      "gravita": "errore",
+      "superato": true
+    },
+    {
+      "codice": "TRACCIA_RIORDINO",
+      "descrizione": "Ordine di generazione e ordine finale sono entrambi conservati",
+      "dettagli": [],
+      "gravita": "errore",
+      "superato": true
+    },
+    {
+      "codice": "NESSUN_GIUDIZIO_OPACO",
+      "descrizione": "Non sono introdotti voti o indici pedagogici automatici",
+      "dettagli": [],
+      "gravita": "errore",
+      "superato": true
+    },
+    {
+      "codice": "RENDER_run_3ad01c2d9201d0b9ff0684c1",
+      "descrizione": "ANNATA.md deriva esattamente dal JSON canonico",
+      "dettagli": [],
+      "gravita": "errore",
+      "superato": true
+    },
+    {
+      "codice": "OUTPUT_RUN_run_e00a90482bd6d6815690a9b1",
+      "descrizione": "Il run completo contiene JSON, Markdown e validazione",
+      "dettagli": [],
+      "gravita": "errore",
+      "superato": true
+    },
+    {
+      "codice": "ANNATA_VALIDA",
+      "descrizione": "ANNATA.json supera la validazione autonoma",
+      "dettagli": [],
+      "gravita": "errore",
+      "superato": true
+    },
+    {
+      "codice": "EVENTI_COMPLETI",
+      "descrizione": "Gli eventi conservano identità, ruolo, livelli e cronologia",
+      "dettagli": [],
+      "gravita": "errore",
+      "superato": true
+    },
+    {
+      "codice": "STUDENTI_COMPLETI",
+      "descrizione": "Il riepilogo per studente espone distribuzione dei riusi e FISSO",
+      "dettagli": [],
+      "gravita": "errore",
+      "superato": true
+    },
+    {
+      "codice": "LIVELLI_SEPARATI",
+      "descrizione": "Incompatibilità e affinità restano separate per livello",
+      "dettagli": [],
+      "gravita": "errore",
+      "superato": true
+    },
+    {
+      "codice": "GENERE_MISTO",
+      "descrizione": "Flag, massimi esatti e risultato ottenuto sono presenti",
+      "dettagli": [],
+      "gravita": "errore",
+      "superato": true
+    },
+    {
+      "codice": "TRACCIA_RIORDINO",
+      "descrizione": "Ordine di generazione e ordine finale sono entrambi conservati",
+      "dettagli": [],
+      "gravita": "errore",
+      "superato": true
+    },
+    {
+      "codice": "FISSO",
+      "descrizione": "Cronologia e ruolo del vicino del FISSO sono osservabili",
+      "dettagli": [],
+      "gravita": "errore",
+      "superato": true
+    },
+    {
+      "codice": "NESSUN_GIUDIZIO_OPACO",
+      "descrizione": "Non sono introdotti voti o indici pedagogici automatici",
+      "dettagli": [],
+      "gravita": "errore",
+      "superato": true
+    },
+    {
+      "codice": "RENDER_run_e00a90482bd6d6815690a9b1",
+      "descrizione": "ANNATA.md deriva esattamente dal JSON canonico",
+      "dettagli": [],
+      "gravita": "errore",
+      "superato": true
+    },
+    {
+      "codice": "OUTPUT_O6",
+      "descrizione": "I confronti appaiati hanno JSON, Markdown e validazione",
+      "dettagli": [
+        "confronti prodotti=1",
+        "attesi=1"
+      ],
+      "gravita": "errore",
+      "superato": true
+    }
+  ],
+  "controlli_superati": 25,
+  "controlli_totali": 25,
+  "numero_avvisi": 0,
+  "numero_errori": 0,
+  "pronto_raccolta_reale": true,
+  "richiede_completezza": true,
+  "richiede_corpus_ufficiale": false,
+  "valido": true
+}
