@@ -1045,7 +1045,7 @@ class EsportazioneMixin:
                         "Il Report corrente è vuoto e non può essere esportato."
                     )
 
-                with open(file_path, 'w', encoding='utf-8') as f:
+                with open(file_path, 'w', encoding='utf-8-sig') as f:
                     f.write(report_completo)
 
                 mostra_popup_file_salvato(self, "Esportazione completata", "Report testuale salvato con successo!", file_path)
