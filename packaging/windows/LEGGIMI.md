@@ -1,7 +1,7 @@
 # Packaging Windows — PostiPerfetti R0.8
 
 Questa cartella contiene la configurazione riproducibile per produrre la
-distribuzione Windows di PostiPerfetti.
+distribuzione Windows di «PostiPerfetti».
 
 ## File principali
 
@@ -14,7 +14,6 @@ distribuzione Windows di PostiPerfetti.
 - `info_pre_installazione.txt` — pagina informativa prima dell'installazione.
 - `info_dopo_installazione.txt` — avvio rapido mostrato a installazione conclusa.
 - `build_windows.ps1` — automatizza build PyInstaller e, se disponibile, Inno Setup.
-- `COLLAUDO_WINDOWS.md` — sequenza di verifiche da eseguire sulla partizione Windows.
 
 ## Scelte architetturali
 
@@ -42,5 +41,3 @@ future. È l'identità stabile con cui Inno Setup riconosce che una nuova releas
 ## Dove si costruisce
 
 PyInstaller non è un cross-compiler: la build Windows va prodotta **su Windows**.
-I file di configurazione possono invece essere preparati e versionati da Linux,
-come avviene qui.
