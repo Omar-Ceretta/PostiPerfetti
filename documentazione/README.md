@@ -11,5 +11,3 @@ Questa cartella raccoglie la documentazione stabile del progetto.
 ## Per sviluppo e collaudo
 
 La sottocartella **`sviluppo/`** contiene l'officina tecnica: suite di test, strumenti di validazione, diagnostica e corpus di regressione.
-
-I documenti legati alle singole fasi di costruzione della R0.8, i prompt di ripresa e i rapporti intermedi non sono documentazione corrente: vengono conservati separatamente nell'archivio storico.
