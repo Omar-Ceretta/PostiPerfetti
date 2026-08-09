@@ -393,7 +393,7 @@ class PopupLayoutStorico(QDialog):
             if file_path:
                 report = self._genera_report_testuale()
 
-                with open(file_path, 'w', encoding='utf-8') as f:
+                with open(file_path, 'w', encoding='utf-8-sig') as f:
                     f.write(report)
 
                 mostra_popup_file_salvato(self, "Report salvato", "Report testuale salvato con successo!", file_path)
@@ -1007,7 +1007,7 @@ class StoricoUIMixin:
 
                         if file_path:
                             report_testo = text_edit.toPlainText()
-                            with open(file_path, 'w', encoding='utf-8') as f:
+                            with open(file_path, 'w', encoding='utf-8-sig') as f:
                                 f.write(report_testo)
                             mostra_popup_file_salvato(
                                 dialog, "Report salvato",
