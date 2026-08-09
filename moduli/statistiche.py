@@ -210,7 +210,7 @@ class StatisticheMixin:
 
         if file_path:
             try:
-                with open(file_path, 'w', encoding='utf-8') as f:
+                with open(file_path, 'w', encoding='utf-8-sig') as f:
                     f.write(contenuto_txt)
 
                 mostra_popup_file_salvato(self, "Esportazione completata", "Statistiche salvate con successo!", file_path)
