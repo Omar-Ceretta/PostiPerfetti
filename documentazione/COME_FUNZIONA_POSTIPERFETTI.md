@@ -1,16 +1,16 @@
-# Come funziona PostiPerfetti
+# Come funziona «PostiPerfetti»
 
-> **Versione di riferimento:** R0.8  
-> Questo documento spiega che cosa succede **dietro le quinte** quando PostiPerfetti calcola una disposizione.  
-> Non è un manuale di programmazione: l'obiettivo è mostrare, con un linguaggio accessibile, **quale percorso seguono i dati, quali regole vengono applicate e come il programma sceglie fra più soluzioni possibili**.
+> **Versione di riferimento:** ≥ 0.8.0
+> Questo documento spiega che cosa succede **dietro le quinte** quando «PostiPerfetti» calcola una disposizione.  
+> L'obiettivo è mostrare, con un linguaggio accessibile, **quale percorso seguono i dati, quali regole vengono applicate e come il programma sceglie fra più soluzioni possibili**.
 
 ---
 
 ## 1. L'idea generale
 
-PostiPerfetti non prende semplicemente l'elenco degli studenti e li mescola.
+««PostiPerfetti»» non prende semplicemente gli studenti in un elenco classe e li mescola.
 
-Quando viene richiesta un'assegnazione, il programma deve tenere insieme informazioni di natura diversa:
+Quando viene richiesta un'assegnazione, il programma tiene insieme informazioni di natura diversa:
 
 - chi sono gli studenti;
 - quali vicinanze sono preferibili o problematiche;
@@ -58,7 +58,7 @@ anteprima
 salvataggio nello Storico
 ```
 
-Nel codice i quattro tentativi sono abbreviati con **T1, T2, T3 e T4**: la **T sta semplicemente per “Tentativo”**.
+Nel codice i quattro tentativi sono abbreviati con **T1, T2, T3 e T4**: la **T sta per “Tentativo”**.
 
 ---
 
@@ -75,17 +75,17 @@ Per ogni studente possono essere disponibili, fra le altre, queste informazioni:
 - affinità con altri studenti;
 - incompatibilità con altri studenti.
 
-Prima di iniziare la ricerca, i dati vengono inoltre portati in un ordine stabile, così il semplice ordine delle righe nel file non deve influenzare il risultato.
+Prima di iniziare la ricerca, i dati vengono inoltre portati in un ordine stabile, dal momento che l'ordine delle righe nel file non deve influenzare il risultato.
 
 ### Lo Storico
 
-PostiPerfetti conserva le assegnazioni già salvate.
+«PostiPerfetti» conserva le assegnazioni già salvate.
 
 Da queste ricava una **memoria delle vicinanze precedenti**, utilizzata per favorire la rotazione e limitare il più possibile il ritorno degli stessi abbinamenti.
 
-Le modalità **coppie** e **terzetti** possiedono memorie separate, perché una vicinanza nata in una modalità non deve modificare automaticamente il comportamento dell'altra.
+Le modalità **coppie** e **terzetti** possiedono memorie separate, perché una vicinanza nata in una modalità non deve modificare il comportamento dell'altra.
 
-> Nel codice questa memoria delle vicinanze già usate viene talvolta indicata con il termine tecnico *blacklist*. Nel seguito useremo invece l'espressione più intuitiva **memoria dei riusi**.
+> Nel codice questa memoria delle vicinanze già usate viene indicata con il termine tecnico *blacklist*. Qui se ne parlerà con l'espressione **memoria dei riusi**.
 
 ### L'aula
 
@@ -97,7 +97,7 @@ Il motore deve quindi trovare non soltanto gruppi socialmente accettabili, ma an
 
 ## 3. Una soluzione candidata non è ancora il risultato finale
 
-Durante la ricerca PostiPerfetti può costruire più **soluzioni candidate**.
+Durante la ricerca, «PostiPerfetti» può costruire più **soluzioni candidate**.
 
 Una soluzione candidata è una disposizione completa che il programma è riuscito a ottenere rispettando le condizioni previste dal tentativo corrente.
 
@@ -115,13 +115,13 @@ Non esiste perciò un unico “lancio casuale” che decide tutto.
 
 ## 4. Prima regola: esistono vincoli assoluti e preferenze
 
-PostiPerfetti distingue fra ciò che **non deve essere violato** e ciò che invece può essere progressivamente sacrificato quando una classe è particolarmente difficile da sistemare.
+«PostiPerfetti» distingue fra ciò che **non deve essere violato** e ciò che invece può essere progressivamente sacrificato quando una classe è particolarmente difficile da sistemare.
 
 ### Vincoli che restano assoluti
 
-Durante tutti i tentativi restano non negoziabili:
+Durante tutti i tentativi restano NON negoziabili:
 
-- incompatibilità di **livello 3** fra studenti realmente adiacenti;
+- incompatibilità di **livello 3** fra studenti adiacenti;
 - posizione **PRIMA**;
 - posizione **FISSO**, gestita con una logica dedicata;
 - capienza e possibilità fisica di collocare i gruppi nell'aula.
@@ -130,7 +130,7 @@ Un'incompatibilità di livello 3 è quindi un vero veto: quella vicinanza non en
 
 ### Preferenze che possono essere allentate
 
-Possono invece contribuire alla qualità della soluzione senza essere sempre obbligatorie:
+Possono invece contribuire alla qualità della soluzione, senza essere per questo obbligatorie:
 
 - incompatibilità di livello 1 e 2;
 - affinità di livello 1, 2 e 3;
@@ -151,8 +151,8 @@ Sono **quattro configurazioni progressive dello stesso sistema di ricerca**.
 |---|---|---|
 | **T1 — Tentativo 1** | Tiene conto di tutte le preferenze disponibili. | Escluse. |
 | **T2 — Tentativo 2** | Rinuncia alle preferenze più deboli di livello 1. | Escluse. |
-| **T3 — Tentativo 3** | Rinuncia anche a diverse preferenze intermedie; conserva ancora le più forti. | Escluse. |
-| **T4 — Tentativo 4** | Mantiene soprattutto i vincoli assoluti e fisici. | Ammesse solo se necessarie e fortemente penalizzate. |
+| **T3 — Tentativo 3** | Rinuncia anche alle preferenze intermedie; conserva ancora le più forti. | Escluse. |
+| **T4 — Tentativo 4** | Mantiene soltanto i vincoli assoluti e fisici. | Ammesse solo se necessarie, ma fortemente penalizzate. |
 
 In forma intuitiva:
 
@@ -227,7 +227,7 @@ L'incompatibilità di livello 3 viene esclusa **prima** di qualunque confronto n
 
 ## 8. Per chi vuole andare più a fondo: il punteggio in forma matematica
 
-Questa sezione non è necessaria per usare PostiPerfetti. Serve soltanto a mostrare in forma compatta come diverse informazioni vengono trasformate in un punteggio.
+Questa sezione ha lo scopo di mostrare in forma compatta come diverse informazioni vengono trasformate in un punteggio.
 
 Per una possibile vicinanza fra due studenti \(a\) e \(b\), il punteggio locale può essere rappresentato schematicamente come:
 
@@ -331,7 +331,7 @@ Questa ottimizzazione:
 - non rende lecita una soluzione prima vietata;
 - serve soltanto a evitare esplorazioni duplicate.
 
-È quindi una tecnica di efficienza interna, non un nuovo “livello” di assegnazione.
+È quindi una tecnica di efficienza interna, utile a non sprecare tempo di computazione, non un nuovo “livello” di assegnazione.
 
 ---
 
@@ -412,7 +412,7 @@ Gli stessi quattro Tentativi vengono applicati alle adiacenze che compongono que
 
 Il punteggio locale serve soprattutto a **guidare la ricerca**.
 
-Quando invece esistono più disposizioni complete, PostiPerfetti usa una seconda valutazione, più importante, che stabilisce quale soluzione preferire.
+Quando invece esistono più disposizioni complete, «PostiPerfetti» usa una seconda valutazione, più importante, che stabilisce quale soluzione preferire.
 
 Per una disposizione completa \(A\), la chiave di confronto è:
 
@@ -450,7 +450,7 @@ La stessa struttura viene usata per coppie e terzetti.
 
 ## 15. Confrontare più soluzioni invece di fermarsi alla prima
 
-In alcune situazioni PostiPerfetti costruisce più soluzioni candidate e le confronta.
+In alcune situazioni «PostiPerfetti» costruisce più soluzioni candidate e le confronta.
 
 Nel codice questa tecnica è indicata come *best-of-N*: in termini semplici significa soltanto **“genera fino a N possibilità e scegli la migliore secondo la metrica”**.
 
@@ -521,7 +521,7 @@ Per ogni annata candidata:
 2. viene generato il primo mese;
 3. le sue vicinanze entrano nella memoria temporanea;
 4. il secondo mese viene quindi calcolato sapendo che cosa è già accaduto nel primo;
-5. il processo continua fino al numero di mesi richiesto.
+5. il processo continua fino al numero di mesi richiesto (10 al massimo).
 
 ```text
 configurazione iniziale
@@ -582,9 +582,9 @@ La ricerca può arrestarsi quando viene raggiunto un limite di tempo, un numero 
 
 ---
 
-## 19. Le guardie di qualità nella scelta annuale
+## 19. Le guardie di qualità nella scelta Annuale
 
-Dopo il primo confronto complessivo, PostiPerfetti applica un secondo livello di controllo.
+Dopo il primo confronto complessivo, «PostiPerfetti» applica un secondo livello di controllo.
 
 Questa fase non crea nuove coppie o nuovi terzetti: confronta annate **già costruite**.
 
@@ -625,7 +625,7 @@ soluzione di riferimento
 
 ## 20. Il riordino dei mesi non cambia i posti
 
-Una volta scelta l'annata, PostiPerfetti può migliorare **l'ordine temporale** dei mesi già generati.
+Una volta scelta l'annata, «PostiPerfetti» può migliorare **l'ordine temporale** dei mesi già generati.
 
 Quando alcuni riusi o alcune incompatibilità non assolute sono inevitabili, il programma prova — entro precise guardie di sicurezza — a **collocare più avanti nel calendario i mesi che contengono questi compromessi**, mantenendo il più possibile favorevole la parte iniziale dell'anno scolastico.
 
@@ -647,7 +647,7 @@ Cambia quindi **quando** compare un mese già generato, non **come** quel mese �
 
 L'interfaccia grafica e il motore di calcolo sono separati intenzionalmente.
 
-Le elaborazioni più pesanti non devono manipolare direttamente i pulsanti, i pannelli o gli altri elementi grafici della finestra mentre stanno calcolando.
+Le elaborazioni più pesanti non devono incidere nella reponsività di pulsanti, pannelli o altri elementi grafici della finestra mentre stanno calcolando.
 
 Nella R0.8:
 
@@ -672,7 +672,7 @@ L'utente vede la disposizione e può salvarla. Solo in quel momento l'assegnazio
 
 L'intera annata viene prima preparata e mostrata in anteprima.
 
-Se viene accettata, tutti i mesi vengono preparati e salvati come un unico blocco, così non dovrebbe rimanere una parte dell'annata registrata e una parte no.
+Se viene accettata, tutti i mesi vengono preparati e salvati come un unico blocco.
 
 Lo Storico diventa a sua volta una delle fonti utilizzate dalle assegnazioni successive.
 
@@ -696,9 +696,9 @@ calcolo successivo
 
 ## 23. Riassunto in dieci passaggi
 
-Se si vuole ricordare soltanto l'essenziale:
+Per descrivere il funzionamento in modo essenziale:
 
-1. PostiPerfetti legge e valida la classe.
+1. «PostiPerfetti» legge e valida la classe.
 2. Recupera geometria, opzioni e Storico.
 3. Crea una fotografia indipendente dei dati di partenza.
 4. Valuta la qualità delle possibili vicinanze.
@@ -709,4 +709,4 @@ Se si vuole ricordare soltanto l'essenziale:
 9. Nell'Annuale ripete il processo mese dopo mese e applica ulteriori guardie di qualità.
 10. Solo dopo l'accettazione dell'utente aggiorna lo Storico reale.
 
-Il principio di fondo è che PostiPerfetti non cerca semplicemente una disposizione **possibile**: prova prima a trovare quella che conserva meglio rotazione, compatibilità e preferenze, allentando le richieste non assolute soltanto quando necessario.
+Il principio di fondo è che «PostiPerfetti» non cerca semplicemente una disposizione **possibile**: prova prima a trovare quella che conserva meglio rotazione, compatibilità e preferenze, allentando le richieste non assolute soltanto quando è necessario.
