@@ -40,7 +40,7 @@ InfoAfterFile=info_dopo_installazione.txt
 
 ; Output dell'installer, sempre relativo alla root del repository.
 OutputDir=..\..\dist-installer
-OutputBaseFilename=PostiPerfetti_Setup_{#MyAppVersion}
+OutputBaseFilename=PostiPerfetti_setup
 Compression=lzma2
 SolidCompression=yes
 
@@ -75,7 +75,7 @@ Name: "{app}\log"; Flags: uninsneveruninstall
 
 [Files]
 ; Bundle PyInstaller onedir: PostiPerfetti.exe + _internal\...
-Source: "..\..\dist\PostiPerfetti\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\dist\PostiPerfetti\*"; DestDir: "{app}"; Excludes: "\classi\*"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 ; Licenza leggibile anche nella cartella installata.
 Source: "..\..\LICENSE"; DestDir: "{app}"; Flags: ignoreversion

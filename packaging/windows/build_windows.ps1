@@ -68,6 +68,19 @@ if (-not (Test-Path $Exe)) {
     throw "Build PyInstaller terminata senza trovare $Exe"
 }
 
+$ClassiDist = Join-Path $Root "dist\PostiPerfetti\classi"
+New-Item -ItemType Directory -Force -Path $ClassiDist | Out-Null
+
+Copy-Item `
+    (Join-Path $Root "classi\Classe-BASE_esempio.txt") `
+    (Join-Path $ClassiDist "Classe-BASE_esempio.txt") `
+    -Force
+
+Copy-Item `
+    (Join-Path $Root "classi\Classe-COMPLETO_esempio.txt") `
+    (Join-Path $ClassiDist "Classe-COMPLETO_esempio.txt") `
+    -Force
+
 Write-Host ""
 Write-Host "EXE creato: $Exe" -ForegroundColor Green
 
@@ -97,7 +110,7 @@ Write-Host ""
 Write-Host "Compilazione installer con Inno Setup..." -ForegroundColor Cyan
 & $ISCC (Join-Path $PackagingDir "postiperfetti_setup.iss")
 
-$Setup = Join-Path $Root "dist-installer\PostiPerfetti_Setup_0.8.0.exe"
+$Setup = Join-Path $Root "dist-installer\PostiPerfetti_setup.exe"
 if (Test-Path $Setup) {
     Write-Host ""
     Write-Host "Installer creato: $Setup" -ForegroundColor Green
