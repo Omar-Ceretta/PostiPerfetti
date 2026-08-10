@@ -1,0 +1,62 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: test-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pytest:
+    name: Python ${{ matrix.python-version }}
+    runs-on: ubuntu-24.04
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version:
+          - "3.10"
+          - "3.11"
+          - "3.12"
+          - "3.13"
+          - "3.14"
+
+    env:
+      QT_QPA_PLATFORM: offscreen
+
+    steps:
+      - name: Scarica il repository
+        uses: actions/checkout@v7
+
+      - name: Prepara Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: |
+            requirements.txt
+            documentazione/sviluppo/requirements-dev.txt
+
+      - name: Installa le dipendenze di sviluppo
+        run: >
+          python -m pip install
+          -r documentazione/sviluppo/requirements-dev.txt
+
+      - name: Mostra l'ambiente
+        run: |
+          python --version
+          python -m pip --version
+
+      - name: Esegue la suite pubblica
+        run: >
+          python -m pytest
+          documentazione/sviluppo/test
+          -q
