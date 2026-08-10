@@ -1,0 +1,10 @@
+# Dipendenze di sviluppo e collaudo di «PostiPerfetti».
+#
+# Le dipendenze runtime restano definite esclusivamente nel
+# requirements.txt della radice del progetto.
+# Questo file aggiunge soltanto gli strumenti necessari allo sviluppo.
+
+-r ../../requirements.txt
+
+pytest==9.1.1
+ruff==0.16.2
