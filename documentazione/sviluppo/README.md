@@ -7,7 +7,7 @@ Questa cartella contiene materiale tecnico destinato allo sviluppo e al collaudo
 - **`strumenti_diagnostica/`** — utilità diagnostiche specifiche.
 - **`dati_validazione/`** — corpus ridotto di regressione ed esempi necessari ai controlli.
 
-Le sottocartelle `cantiere_semantico` e `validazione_rc` compaiono sia in `strumenti/` sia in `test/`:
+Le sottodirectory `cantiere_semantico` e `validazione_rc` compaiono sia in `strumenti/` sia in `test/`:
 
 ```text
 strumenti/cantiere_semantico/   = implementazione degli strumenti
