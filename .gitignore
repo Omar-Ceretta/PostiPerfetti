@@ -26,7 +26,11 @@ htmlcov/
 /stato/*
 /log/*
 
-# Esportazioni generate nella radice del programma
+# Esportazioni e report generati dall'utente nella radice del programma.
+# La regola /*.txt  evita che report/statistiche locali
+# possano essere inclusi per errore da chi usa un normale workflow Git.
+# Eventuali futuri .txt di progetto in root dovranno essere esclusi
+# esplicitamente da questa regola.
 /*.xlsx
 /*.txt
 
@@ -37,8 +41,10 @@ htmlcov/
 .directory
 .SynologyWorkingDirectory/
 
-# Artefatti di build e packaging Windows
+# Artefatti di build e packaging
 /.venv-build-windows/
 /build/
 /dist/
 /dist-installer/
+/dist-linux/
+/dist-release/
