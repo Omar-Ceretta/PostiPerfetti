@@ -4,7 +4,7 @@ Questa cartella raccoglie la documentazione stabile del progetto.
 
 ## Per capire il programma
 
-- **`COME_FUNZIONA_POSTIPERFETTI.md`** — descrive il percorso dei dati, i quattro Tentativi, i criteri di scelta e la generazione Mensile/Annuale.
+- **`COME_FUNZIONA.md`** — descrive il percorso dei dati, i quattro Tentativi, i criteri di scelta e la generazione Mensile/Annuale.
 - **`MAPPA_MODULI.md`** — offre una mappa dei moduli Python e delle loro responsabilità.
 - **`INSTALLAZIONE_AVVIO_E_DISINSTALLAZIONE.md`** — testo completo di riferimento per installazione, aggiornamento e disinstallazione.
 
