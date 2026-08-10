@@ -16,7 +16,25 @@
 set -euo pipefail
 
 NOME_APP="PostiPerfetti"
-CARTELLA_DEST="${POSTIPERFETTI_DEST:-$HOME/PostiPerfetti}"
+
+# Se POSTIPERFETTI_DEST è stato fornito esplicitamente, ha sempre
+# precedenza. Altrimenti, quando questo script è la copia INSTALLATA
+# accanto a postiperfetti.py, ricava automaticamente la propria radice.
+# La copia sorgente dentro packaging/linux/ continua invece a usare
+# ~/PostiPerfetti come destinazione predefinita.
+SCRIPT_DIR="$(
+    cd -- "$(dirname -- "${BASH_SOURCE[0]}")" >/dev/null 2>&1
+    pwd -P
+)"
+
+if [ -n "${POSTIPERFETTI_DEST:-}" ]; then
+    CARTELLA_DEST="$POSTIPERFETTI_DEST"
+elif [ -f "$SCRIPT_DIR/postiperfetti.py" ]; then
+    CARTELLA_DEST="$SCRIPT_DIR"
+else
+    CARTELLA_DEST="$HOME/PostiPerfetti"
+fi
+
 PURGE=0
 ASSUMI_SI=0
 
@@ -134,18 +152,46 @@ DIR_ICONA="$DATA_HOME/icons/hicolor/256x256/apps"
 FILE_DESKTOP="$DIR_APPLICAZIONI/postiperfetti.desktop"
 ICONA_INSTALLATA="$DIR_ICONA/postiperfetti.png"
 
-rm -f -- "$FILE_DESKTOP" "$ICONA_INSTALLATA"
-msg_ok "Voce di menu e icona rimosse"
+# Un solo nome .desktop e una sola icona sono condivisi dall'utente.
+# Prima di cancellarli verifichiamo quindi che la voce di menu punti
+# DAVVERO all'installazione che stiamo rimuovendo.
+EXEC_ATTESO="Exec=\"$CARTELLA_DEST/moduli/postiperfetti_launcher.py\""
+PATH_ATTESO="Path=$CARTELLA_DEST"
+INTEGRAZIONE_RIMOSSA=0
 
-# Aggiorniamo le cache solo se gli strumenti sono disponibili.
-if command -v update-desktop-database >/dev/null 2>&1; then
-    update-desktop-database "$DIR_APPLICAZIONI" >/dev/null 2>&1 || true
+if [ -f "$FILE_DESKTOP" ] \
+        && grep -Fqx -- "$EXEC_ATTESO" "$FILE_DESKTOP" \
+        && grep -Fqx -- "$PATH_ATTESO" "$FILE_DESKTOP"; then
+
+    rm -f -- "$FILE_DESKTOP" "$ICONA_INSTALLATA"
+    INTEGRAZIONE_RIMOSSA=1
+    msg_ok "Voce di menu e icona appartenenti a questa installazione rimosse"
+else
+    if [ -f "$FILE_DESKTOP" ]; then
+        msg_nota "La voce di menu esistente appartiene a un'altra installazione:"
+        msg_nota "  $FILE_DESKTOP"
+        msg_nota "Non verrà modificata."
+    else
+        msg_nota "Nessuna voce di menu appartenente a questa installazione da rimuovere."
+    fi
+
+    if [ -f "$ICONA_INSTALLATA" ]; then
+        msg_nota "L'icona condivisa viene conservata per sicurezza."
+    fi
 fi
-if command -v gtk-update-icon-cache >/dev/null 2>&1; then
-    gtk-update-icon-cache -f "$DATA_HOME/icons/hicolor" >/dev/null 2>&1 || true
-fi
-if command -v kbuildsycoca6 >/dev/null 2>&1; then
-    kbuildsycoca6 >/dev/null 2>&1 || true
+
+# Aggiorniamo le cache soltanto se abbiamo davvero rimosso
+# l'integrazione desktop di questa installazione.
+if [ "$INTEGRAZIONE_RIMOSSA" -eq 1 ]; then
+    if command -v update-desktop-database >/dev/null 2>&1; then
+        update-desktop-database "$DIR_APPLICAZIONI" >/dev/null 2>&1 || true
+    fi
+    if command -v gtk-update-icon-cache >/dev/null 2>&1; then
+        gtk-update-icon-cache -f "$DATA_HOME/icons/hicolor" >/dev/null 2>&1 || true
+    fi
+    if command -v kbuildsycoca6 >/dev/null 2>&1; then
+        kbuildsycoca6 >/dev/null 2>&1 || true
+    fi
 fi
 
 msg_fase "Rimozione dei file del programma"

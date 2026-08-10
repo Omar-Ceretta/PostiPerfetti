@@ -21,5 +21,12 @@ Gli aggiornamenti preservano questi dati.
 Durante la disinstallazione verrà chiesto esplicitamente se conservarli
 oppure eliminarli.
 
+CODICE SORGENTE E LICENZA
+
+«PostiPerfetti» è software libero distribuito con licenza GNU GPLv3.
+Il codice sorgente e le Release ufficiali sono disponibili su:
+
+https://github.com/Omar-Ceretta/PostiPerfetti
+
 Per segnalazioni o suggerimenti:
 ceretta.omar@ictombologalliera.edu.it

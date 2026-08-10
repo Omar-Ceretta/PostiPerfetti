@@ -1,5 +1,12 @@
+#ifndef MyAppVersion
+  #error MyAppVersion non definita: compilare tramite build_windows.ps1
+#endif
+
+#ifndef MyAppVersionQuad
+  #error MyAppVersionQuad non definita: compilare tramite build_windows.ps1
+#endif
+
 #define MyAppName "PostiPerfetti"
-#define MyAppVersion "0.8.0"
 #define MyAppPublisher "Omar Ceretta"
 #define MyAppURL "https://github.com/Omar-Ceretta/PostiPerfetti"
 #define MyAppExeName "PostiPerfetti.exe"
@@ -44,9 +51,9 @@ OutputBaseFilename=PostiPerfetti_setup
 Compression=lzma2
 SolidCompression=yes
 
-; Versione del Setup.exe stesso.
-VersionInfoVersion=0.8.0.0
-VersionInfoProductVersion=0.8.0.0
+; Versione del Setup.exe stesso, ricevuta dalla fonte unica tramite lo script di build.
+VersionInfoVersion={#MyAppVersionQuad}
+VersionInfoProductVersion={#MyAppVersionQuad}
 VersionInfoDescription=Installer di PostiPerfetti
 VersionInfoProductName=PostiPerfetti
 

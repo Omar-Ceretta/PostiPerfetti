@@ -41,17 +41,51 @@ if (-not (Test-Path $PythonVenv)) {
     }
 }
 
+# Legge l'identità della release dalla stessa fonte usata dall'applicazione.
+$Versione = (
+    & $PythonVenv -c "from moduli.versione import VERSIONE; print(VERSIONE)"
+).Trim()
+
+$VersioneWindows = (
+    & $PythonVenv -c "from moduli.versione import VERSIONE_WINDOWS; print('.'.join(str(x) for x in VERSIONE_WINDOWS))"
+).Trim()
+
+if (
+    [string]::IsNullOrWhiteSpace($Versione) -or
+    [string]::IsNullOrWhiteSpace($VersioneWindows)
+) {
+    throw "Impossibile ricavare la versione da moduli/versione.py"
+}
+
+Write-Host ""
+Write-Host "Versione sorgente: $Versione ($VersioneWindows per Windows)" -ForegroundColor Cyan
+
 Write-Host ""
 Write-Host "Installazione/aggiornamento dipendenze di build..." -ForegroundColor Cyan
-& $PythonVenv -m pip install --disable-pip-version-check --upgrade pip
-& $PythonVenv -m pip install --disable-pip-version-check -r (Join-Path $Root "requirements.txt")
-& $PythonVenv -m pip install --disable-pip-version-check "pyinstaller>=6.21,<7"
+
+$RequirementsBuild = Join-Path `
+    $PackagingDir `
+    "requirements-build-windows.txt"
+
+& $PythonVenv -m pip install `
+    --disable-pip-version-check `
+    -r $RequirementsBuild
+
+if ($LASTEXITCODE -ne 0) {
+    throw "Installazione delle dipendenze di build non riuscita."
+}
 
 if (-not $SaltaTest) {
     Write-Host ""
-    Write-Host "Esecuzione test rapidi della root..." -ForegroundColor Cyan
-    & $PythonVenv -m pip install --disable-pip-version-check pytest
-    & $PythonVenv -m pytest -q
+    Write-Host "Esecuzione suite pubblica..." -ForegroundColor Cyan
+
+    & $PythonVenv -m pytest `
+        (Join-Path $Root "documentazione\sviluppo\test") `
+        -q
+
+    if ($LASTEXITCODE -ne 0) {
+        throw "La suite pytest non è completamente verde."
+    }
 }
 
 Write-Host ""
@@ -108,7 +142,14 @@ if (-not $ISCC) {
 
 Write-Host ""
 Write-Host "Compilazione installer con Inno Setup..." -ForegroundColor Cyan
-& $ISCC (Join-Path $PackagingDir "postiperfetti_setup.iss")
+
+$DefVersione = "/DMyAppVersion=`"$Versione`""
+$DefVersioneWindows = "/DMyAppVersionQuad=`"$VersioneWindows`""
+
+& $ISCC `
+    $DefVersione `
+    $DefVersioneWindows `
+    (Join-Path $PackagingDir "postiperfetti_setup.iss")
 
 $Setup = Join-Path $Root "dist-installer\PostiPerfetti_setup.exe"
 if (Test-Path $Setup) {

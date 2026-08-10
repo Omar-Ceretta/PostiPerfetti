@@ -6,11 +6,14 @@
 # dell'utente e crea icona e voce di menu secondo gli standard
 # freedesktop.org (validi su KDE, GNOME, XFCE, COSMIC, ecc.).
 #
-# NON richiede MAI privilegi di amministratore (niente sudo):
-# scrive esclusivamente dentro la cartella personale dell'utente.
+# Lo script deve essere eseguito come utente normale, MAI con sudo.
+# Se mancano prerequisiti di sistema, può chiedere esplicitamente
+# l'autorizzazione a usare sudo soltanto per il gestore dei pacchetti.
+# I file di PostiPerfetti restano sempre nella cartella dell'utente.
 #
-# L'ambiente virtuale (.venv) e le dipendenze NON sono compito di
-# questo script: se ne occupa il launcher al primo avvio del programma.
+# L'installer prepara e verifica anche l'ambiente virtuale (.venv)
+# e le dipendenze Python. Il launcher conserva il ruolo di controllo
+# e autoriparazione per eventuali problemi successivi.
 # =====================================================================
 
 
@@ -24,9 +27,18 @@
 #   -o pipefail  una pipe fallisce se fallisce QUALSIASI suo comando
 set -euo pipefail
 
-# Indirizzo dell'archivio: stato attuale del ramo principale su GitHub.
-# Non esistono versioni multiple: c'è sempre e solo l'ultima.
+# ---------------------------------------------------------------------
+# Modalità di distribuzione
+# ---------------------------------------------------------------------
+# Questo file nel repository resta deliberatamente un installer di
+# SVILUPPO/COLLAUDO. Il generatore di release ne crea una copia nella
+# quale queste quattro costanti vengono sostituite automaticamente.
+#
+# Non modificare a mano questi valori per preparare una release.
+MODALITA_RELEASE=0
+VERSIONE_RELEASE=""
 URL_TARBALL="https://github.com/Omar-Ceretta/PostiPerfetti/archive/refs/heads/main.tar.gz"
+SHA256_ATTESO=""
 
 # Cartella di destinazione del programma.
 # Di norma ~/PostiPerfetti, ma può essere cambiata all'avvio con:
@@ -38,6 +50,11 @@ CARTELLA_DEST="${POSTIPERFETTI_DEST:-$HOME/PostiPerfetti}"
 # si può evitare di riscrivere la voce .desktop e l'icona dell'utente con:
 #   POSTIPERFETTI_INTEGRA_MENU=0 POSTIPERFETTI_DEST=... bash install.sh
 INTEGRA_MENU="${POSTIPERFETTI_INTEGRA_MENU:-1}"
+
+# Modalità di collaudo: se impostata, usa direttamente una copia locale
+# del repository invece di scaricare l'archivio da GitHub.
+# Non è usata nell'installazione normale dell'utente.
+SORGENTE_LOCALE="${POSTIPERFETTI_SORGENTE_LOCALE:-}"
 
 # Nome leggibile del programma, usato nei messaggi
 NOME_APP="PostiPerfetti"
@@ -71,10 +88,53 @@ errore_fatale() {
     exit 1
 }
 
+
+# Calcola SHA-256 usando Python, che è già un prerequisito obbligatorio
+# dell'applicazione. Non introduciamo quindi sha256sum/shasum come
+# ulteriore dipendenza di sistema.
+calcola_sha256() {
+    python3 - "$1" <<'PY'
+from hashlib import sha256
+from pathlib import Path
+import sys
+
+percorso = Path(sys.argv[1])
+digest = sha256()
+
+with percorso.open("rb") as file:
+    for blocco in iter(lambda: file.read(1024 * 1024), b""):
+        digest.update(blocco)
+
+print(digest.hexdigest())
+PY
+}
+
 case "$INTEGRA_MENU" in
     0|1) ;;
     *) errore_fatale "POSTIPERFETTI_INTEGRA_MENU accetta soltanto 0 oppure 1." ;;
 esac
+
+case "$MODALITA_RELEASE" in
+    0|1) ;;
+    *) errore_fatale "Configurazione interna non valida: MODALITA_RELEASE." ;;
+esac
+
+if [ "$MODALITA_RELEASE" = "1" ]; then
+    if [ -z "$VERSIONE_RELEASE" ]; then
+        errore_fatale "Installer di release privo della versione attesa."
+    fi
+
+    if [[ ! "$SHA256_ATTESO" =~ ^[0-9a-fA-F]{64}$ ]]; then
+        errore_fatale "Installer di release privo di uno SHA-256 valido."
+    fi
+
+    # Una copia ufficiale di release non deve poter essere dirottata
+    # tramite la modalità di collaudo locale.
+    if [ -n "$SORGENTE_LOCALE" ]; then
+        errore_fatale "POSTIPERFETTI_SORGENTE_LOCALE è una funzione di
+     collaudo e non è disponibile nell'installer ufficiale di release."
+    fi
+fi
 
 
 # --- Riconoscimento della famiglia di distribuzione -----------------
@@ -96,17 +156,145 @@ famiglia_distro() {
     esac
 }
 
-# Compone il comando di installazione adatto alla distribuzione.
-# Argomenti: $1 nome pacchetto su Debian/Ubuntu
-#            $2 su Fedora    $3 su Arch    $4 su openSUSE
+# Restituisce il pacchetto che fornisce Python 3 nella famiglia rilevata.
+pacchetto_python() {
+    case "$(famiglia_distro)" in
+        debian|fedora|suse) printf 'python3' ;;
+        arch)               printf 'python' ;;
+        *)                  printf 'python3' ;;
+    esac
+}
+
+# Su Debian/Ubuntu il supporto completo a venv è separato.
+# Nelle altre famiglie supportate è fornito dal pacchetto Python.
+pacchetto_venv() {
+    case "$(famiglia_distro)" in
+        debian) printf 'python3-venv' ;;
+        fedora) printf 'python3' ;;
+        arch)   printf 'python' ;;
+        suse)   printf 'python3' ;;
+        *)      printf 'python3' ;;
+    esac
+}
+
+# Libreria richiesta dal plugin Qt/XCB.
+pacchetto_xcb_cursor() {
+    case "$(famiglia_distro)" in
+        debian) printf 'libxcb-cursor0' ;;
+        fedora) printf 'xcb-util-cursor' ;;
+        arch)   printf 'xcb-util-cursor' ;;
+        suse)   printf 'libxcb-cursor0' ;;
+        *)      printf 'libxcb-cursor0' ;;
+    esac
+}
+
+# Produce un comando leggibile da mostrare all'utente.
+# I nomi ricevuti sono già quelli corretti per la famiglia corrente.
 comando_installazione() {
     case "$(famiglia_distro)" in
-        debian) printf 'sudo apt install %s'     "$1" ;;
-        fedora) printf 'sudo dnf install %s'     "$2" ;;
-        arch)   printf 'sudo pacman -S %s'       "$3" ;;
-        suse)   printf 'sudo zypper install %s'  "$4" ;;
-        *)      printf 'installa il pacchetto «%s» con il gestore della tua distribuzione' "$1" ;;
+        debian) printf 'sudo apt-get install %s' "$*" ;;
+        fedora) printf 'sudo dnf install %s' "$*" ;;
+        arch)   printf 'sudo pacman -S --needed %s' "$*" ;;
+        suse)   printf 'sudo zypper install %s' "$*" ;;
+        *)      printf 'installa manualmente i prerequisiti mancanti' ;;
     esac
+}
+
+# Installa in una sola operazione i pacchetti di sistema mancanti.
+# Su Arch NON eseguiamo mai «pacman -Sy»: evitiamo di aggiornare soltanto
+# il database dei pacchetti e lasciare il sistema in stato incoerente.
+installa_pacchetti_sistema() {
+    case "$(famiglia_distro)" in
+        debian)
+            sudo apt-get update &&
+            sudo apt-get install -y "$@"
+            ;;
+        fedora)
+            sudo dnf install -y "$@"
+            ;;
+        arch)
+            sudo pacman -S --needed --noconfirm "$@"
+            ;;
+        suse)
+            sudo zypper --non-interactive install "$@"
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+}
+
+# Verifica il contratto Python della release corrente.
+# PySide6 6.11.1 richiede Python >= 3.10 e < 3.15.
+python_versione_compatibile() {
+    python3 -c '
+import sys
+raise SystemExit(
+    0 if (3, 10) <= sys.version_info[:2] < (3, 15) else 1
+)
+' >/dev/null 2>&1
+}
+
+# Non ci accontentiamo di «import venv» o «import ensurepip»:
+# proviamo realmente a creare un piccolo ambiente virtuale, verifichiamo
+# che contenga Python e pip e poi lo eliminiamo.
+python_puo_creare_venv() {
+    local prova_venv
+
+    prova_venv="$(mktemp -d)" || return 1
+
+    if python3 -m venv "$prova_venv/venv" >/dev/null 2>&1 \
+            && "$prova_venv/venv/bin/python" -m pip --version \
+                >/dev/null 2>&1; then
+        rm -rf "$prova_venv"
+        return 0
+    fi
+
+    rm -rf "$prova_venv"
+    return 1
+}
+
+# Verifica la presenza della libreria nativa che ha causato il crash
+# osservato su Linux Mint.
+ha_libreria_xcb_cursor() {
+    local ldconfig_cmd="" contenuto=""
+
+    if command -v ldconfig >/dev/null 2>&1; then
+        ldconfig_cmd="$(command -v ldconfig)"
+    elif [ -x /usr/sbin/ldconfig ]; then
+        ldconfig_cmd="/usr/sbin/ldconfig"
+    elif [ -x /sbin/ldconfig ]; then
+        ldconfig_cmd="/sbin/ldconfig"
+    fi
+
+    if [ -n "$ldconfig_cmd" ]; then
+        contenuto="$("$ldconfig_cmd" -p 2>/dev/null || true)"
+        if [[ "$contenuto" == *"libxcb-cursor.so.0"* ]]; then
+            return 0
+        fi
+    fi
+
+    # Ripiego per sistemi dove ldconfig non è disponibile nel modo atteso.
+    if [ -n "$(find /usr/lib /usr/lib64 /lib /lib64 \
+            -name 'libxcb-cursor.so.0' -print -quit 2>/dev/null)" ]; then
+        return 0
+    fi
+
+    return 1
+}
+
+# Aggiunge un pacchetto all'elenco evitando duplicati.
+aggiungi_pacchetto() {
+    local nuovo="$1"
+    local presente
+
+    for presente in "${PACCHETTI_MANCANTI[@]}"; do
+        if [ "$presente" = "$nuovo" ]; then
+            return
+        fi
+    done
+
+    PACCHETTI_MANCANTI+=("$nuovo")
 }
 
 
@@ -130,68 +318,222 @@ if [ "$(id -u)" -eq 0 ]; then
 fi
 msg_ok "Esecuzione come utente normale"
 
-# --- 1.2 Python 3 deve essere presente ------------------------------
-# Serve al launcher per creare il .venv e avviare il programma.
+# --- 1.2 Inventario dei prerequisiti di sistema ---------------------
+# Prima raccogliamo TUTTE le mancanze; soltanto dopo chiediamo
+# eventualmente il permesso di installarle.
+PACCHETTI_MANCANTI=()
+MANCANZE=()
+PREREQUISITI_INSTALLATI=0
+
 if ! command -v python3 >/dev/null 2>&1; then
-    errore_fatale "Python 3 non è installato.
-     Installalo con:
-       $(comando_installazione 'python3 python3-venv' 'python3' 'python' 'python3')"
+    MANCANZE+=("Python 3")
+
+    aggiungi_pacchetto "$(pacchetto_python)"
+
+    # Su Debian il pacchetto venv è distinto: se Python manca del tutto,
+    # predisponiamolo già nella stessa transazione.
+    if [ "$(famiglia_distro)" = "debian" ]; then
+        aggiungi_pacchetto "$(pacchetto_venv)"
+    fi
+else
+    # Se Python c'è già ma è fuori dal contratto della release, non
+    # tentiamo di sostituire automaticamente l'interprete di sistema.
+    if ! python_versione_compatibile; then
+        VERSIONE_PYTHON="$(python3 --version 2>&1)"
+        errore_fatale "La versione di Python installata non è compatibile con questa release.
+     Rilevata: $VERSIONE_PYTHON
+     Richiesta: Python 3.10, 3.11, 3.12, 3.13 oppure 3.14.
+
+     L'installer non sostituisce automaticamente il Python di sistema."
+    fi
+
+    if ! python_puo_creare_venv; then
+        MANCANZE+=("supporto Python agli ambienti virtuali")
+        aggiungi_pacchetto "$(pacchetto_venv)"
+    fi
+fi
+
+if ! command -v tar >/dev/null 2>&1; then
+    MANCANZE+=("tar")
+    aggiungi_pacchetto "tar"
+fi
+
+if ! command -v rsync >/dev/null 2>&1; then
+    MANCANZE+=("rsync")
+    aggiungi_pacchetto "rsync"
+fi
+
+if [ -z "$SORGENTE_LOCALE" ] \
+        && ! command -v curl >/dev/null 2>&1 \
+        && ! command -v wget >/dev/null 2>&1; then
+    MANCANZE+=("strumento di download")
+    aggiungi_pacchetto "curl"
+fi
+
+if ! ha_libreria_xcb_cursor; then
+    MANCANZE+=("libreria Qt/XCB per il cursore")
+    aggiungi_pacchetto "$(pacchetto_xcb_cursor)"
+fi
+
+# --- 1.3 Installazione facoltativa delle sole mancanze ---------------
+if [ "${#PACCHETTI_MANCANTI[@]}" -gt 0 ]; then
+    msg_fase "Prerequisiti di sistema mancanti"
+
+    for mancanza in "${MANCANZE[@]}"; do
+        printf '  - %s\n' "$mancanza"
+    done
+
+    if [ "$(famiglia_distro)" = "ignota" ]; then
+        errore_fatale "La distribuzione Linux non è stata riconosciuta.
+     Non installerò pacchetti di sistema tentando di indovinare i nomi.
+     Installa manualmente i prerequisiti elencati qui sopra e riesegui
+     questo installer."
+    fi
+
+    msg_nota "Pacchetti proposti: ${PACCHETTI_MANCANTI[*]}"
+
+    if ! command -v sudo >/dev/null 2>&1; then
+        errore_fatale "Per installare automaticamente i prerequisiti serve «sudo».
+     Puoi installarli manualmente con privilegi amministrativi:
+       $(comando_installazione "${PACCHETTI_MANCANTI[@]}")"
+    fi
+
+    if [ ! -t 0 ]; then
+        errore_fatale "Sono necessari pacchetti di sistema, ma l'installer
+     non è in un terminale interattivo e non può chiederti il permesso.
+     Rieseguilo da terminale."
+    fi
+
+    printf '\n'
+    printf '  %sPosso installare automaticamente questi prerequisiti.%s\n' \
+        "$C_TIT" "$C_END"
+    printf '  Verrà richiesta la password di amministrazione da sudo.\n'
+    printf '  Nessun altro file di sistema verrà modificato da PostiPerfetti.\n'
+    printf '\n'
+    printf '  %sProcedere? [S/n] %s' "$C_TIT" "$C_END"
+
+    if ! read -r risposta_prerequisiti; then
+        risposta_prerequisiti="n"
+    fi
+
+    case "$risposta_prerequisiti" in
+        ""|s|S|si|SI|Si|sì|SÌ|Sì|y|Y|yes|YES|Yes)
+            ;;
+        *)
+            errore_fatale "Installazione dei prerequisiti annullata.
+     Puoi installarli manualmente con:
+       $(comando_installazione "${PACCHETTI_MANCANTI[@]}")"
+            ;;
+    esac
+
+    if ! sudo -v; then
+        errore_fatale "Autorizzazione amministrativa non concessa.
+     Nessuna modifica è stata eseguita da PostiPerfetti."
+    fi
+
+    msg_fase "Installazione dei prerequisiti di sistema"
+
+    if ! installa_pacchetti_sistema "${PACCHETTI_MANCANTI[@]}"; then
+        errore_fatale "Il gestore dei pacchetti non è riuscito a completare
+     l'installazione dei prerequisiti.
+
+     Controlla i messaggi qui sopra e riprova."
+    fi
+
+    PREREQUISITI_INSTALLATI=1
+fi
+
+# --- 1.4 Verifica reale DOPO l'eventuale installazione ---------------
+# Non ci fidiamo soltanto del codice di uscita del package manager:
+# verifichiamo le capacità che PostiPerfetti utilizzerà davvero.
+if ! command -v python3 >/dev/null 2>&1; then
+    errore_fatale "Python 3 risulta ancora non disponibile dopo il controllo dei prerequisiti."
 fi
 msg_ok "Python 3 presente"
 msg_nota "$(python3 --version 2>&1)"
 
-# --- 1.3 Python deve poter creare ambienti virtuali -----------------
-# Su Debian/Ubuntu il modulo «ensurepip» sta in un pacchetto separato
-# (python3-venv): senza di esso la creazione del .venv fallirebbe più
-# tardi, con un errore incomprensibile. Meglio accorgersene ADESSO.
-if ! python3 -c 'import ensurepip' >/dev/null 2>&1; then
-    errore_fatale "Python 3 non può creare ambienti virtuali (modulo «venv» incompleto).
-     Installa il componente mancante con:
-       $(comando_installazione 'python3-venv' 'python3' 'python' 'python3')"
+if ! python_versione_compatibile; then
+    errore_fatale "La versione di Python disponibile non è compatibile.
+     Serve una versione compresa tra Python 3.10 e Python 3.14."
 fi
-msg_ok "Supporto agli ambienti virtuali disponibile"
+msg_ok "Versione di Python compatibile"
 
-# --- 1.4 «tar» per estrarre l'archivio scaricato --------------------
+if ! python_puo_creare_venv; then
+    errore_fatale "Python 3 non riesce a creare un ambiente virtuale
+     completo di pip, anche dopo il controllo dei prerequisiti."
+fi
+msg_ok "Creazione reale di un ambiente virtuale: OK"
+
 if ! command -v tar >/dev/null 2>&1; then
-    errore_fatale "Il comando «tar» non è disponibile.
-     Installalo con:
-       $(comando_installazione 'tar' 'tar' 'tar' 'tar')"
+    errore_fatale "Il comando «tar» risulta ancora non disponibile."
 fi
 msg_ok "Strumento di estrazione «tar» presente"
 
-# --- 1.4-bis «rsync» per copiare il programma in modo sicuro --------
-# Serve al BLOCCO 4 per sincronizzare SOLO le cartelle di programma
-# (moduli/ e risorse/) senza mai toccare classi/, stato/ e log/, cioè
-# i dati dell'utente. È lo strumento che rende la copia sicura.
 if ! command -v rsync >/dev/null 2>&1; then
-    errore_fatale "Il comando «rsync» non è disponibile.
-     Installalo con:
-       $(comando_installazione 'rsync' 'rsync' 'rsync' 'rsync')"
+    errore_fatale "Il comando «rsync» risulta ancora non disponibile."
 fi
 msg_ok "Strumento di copia «rsync» presente"
 
-# --- 1.5 Uno strumento per scaricare: curl OPPURE wget --------------
-# Ne basta uno. Memorizziamo quale, così il BLOCCO 2 saprà quale usare.
-if command -v curl >/dev/null 2>&1; then
+if [ -n "$SORGENTE_LOCALE" ]; then
+    SCARICATORE=""
+    msg_ok "Modalità di collaudo con sorgente locale attiva"
+elif command -v curl >/dev/null 2>&1; then
     SCARICATORE="curl"
+    msg_ok "Strumento di download disponibile: $SCARICATORE"
 elif command -v wget >/dev/null 2>&1; then
     SCARICATORE="wget"
+    msg_ok "Strumento di download disponibile: $SCARICATORE"
 else
-    errore_fatale "Serve «curl» oppure «wget» per scaricare il programma.
-     Installane uno con:
-       $(comando_installazione 'curl' 'curl' 'curl' 'curl')"
+    errore_fatale "Né «curl» né «wget» risultano disponibili."
 fi
-msg_ok "Strumento di download disponibile: $SCARICATORE"
+
+if ! ha_libreria_xcb_cursor; then
+    errore_fatale "La libreria «libxcb-cursor.so.0» risulta ancora assente.
+     Qt potrebbe non riuscire ad avviare l'interfaccia grafica."
+fi
+msg_ok "Libreria Qt/XCB «libxcb-cursor.so.0» presente"
 
 # --- 1.6 Riepilogo di ciò che verrà fatto ---------------------------
 msg_fase "Riepilogo"
 msg_nota "Il programma sarà installato in: $CARTELLA_DEST"
-msg_nota "Nessuna modifica richiede privilegi di amministratore."
+
+if [ "$PREREQUISITI_INSTALLATI" = "1" ]; then
+    msg_nota "Sono stati installati soltanto i prerequisiti di sistema mancanti."
+    msg_nota "I file di PostiPerfetti saranno comunque scritti come utente normale."
+else
+    msg_nota "Tutti i prerequisiti di sistema erano già presenti: sudo non è stato usato."
+fi
 
 
 # =====================================================================
-# BLOCCO 2 — Download dell'archivio in cartella temporanea
+# BLOCCO 2 — Acquisizione del sorgente
 # =====================================================================
+
+if [ -n "$SORGENTE_LOCALE" ]; then
+    msg_fase "Uso del sorgente locale di collaudo"
+
+    if [ ! -d "$SORGENTE_LOCALE" ]; then
+        errore_fatale "La cartella sorgente locale non esiste:
+     $SORGENTE_LOCALE"
+    fi
+
+    CARTELLA_SORGENTE="$(
+        cd -- "$SORGENTE_LOCALE" 2>/dev/null
+        pwd -P
+    )"
+
+    if [ ! -f "$CARTELLA_SORGENTE/postiperfetti.py" ] \
+            || [ ! -f "$CARTELLA_SORGENTE/requirements.txt" ] \
+            || [ ! -d "$CARTELLA_SORGENTE/moduli" ] \
+            || [ ! -d "$CARTELLA_SORGENTE/risorse" ]; then
+        errore_fatale "La cartella indicata non sembra una radice valida
+     del repository di «$NOME_APP»:
+     $CARTELLA_SORGENTE"
+    fi
+
+    msg_ok "Sorgente locale verificato"
+    msg_nota "Sorgente pronto in: $CARTELLA_SORGENTE"
+else
 
 msg_fase "Scaricamento di «$NOME_APP»"
 
@@ -251,6 +593,29 @@ fi
 
 msg_ok "Programma scaricato correttamente"
 
+# L'installer ufficiale di release conosce in anticipo l'impronta
+# dell'asset che deve installare. Un download diverso, anche se fosse
+# comunque un archivio tar.gz valido, viene rifiutato.
+if [ "$MODALITA_RELEASE" = "1" ]; then
+    msg_fase "Verifica dell'integrità del pacchetto"
+
+    SHA256_OTTENUTO="$(calcola_sha256 "$ARCHIVIO_TMP")"
+
+    if [ "$SHA256_OTTENUTO" != "$SHA256_ATTESO" ]; then
+        errore_fatale "La verifica SHA-256 del pacchetto è fallita.
+
+     Atteso:
+       $SHA256_ATTESO
+
+     Ricevuto:
+       $SHA256_OTTENUTO
+
+     Il pacchetto NON verrà estratto né installato.
+     Riscarica l'installer dalla Release ufficiale."
+    fi
+
+    msg_ok "SHA-256 del pacchetto verificato"
+fi
 
 # =====================================================================
 # BLOCCO 3 — Estrazione e individuazione della cartella sorgente
@@ -291,39 +656,133 @@ fi
 msg_ok "File estratti e verificati"
 msg_nota "Sorgente pronto in: $CARTELLA_SORGENTE"
 
+fi  # fine: sorgente locale / download remoto
+
+
+# In una release verifichiamo due identità indipendenti:
+#   1. i byte del pacchetto devono avere lo SHA-256 previsto;
+#   2. il codice al suo interno deve dichiarare la versione prevista.
+if [ "$MODALITA_RELEASE" = "1" ]; then
+    FILE_VERSIONE_SORGENTE="$CARTELLA_SORGENTE/moduli/versione.py"
+
+    if [ ! -f "$FILE_VERSIONE_SORGENTE" ]; then
+        errore_fatale "Il pacchetto non contiene «moduli/versione.py»."
+    fi
+
+    if ! VERSIONE_SORGENTE="$(
+        python3 - "$FILE_VERSIONE_SORGENTE" <<'PY'
+import runpy
+import sys
+
+dati = runpy.run_path(sys.argv[1])
+print(dati["VERSIONE"])
+PY
+    )"; then
+        errore_fatale "Impossibile leggere la versione dal pacchetto."
+    fi
+
+    if [ "$VERSIONE_SORGENTE" != "$VERSIONE_RELEASE" ]; then
+        errore_fatale "Il pacchetto non appartiene alla release attesa.
+
+     Installer: $VERSIONE_RELEASE
+     Pacchetto: $VERSIONE_SORGENTE
+
+     L'installazione viene interrotta."
+    fi
+
+    msg_ok "Versione del pacchetto verificata: $VERSIONE_RELEASE"
+fi
+
 
 # =====================================================================
-# BLOCCO 4 — Installazione o aggiornamento in $CARTELLA_DEST
+# BLOCCO 4 — Installazione, aggiornamento o reinstallazione
 # =====================================================================
 
-# Prima di distinguere installazione/aggiornamento, proteggiamo una cartella
-# già esistente ma NON riconosciuta come PostiPerfetti: non vogliamo mai
-# sovrascrivere per errore contenuti estranei scelti come destinazione.
+# Dopo una disinstallazione normale possono restare ESCLUSIVAMENTE le
+# cartelle dati classi/, stato/ e log/. Una destinazione di questo tipo
+# è una reinstallazione legittima e non deve essere scambiata per una
+# cartella estranea.
+#
+# Per sicurezza:
+#   - deve esserci almeno una delle tre cartelle;
+#   - al primo livello non deve esserci nient'altro;
+#   - le tre voci ammesse devono essere directory reali, non symlink.
+destinazione_contiene_solo_dati_conservati() {
+    local voce nome trovato=0
+
+    [ -d "$CARTELLA_DEST" ] || return 1
+
+    while IFS= read -r -d '' voce; do
+        trovato=1
+        nome="${voce##*/}"
+
+        case "$nome" in
+            classi|stato|log)
+                if [ ! -d "$voce" ] || [ -L "$voce" ]; then
+                    return 1
+                fi
+                ;;
+            *)
+                return 1
+                ;;
+        esac
+    done < <(
+        find "$CARTELLA_DEST" \
+            -mindepth 1 \
+            -maxdepth 1 \
+            -print0 2>/dev/null
+    )
+
+    [ "$trovato" -eq 1 ]
+}
+
+# Proteggiamo sempre una cartella non riconosciuta: PostiPerfetti non
+# deve sovrascrivere contenuti estranei soltanto perché l'utente ha
+# scelto per errore quella destinazione.
 if [ -d "$CARTELLA_DEST" ] && [ ! -f "$CARTELLA_DEST/postiperfetti.py" ]; then
-    if find "$CARTELLA_DEST" -mindepth 1 -maxdepth 1 -print -quit 2>/dev/null | grep -q .; then
-        errore_fatale "La cartella di destinazione esiste già e non sembra un'installazione di «$NOME_APP»:
+    if find "$CARTELLA_DEST" \
+            -mindepth 1 \
+            -maxdepth 1 \
+            -print -quit 2>/dev/null | grep -q .; then
+
+        if ! destinazione_contiene_solo_dati_conservati; then
+            errore_fatale "La cartella di destinazione esiste già e non sembra
+     né un'installazione di «$NOME_APP», né una precedente
+     installazione disinstallata conservando i dati:
      $CARTELLA_DEST
-     Scegli una cartella vuota oppure una precedente installazione valida."
+
+     Per sicurezza nessun contenuto verrà sovrascritto."
+        fi
     fi
 fi
 
-# Distinguiamo i due scenari osservando se la destinazione contiene
-# GIÀ un'installazione (cerchiamo il file principale come prova).
-# Questo determina come trattare le cartelle dell'utente (classi/,
-# stato/, log/): alla prima installazione vanno seminati gli esempi,
-# in aggiornamento vanno lasciate assolutamente intatte.
+# Distinguiamo tre casi:
+#   aggiornamento              → il programma è già installato;
+#   reinstallazione_con_dati   → il programma è stato rimosso ma sono
+#                                rimasti classi/, stato/ e/o log/;
+#   prima_installazione        → destinazione nuova o vuota.
 if [ -f "$CARTELLA_DEST/postiperfetti.py" ]; then
     TIPO_INSTALLAZIONE="aggiornamento"
+elif destinazione_contiene_solo_dati_conservati; then
+    TIPO_INSTALLAZIONE="reinstallazione_con_dati"
 else
     TIPO_INSTALLAZIONE="prima_installazione"
 fi
 
-if [ "$TIPO_INSTALLAZIONE" = "aggiornamento" ]; then
-    msg_fase "Aggiornamento dell'installazione esistente"
-    msg_nota "I tuoi dati personali (classi e impostazioni) NON verranno toccati."
-else
-    msg_fase "Installazione nella cartella personale"
-fi
+case "$TIPO_INSTALLAZIONE" in
+    aggiornamento)
+        msg_fase "Aggiornamento dell'installazione esistente"
+        msg_nota "Classi, impostazioni e log NON verranno toccati."
+        ;;
+    reinstallazione_con_dati)
+        msg_fase "Reinstallazione con recupero dei dati conservati"
+        msg_nota "Sono stati trovati dati di una precedente installazione."
+        msg_nota "Classi, impostazioni e log precedenti saranno PRESERVATI."
+        ;;
+    prima_installazione)
+        msg_fase "Installazione nella cartella personale"
+        ;;
+esac
 
 # Creiamo la cartella di destinazione se non esiste ancora.
 # ( -p non dà errore se la cartella c'è già )
@@ -338,18 +797,19 @@ mkdir -p "$CARTELLA_DEST"
 #
 # Sono SOLO i file che servono a FAR GIRARE il programma:
 #   postiperfetti.py  → il programma vero e proprio (punto d'avvio)
-#   requirements.txt  → elenco delle librerie CON i vincoli di versione;
-#                       il launcher lo legge al 1° avvio per installarle.
+#   requirements.txt  → elenco congelato delle librerie runtime;
+#                       l'installer lo usa per preparare il .venv e il
+#                       launcher lo usa in seguito per eventuali riparazioni.
 #                       Su Linux è NECESSARIO (non è come su Windows, dove
 #                       PyInstaller impacchetta già tutto nell'.exe).
 #   LICENSE           → testo della licenza GNU GPLv3
 #   moduli/           → tutto il codice del programma
 #   risorse/          → icone e font distribuiti con il programma
 #
-# NON copiamo MAI: classi/, stato/, log/ (territorio dell'utente: le
-# crea il programma stesso al primo avvio), né .venv/, né alcuno
-# strumento di sviluppo. Così qualunque cosa "in più" ci sia nel
-# repository viene semplicemente ignorata.
+# NON copiamo MAI: classi/, stato/, log/ (territorio dell'utente),
+# né un eventuale .venv del repository sorgente, né strumenti di sviluppo.
+# Il .venv dell'installazione viene creato/verificato localmente più avanti.
+# Così qualunque cosa "in più" ci sia nel repository viene ignorata.
 
 # Cartelle di programma (contengono molti file) e singoli file: li
 # elenchiamo qui, una volta sola, per non ripetere nomi sparsi nel codice.
@@ -395,7 +855,35 @@ for file in "${FILE_PROGRAMMA[@]}"; do
     cp -f "$CARTELLA_SORGENTE/$file" "$CARTELLA_DEST/$file"
 done
 
+# Il disinstaller è un'eccezione intenzionale alla lista positiva:
+# nel repository vive dentro packaging/linux/, ma nell'installazione
+# finale deve trovarsi direttamente accanto a postiperfetti.py.
+#
+# Accettiamo anche un futuro pacchetto release che lo contenga già
+# nella radice, così questa logica non dovrà essere riscritta quando
+# separeremo il pacchetto runtime dal repository completo.
+if [ -f "$CARTELLA_SORGENTE/uninstall.sh" ]; then
+    UNINSTALLER_SORGENTE="$CARTELLA_SORGENTE/uninstall.sh"
+elif [ -f "$CARTELLA_SORGENTE/packaging/linux/uninstall.sh" ]; then
+    UNINSTALLER_SORGENTE="$CARTELLA_SORGENTE/packaging/linux/uninstall.sh"
+else
+    errore_fatale "Il disinstaller Linux «uninstall.sh» è assente
+     dal pacchetto scaricato. L'installazione non può essere
+     considerata completa."
+fi
+
+UNINSTALLER_DEST="$CARTELLA_DEST/uninstall.sh"
+
+if ! cp -f "$UNINSTALLER_SORGENTE" "$UNINSTALLER_DEST"; then
+    errore_fatale "Copia di «uninstall.sh» non riuscita."
+fi
+
+if ! chmod +x "$UNINSTALLER_DEST"; then
+    errore_fatale "Impossibile rendere eseguibile «uninstall.sh»."
+fi
+
 msg_ok "File del programma copiati (solo i contenuti necessari)"
+msg_ok "Disinstaller installato e reso eseguibile"
 
 # --- Prima installazione: semina i file-classe di ESEMPIO -----------
 # Il programma crea da sé le cartelle classi/, stato/ e log/ al primo
@@ -428,10 +916,353 @@ if [ -f "$LAUNCHER" ]; then
     chmod +x "$LAUNCHER"
     msg_ok "Launcher reso eseguibile"
 else
-    # Non è fatale qui, ma è un'anomalia che vale la pena segnalare:
-    # senza launcher, il BLOCCO 5 non avrebbe cosa avviare.
-    msg_nota "Attenzione: launcher non trovato nel percorso atteso."
+    errore_fatale "Launcher non trovato nel percorso atteso:
+     $LAUNCHER
+     L'installazione non può essere considerata completa."
 fi
+
+# =====================================================================
+# BLOCCO 4-bis — Preparazione e verifica dell'ambiente Python
+# =====================================================================
+
+msg_fase "Preparazione dell'ambiente Python"
+
+VENV_DEST="$CARTELLA_DEST/.venv"
+PYTHON_VENV="$VENV_DEST/bin/python3"
+REQUISITI_DEST="$CARTELLA_DEST/requirements.txt"
+
+
+# Verifica che tutte le righe runtime di requirements.txt siano bloccate
+# con «==» e che nell'ambiente siano installate ESATTAMENTE quelle versioni.
+requirements_esatti() {
+    local python_eseguibile="$1"
+    local file_requirements="$2"
+
+    "$python_eseguibile" - "$file_requirements" <<'PY'
+from importlib.metadata import PackageNotFoundError, version
+from pathlib import Path
+import sys
+
+percorso = Path(sys.argv[1])
+errori = []
+
+if not percorso.is_file():
+    print(f"requirements.txt non trovato: {percorso}", file=sys.stderr)
+    raise SystemExit(1)
+
+for numero, riga_grezza in enumerate(
+    percorso.read_text(encoding="utf-8").splitlines(),
+    start=1,
+):
+    riga = riga_grezza.split("#", 1)[0].strip()
+
+    if not riga:
+        continue
+
+    parti = riga.split("==")
+
+    if len(parti) != 2:
+        errori.append(
+            f"riga {numero}: dipendenza non congelata con ==: {riga!r}"
+        )
+        continue
+
+    nome = parti[0].strip()
+    attesa = parti[1].strip()
+
+    if not nome or not attesa:
+        errori.append(
+            f"riga {numero}: requisito non valido: {riga!r}"
+        )
+        continue
+
+    try:
+        installata = version(nome)
+    except PackageNotFoundError:
+        errori.append(f"{nome}: non installato")
+        continue
+
+    if installata != attesa:
+        errori.append(
+            f"{nome}: installata {installata}, richiesta {attesa}"
+        )
+
+if errori:
+    for errore in errori:
+        print(errore, file=sys.stderr)
+    raise SystemExit(1)
+PY
+}
+
+
+# Un venv non è considerato valido soltanto perché la directory esiste:
+# il suo Python deve essere realmente eseguibile, compatibile e dotato di pip.
+venv_funzionante() {
+    [ -x "$PYTHON_VENV" ] || return 1
+
+    "$PYTHON_VENV" -c '
+import sys
+raise SystemExit(
+    0 if (3, 10) <= sys.version_info[:2] < (3, 15) else 1
+)
+' >/dev/null 2>&1 || return 1
+
+    "$PYTHON_VENV" -m pip --version >/dev/null 2>&1 || return 1
+
+    return 0
+}
+
+
+if venv_funzionante; then
+    msg_ok "Ambiente virtuale esistente e funzionante"
+else
+    if [ -e "$VENV_DEST" ]; then
+        msg_nota "Il vecchio ambiente virtuale è assente o non utilizzabile."
+        msg_nota "Verrà ricreato senza modificare classi, impostazioni o log."
+        rm -rf -- "$VENV_DEST"
+    else
+        msg_nota "Creazione dell'ambiente virtuale..."
+    fi
+
+    if ! python3 -m venv "$VENV_DEST"; then
+        errore_fatale "Creazione dell'ambiente virtuale non riuscita."
+    fi
+
+    if ! venv_funzionante; then
+        errore_fatale "L'ambiente virtuale è stato creato, ma non risulta
+     utilizzabile oppure non contiene pip."
+    fi
+
+    msg_ok "Ambiente virtuale creato"
+fi
+
+
+# Se l'ambiente soddisfa già ESATTAMENTE requirements.txt e pip non
+# segnala conflitti, non tocchiamo nulla e non serve neppure la rete.
+if requirements_esatti "$PYTHON_VENV" "$REQUISITI_DEST" \
+        >/dev/null 2>&1 \
+        && "$PYTHON_VENV" -m pip check >/dev/null 2>&1; then
+
+    msg_ok "Dipendenze Python già esatte e coerenti"
+else
+    msg_nota "Installazione/aggiornamento delle dipendenze Python..."
+    msg_nota "Questa operazione può richiedere qualche minuto."
+
+    if ! "$PYTHON_VENV" -m pip install \
+            --disable-pip-version-check \
+            -r "$REQUISITI_DEST"; then
+        errore_fatale "Installazione delle dipendenze Python non riuscita.
+     Controlla la connessione a internet e i messaggi di pip qui sopra."
+    fi
+
+    if ! "$PYTHON_VENV" -m pip check; then
+        errore_fatale "Le dipendenze Python sono state installate,
+     ma pip segnala incompatibilità nell'ambiente."
+    fi
+
+    if ! requirements_esatti "$PYTHON_VENV" "$REQUISITI_DEST"; then
+        errore_fatale "Le versioni installate non corrispondono
+     esattamente a requirements.txt."
+    fi
+
+    msg_ok "Dipendenze Python installate e verificate"
+fi
+
+
+# Ultimo controllo funzionale Python: i due moduli runtime principali
+# devono essere realmente importabili dal Python che eseguirà l'app.
+if ! "$PYTHON_VENV" -c 'import PySide6, xlsxwriter' >/dev/null 2>&1; then
+    errore_fatale "Le dipendenze risultano installate, ma almeno una
+     non è importabile dal Python dell'ambiente virtuale."
+fi
+
+msg_ok "Import PySide6 e XlsxWriter: OK"
+
+
+# =====================================================================
+# BLOCCO 4-ter — Verifica del runtime grafico Qt
+# =====================================================================
+
+msg_fase "Verifica del runtime grafico Qt"
+
+
+# Ricaviamo dalla stessa installazione PySide6 il percorso ufficiale
+# dei plugin Qt. Evitiamo così percorsi hardcoded dipendenti da Python,
+# architettura o versione della libreria.
+if ! PLUGIN_QT_DIR="$(
+    "$PYTHON_VENV" - <<'PY'
+from PySide6.QtCore import QLibraryInfo
+
+print(
+    QLibraryInfo.path(
+        QLibraryInfo.LibraryPath.PluginsPath
+    )
+)
+PY
+)"; then
+    errore_fatale "Impossibile determinare la cartella dei plugin Qt."
+fi
+
+if [ -z "$PLUGIN_QT_DIR" ] || [ ! -d "$PLUGIN_QT_DIR" ]; then
+    errore_fatale "Qt ha restituito una cartella dei plugin non valida:
+     $PLUGIN_QT_DIR"
+fi
+
+msg_ok "Cartella dei plugin Qt individuata"
+msg_nota "$PLUGIN_QT_DIR"
+
+
+# XCB è il plugin Qt utilizzato per il supporto X11/XWayland.
+# Controlliamo il vero file installato da PySide6.
+PLUGIN_XCB="$PLUGIN_QT_DIR/platforms/libqxcb.so"
+
+if [ ! -f "$PLUGIN_XCB" ]; then
+    errore_fatale "Il plugin Qt/XCB «libqxcb.so» non è stato trovato:
+     $PLUGIN_XCB
+
+     L'installazione di PySide6 non può essere considerata completa."
+fi
+
+msg_ok "Plugin Qt/XCB «libqxcb.so» presente"
+
+
+# Se ldd è disponibile, interroghiamo direttamente il plugin reale.
+# In questo modo intercettiamo QUALUNQUE libreria dinamica richiesta
+# che il sistema non riesca a risolvere, non soltanto libxcb-cursor.
+if command -v ldd >/dev/null 2>&1; then
+    OUTPUT_LDD="$(ldd "$PLUGIN_XCB" 2>&1 || true)"
+
+    LIBRERIE_MANCANTI="$(
+        printf '%s\n' "$OUTPUT_LDD" \
+            | awk '/=> not found/ {print $1}' \
+            | sort -u
+    )"
+
+    if [ -n "$LIBRERIE_MANCANTI" ]; then
+        mkdir -p "$CARTELLA_DEST/log" 2>/dev/null || true
+
+        LOG_QT="$CARTELLA_DEST/log/diagnostica_installazione_qt.log"
+
+        {
+            printf 'Diagnostica libqxcb.so\n'
+            printf '=====================\n\n'
+            printf 'Plugin: %s\n\n' "$PLUGIN_XCB"
+            printf '%s\n' "$OUTPUT_LDD"
+        } > "$LOG_QT" 2>/dev/null || true
+
+        errore_fatale "Il plugin grafico Qt/XCB richiede librerie di sistema
+     che non risultano disponibili:
+
+$LIBRERIE_MANCANTI
+
+     Diagnostica salvata in:
+     $LOG_QT
+
+     L'installazione viene interrotta prima dell'avvio, così il problema
+     può essere corretto senza arrivare a un crash della GUI."
+    fi
+
+    msg_ok "Dipendenze native di «libqxcb.so»: tutte risolte"
+else
+    msg_nota "«ldd» non è disponibile: controllo statico delle librerie saltato."
+    msg_nota "Verrà comunque eseguito il controllo funzionale di Qt."
+fi
+
+
+# Il semplice «import PySide6» non inizializza il sistema grafico.
+# Creare QApplication, invece, obbliga Qt a caricare realmente il
+# proprio plugin di piattaforma. Non mostriamo nessuna finestra.
+smoke_test_qt() {
+    "$PYTHON_VENV" -c '
+from PySide6.QtGui import QGuiApplication
+from PySide6.QtWidgets import QApplication, QWidget
+
+app = QApplication(["postiperfetti-smoke-test"])
+
+widget = QWidget()
+widget.resize(16, 16)
+
+print(QGuiApplication.platformName())
+
+widget.close()
+app.quit()
+'
+}
+
+
+OUTPUT_SMOKE_QT=""
+
+# In una sessione desktop usiamo la piattaforma che Qt sceglierebbe
+# davvero quando l'utente avvia PostiPerfetti.
+if [ -n "${DISPLAY:-}" ] \
+        || [ -n "${WAYLAND_DISPLAY:-}" ] \
+        || [ -n "${QT_QPA_PLATFORM:-}" ]; then
+
+    if OUTPUT_SMOKE_QT="$(smoke_test_qt 2>&1)"; then
+        PIATTAFORMA_QT="$(
+            printf '%s\n' "$OUTPUT_SMOKE_QT" \
+                | tail -n 1 \
+                | tr -d '\r'
+        )"
+
+        msg_ok "Avvio reale di QApplication: OK"
+        msg_nota "Piattaforma Qt rilevata: $PIATTAFORMA_QT"
+    else
+        mkdir -p "$CARTELLA_DEST/log" 2>/dev/null || true
+
+        LOG_QT="$CARTELLA_DEST/log/diagnostica_installazione_qt.log"
+
+        {
+            printf 'Smoke test QApplication fallito\n'
+            printf '================================\n\n'
+            printf '%s\n' "$OUTPUT_SMOKE_QT"
+        } > "$LOG_QT" 2>/dev/null || true
+
+        errore_fatale "Qt è installato, ma non riesce a inizializzare
+     un'applicazione grafica nella sessione corrente.
+
+     Diagnostica salvata in:
+     $LOG_QT
+
+     L'installazione non verrà dichiarata completata."
+    fi
+
+else
+    # Installazione eseguita senza sessione grafica, per esempio via SSH:
+    # possiamo provare il backend offscreen, ma non fingiamo di aver
+    # collaudato il vero desktop dell'utente.
+    if OUTPUT_SMOKE_QT="$(
+        QT_QPA_PLATFORM=offscreen smoke_test_qt 2>&1
+    )"; then
+        msg_ok "Avvio di QApplication in modalità offscreen: OK"
+        msg_nota "Nessuna sessione grafica rilevata:"
+        msg_nota "il backend desktop reale non ha potuto essere collaudato."
+    else
+        mkdir -p "$CARTELLA_DEST/log" 2>/dev/null || true
+
+        LOG_QT="$CARTELLA_DEST/log/diagnostica_installazione_qt.log"
+
+        {
+            printf 'Smoke test QApplication offscreen fallito\n'
+            printf '========================================\n\n'
+            printf '%s\n' "$OUTPUT_SMOKE_QT"
+        } > "$LOG_QT" 2>/dev/null || true
+
+        errore_fatale "Qt non riesce a inizializzare nemmeno
+     un'applicazione grafica in modalità offscreen.
+
+     Diagnostica salvata in:
+     $LOG_QT"
+    fi
+fi
+
+
+# Una precedente diagnosi fallita non deve continuare a sembrare attuale
+# dopo che tutti i controlli Qt sono stati superati.
+rm -f -- "$CARTELLA_DEST/log/diagnostica_installazione_qt.log" \
+    2>/dev/null || true
+
+msg_ok "Runtime grafico Qt verificato"
 
 
 # =====================================================================
@@ -546,12 +1377,22 @@ msg_fase "Installazione completata"
 
 # --- Riepilogo onesto di ciò che è stato fatto ----------------------
 printf '\n'
-if [ "$TIPO_INSTALLAZIONE" = "aggiornamento" ]; then
-    printf '  %s«%s» è stato aggiornato.%s\n' "$C_TIT" "$NOME_APP" "$C_END"
-    printf '  I tuoi dati personali (classi e impostazioni) sono rimasti intatti.\n'
-else
-    printf '  %s«%s» è stato installato.%s\n' "$C_TIT" "$NOME_APP" "$C_END"
-fi
+case "$TIPO_INSTALLAZIONE" in
+    aggiornamento)
+        printf '  %s«%s» è stato aggiornato.%s\n' \
+            "$C_TIT" "$NOME_APP" "$C_END"
+        printf '  Classi, impostazioni e log sono rimasti intatti.\n'
+        ;;
+    reinstallazione_con_dati)
+        printf '  %s«%s» è stato reinstallato.%s\n' \
+            "$C_TIT" "$NOME_APP" "$C_END"
+        printf '  I dati conservati dalla precedente installazione sono rimasti intatti.\n'
+        ;;
+    prima_installazione)
+        printf '  %s«%s» è stato installato.%s\n' \
+            "$C_TIT" "$NOME_APP" "$C_END"
+        ;;
+esac
 printf '\n'
 printf '  Programma installato in:  %s%s%s\n'   "$C_DET" "$CARTELLA_DEST" "$C_END"
 if [ -n "$FILE_DESKTOP" ]; then
@@ -570,15 +1411,8 @@ if [ -n "$FILE_DESKTOP" ]; then
     printf '  %sSe non compare subito, apparirà al prossimo accesso al sistema.%s\n' "$C_DET" "$C_END"
 fi
 
-# --- Nota sul primo avvio (solo alla prima installazione) -----------
-# Il .venv e le dipendenze non sono compito dell'installer: al primo
-# avvio ci pensa il launcher. Preveniamo la sorpresa dei popup.
-if [ "$TIPO_INSTALLAZIONE" = "prima_installazione" ]; then
-    printf '\n'
-    printf '  %sNota: al PRIMO avvio, il programma preparerà il proprio\n' "$C_DET"
-    printf '  ambiente e scaricherà i componenti necessari (serve una\n'
-    printf '  connessione a internet). Le volte successive partirà subito.%s\n' "$C_END"
-fi
+# L'ambiente Python è già stato preparato e verificato dall'installer:
+# il primo avvio non deve più eseguire alcuna installazione obbligatoria.
 
 # --- Offerta di avvio immediato -------------------------------------
 # Proponiamo di avviare ora, ma SOLO se siamo in un terminale
@@ -595,9 +1429,9 @@ if [ -t 0 ] && [ -f "$LAUNCHER" ]; then
         # La stringa vuota è ora il default, coerente con [S/n].
         ""|s|S|si|Si|sì|Sì|y|Y)
             printf '\n  Avvio in corso...\n'
-            # Al primo avvio il launcher può dover creare il .venv e chiedere
-            # conferma nel terminale: lo eseguiamo quindi IN PRIMO PIANO.
-            # Sarà poi il launcher stesso a staccare la GUI dal terminale.
+            # L'ambiente è già stato preparato dall'installer.
+            # Il launcher ne verifica comunque l'integrità e avvia la GUI,
+            # che viene poi separata dal terminale.
             "$LAUNCHER"
             ;;
         *)

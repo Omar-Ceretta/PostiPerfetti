@@ -1,0 +1,8 @@
+# Ambiente di build Windows di «PostiPerfetti».
+#
+# Le dipendenze runtime e di test restano definite nelle rispettive
+# fonti uniche; questo file aggiunge la toolchain necessaria al packaging.
+
+-r ../../documentazione/sviluppo/requirements-dev.txt
+
+PyInstaller==6.22.0

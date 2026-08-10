@@ -8,7 +8,7 @@ echo  PostiPerfetti - creazione installer Windows
 echo ============================================================
 echo.
 
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0crea_installer_windows.ps1"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0crea_installer_windows.ps1" -MantieniAmbienteBuild
 set "EXITCODE=%ERRORLEVEL%"
 
 echo.
