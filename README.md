@@ -6,11 +6,15 @@
 >
 > ✅ **«PostiPerfetti» è un programma gratuito e *open source* che utilizza uno speciale algoritmo per aiutare il docente Coordinatore (o qualsiasi insegnante ne abbia la necessità) ad assegnare agli studenti il proprio posto in classe.** 
 >
-> ✅ Per funzionare, esso **richiede la creazione di un file ".txt" con i dati essenziali degli alunni (*cognome*, *nome*, *genere*)**. Tramite alcune funzioni intuitive sarà poi possibile aggiungere una serie di informazioni e vincoli ('affinità' e 'incompatibilità' fra allievi, loro 'posizione' rispetto alla cattedra, eventuale preferenza per 'coppie miste M+F') per ottenere **UNA DISTRIBUZIONE DEGLI ALLIEVI QUANTO PIÙ IN LINEA CON I DESIDERATA DELL'INSEGNANTE**.
+> ✅ Per funzionare, esso **richiede la creazione di un file ".txt" con i dati essenziali degli alunni**: *cognome*, *nome*, *genere*. Tramite alcune funzioni intuitive sarà poi possibile aggiungere una serie di informazioni e vincoli ('affinità' e 'incompatibilità' fra allievi, loro 'posizione' rispetto alla cattedra, eventuale preferenza per 'coppie miste M+F') per ottenere **UNA DISTRIBUZIONE DEGLI ALLIEVI QUANTO PIÙ IN LINEA CON I DESIDERATA DELL'INSEGNANTE**.
 >
 > ✅ Gli allievi possono essere distribuiti automaticamente secondo la geometria scelta: **a coppie oppure a terzetti**, con l’eventuale blocco finale necessario a sistemare il resto della classe. Il numero di file e di posti per fila è adattabile alle esigenze dell’aula. **Una singola assegnazione richiede in genere da pochi secondi a qualche minuto.** Il tempo dipende in parte dal numero di "vincoli" impostati, ma soprattutto dalla **grandezza della classe** e da **quante assegnazioni sono già state salvate** nello Storico: più vicinanze sono già state sperimentate, più diventa impegnativo trovarne di nuove.
 >
-> ✅ **«PostiPerfetti» non ha alcun accesso alla rete, pertanto non invia nessun dato a terzi**. Lavorando esclusivamente in locale, ogni informazione è quindi mantenuta al sicuro all'interno del pc del docente.
+> ✅ Durante il suo utilizzo, **«PostiPerfetti» lavora in locale e non invia dati studenti a servizi remoti**. Le operazioni di installazione e aggiornamento possono invece utilizzare la rete per scaricare il programma e le sue dipendenze.
+>
+> 🔐 I file delle classi, lo Storico e gli altri dati dell'utente restano memorizzati localmente sul computer e **non sono cifrati da «PostiPerfetti»**. Devono quindi essere protetti come qualunque altro documento contenente dati personali, secondo le regole e gli strumenti previsti dall'Istituto.
+>
+> 📄 Per maggiori dettagli consulta **[Dati locali, privacy e sicurezza](documentazione/DATI_PRIVACY_E_SICUREZZA.md)**.
 
 
 

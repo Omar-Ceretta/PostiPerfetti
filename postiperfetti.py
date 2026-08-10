@@ -19,6 +19,7 @@ if __name__ == "__main__":
 
 sys.dont_write_bytecode = True
 import os
+from moduli.versione import VERSIONE
 
 # Esperimento diagnostico, inattivo per impostazione predefinita.
 # Consente di verificare se la responsività della GUI durante i calcoli
@@ -89,6 +90,7 @@ def _gestisci_crash(tipo, valore, tb):
         with open(percorso_log, "a", encoding="utf-8") as f:
             f.write("\n" + "=" * 70 + "\n")
             f.write(f"CRASH {_dt.now().strftime('%d/%m/%Y %H:%M:%S')}\n")
+            f.write(f"Versione PostiPerfetti: {VERSIONE}\n")
             f.write("".join(traceback.format_exception(tipo, valore, tb)))
     except Exception:
         pass
@@ -122,14 +124,14 @@ import threading as _threading_per_hook
 _threading_per_hook.excepthook = lambda args: _gestisci_crash(
     args.exc_type, args.exc_value, args.exc_traceback)
 
-from PySide6.QtWidgets import QApplication, QMainWindow
-from PySide6.QtCore import QTimer
+from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox
+from PySide6.QtCore import QLockFile, QTimer
 from PySide6.QtGui import QIcon, QFontDatabase
 
 from moduli.stato_sessione import StatoSessione
 
 from moduli.tema import imposta_tema
-from moduli.percorsi import get_resource_path
+from moduli.percorsi import get_resource_path, get_state_path
 from moduli.watchdog_gui import avvia_watchdog_gui_da_ambiente
 
 from moduli.utilita import (
@@ -153,6 +155,79 @@ from moduli.ciclo_vita_ui import CicloVitaUIMixin
 from moduli.esportazione import EsportazioneMixin
 
 from moduli.storico_ui import StoricoUIMixin
+
+
+def _acquisisci_lock_istanza():
+    """Impedisce a due processi di usare contemporaneamente lo stesso stato.
+
+    Il lock resta attivo per l'intera vita dell'applicazione. Un eventuale
+    lock lasciato da un processo terminato in modo anomalo viene riconosciuto
+    da QLockFile tramite le informazioni del processo proprietario.
+    """
+    try:
+        percorso_lock = get_state_path(
+            "postiperfetti.lock",
+            crea_genitori=True,
+        )
+    except OSError as errore:
+        QMessageBox.critical(
+            None,
+            "PostiPerfetti — impossibile avviare",
+            "Non è stato possibile preparare la protezione dello Storico.\n\n"
+            "PostiPerfetti non verrà avviato, per evitare il rischio di "
+            "scritture concorrenti o perdita di dati.\n\n"
+            f"Dettaglio tecnico:\n{errore}",
+        )
+        return None
+
+    lock = QLockFile(percorso_lock)
+
+    # È un lock di lunga durata: non deve diventare «vecchio» soltanto
+    # perché PostiPerfetti rimane aperto per molto tempo.
+    lock.setStaleLockTime(0)
+
+    # Una breve attesa evita falsi negativi durante due avvii quasi simultanei,
+    # senza rendere percepibilmente più lento l'avvio normale.
+    if lock.tryLock(250):
+        return lock
+
+    errore = lock.error()
+
+    if errore == QLockFile.LockError.LockFailedError:
+        QMessageBox.information(
+            None,
+            "PostiPerfetti è già aperto",
+            "Un'altra istanza di PostiPerfetti risulta già in esecuzione.\n\n"
+            "Per proteggere lo Storico e le rotazioni non è possibile "
+            "aprire contemporaneamente due finestre che utilizzano gli "
+            "stessi dati.\n\n"
+            "Usa la finestra già aperta oppure chiudila prima di riavviare "
+            "il programma.",
+        )
+        return None
+
+    if errore == QLockFile.LockError.PermissionError:
+        dettaglio = (
+            "Non è possibile creare il file di protezione nella cartella "
+            "dello stato. Controlla i permessi della directory."
+        )
+    else:
+        dettaglio = (
+            "Si è verificato un errore imprevisto durante la creazione del "
+            "file di protezione."
+        )
+
+    QMessageBox.critical(
+        None,
+        "PostiPerfetti — impossibile avviare",
+        "Non è stato possibile proteggere lo Storico da accessi concorrenti.\n\n"
+        "PostiPerfetti non verrà avviato, per evitare il rischio di perdita "
+        "di dati.\n\n"
+        f"{dettaglio}\n\n"
+        f"File di lock:\n{percorso_lock}",
+    )
+    return None
+
 
 def carica_font_emoji():
     percorso = get_resource_path(
@@ -321,6 +396,15 @@ def main():
     """Crea l’applicazione Qt e avvia l’interfaccia principale."""
 
     app = QApplication(sys.argv)
+    app.setApplicationName("PostiPerfetti")
+    app.setApplicationVersion(VERSIONE)
+
+    lock_istanza = _acquisisci_lock_istanza()
+    if lock_istanza is None:
+        return
+
+    # In una chiusura normale il file viene rimosso esplicitamente.
+    app.aboutToQuit.connect(lock_istanza.unlock)
 
     carica_font_emoji()
 
