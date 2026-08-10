@@ -1,6 +1,6 @@
 # Come funziona «PostiPerfetti»
 
-> **Versione di riferimento:** ≥ 0.8.0
+> **Versione di riferimento:** 0.8.0
 > Questo documento spiega che cosa succede **dietro le quinte** quando «PostiPerfetti» calcola una disposizione.  
 > L'obiettivo è mostrare, con un linguaggio accessibile, **quale percorso seguono i dati, quali regole vengono applicate e come il programma sceglie fra più soluzioni possibili**.
 
