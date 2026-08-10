@@ -8,6 +8,4 @@ Qui troverai tutti i dettagli necessari: requisiti, primo avvio, aggiornamenti, 
 
 ### 👉 [Vai alle istruzioni di installazione](https://github.com/Omar-Ceretta/PostiPerfetti/releases/latest)
 
-
-
 ---
