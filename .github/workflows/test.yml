@@ -36,6 +36,11 @@ jobs:
       - name: Scarica il repository
         uses: actions/checkout@v7
 
+      - name: Installa il runtime grafico Qt
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libegl1
+
       - name: Prepara Python ${{ matrix.python-version }}
         uses: actions/setup-python@v7
         with:
