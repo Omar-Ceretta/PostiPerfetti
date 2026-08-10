@@ -188,6 +188,17 @@ pacchetto_xcb_cursor() {
     esac
 }
 
+# Libreria EGL richiesta dal runtime grafico Qt/PySide6.
+pacchetto_egl() {
+    case "$(famiglia_distro)" in
+        debian) printf 'libegl1' ;;
+        fedora) printf 'libglvnd-egl' ;;
+        arch)   printf 'libglvnd' ;;
+        suse)   printf 'Mesa-libEGL1' ;;
+        *)      printf 'libegl1' ;;
+    esac
+}
+
 # Produce un comando leggibile da mostrare all'utente.
 # I nomi ricevuti sono già quelli corretti per la famiglia corrente.
 comando_installazione() {
@@ -254,9 +265,9 @@ python_puo_creare_venv() {
     return 1
 }
 
-# Verifica la presenza della libreria nativa che ha causato il crash
-# osservato su Linux Mint.
-ha_libreria_xcb_cursor() {
+# Verifica la presenza di una libreria nativa richiesta dal runtime Qt.
+ha_libreria_nativa() {
+    local nome="$1"
     local ldconfig_cmd="" contenuto=""
 
     if command -v ldconfig >/dev/null 2>&1; then
@@ -269,18 +280,26 @@ ha_libreria_xcb_cursor() {
 
     if [ -n "$ldconfig_cmd" ]; then
         contenuto="$("$ldconfig_cmd" -p 2>/dev/null || true)"
-        if [[ "$contenuto" == *"libxcb-cursor.so.0"* ]]; then
+        if [[ "$contenuto" == *"$nome"* ]]; then
             return 0
         fi
     fi
 
     # Ripiego per sistemi dove ldconfig non è disponibile nel modo atteso.
     if [ -n "$(find /usr/lib /usr/lib64 /lib /lib64 \
-            -name 'libxcb-cursor.so.0' -print -quit 2>/dev/null)" ]; then
+            -name "$nome" -print -quit 2>/dev/null)" ]; then
         return 0
     fi
 
     return 1
+}
+
+ha_libreria_xcb_cursor() {
+    ha_libreria_nativa 'libxcb-cursor.so.0'
+}
+
+ha_libreria_egl() {
+    ha_libreria_nativa 'libEGL.so.1'
 }
 
 # Aggiunge un pacchetto all'elenco evitando duplicati.
@@ -373,6 +392,11 @@ fi
 if ! ha_libreria_xcb_cursor; then
     MANCANZE+=("libreria Qt/XCB per il cursore")
     aggiungi_pacchetto "$(pacchetto_xcb_cursor)"
+fi
+
+if ! ha_libreria_egl; then
+    MANCANZE+=("libreria grafica EGL richiesta da Qt")
+    aggiungi_pacchetto "$(pacchetto_egl)"
 fi
 
 # --- 1.3 Installazione facoltativa delle sole mancanze ---------------
@@ -492,6 +516,12 @@ if ! ha_libreria_xcb_cursor; then
      Qt potrebbe non riuscire ad avviare l'interfaccia grafica."
 fi
 msg_ok "Libreria Qt/XCB «libxcb-cursor.so.0» presente"
+
+if ! ha_libreria_egl; then
+    errore_fatale "La libreria «libEGL.so.1» risulta ancora assente.
+     PySide6 potrebbe non riuscire a inizializzare il runtime grafico."
+fi
+msg_ok "Libreria grafica «libEGL.so.1» presente"
 
 # --- 1.6 Riepilogo di ciò che verrà fatto ---------------------------
 msg_fase "Riepilogo"
