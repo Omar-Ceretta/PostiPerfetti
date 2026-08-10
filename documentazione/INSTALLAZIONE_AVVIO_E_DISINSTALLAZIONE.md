@@ -3,7 +3,7 @@
 ---
 
 <table border="0"><tr><td>
-<img src="https://raw.githubusercontent.com/Omar-Ceretta/PostiPerfetti/main/dati/screenshot/windows11.png" width="64" />
+<img src="https://raw.githubusercontent.com/Omar-Ceretta/PostiPerfetti/main/risorse/icone/windows11.png" width="64" />
 </td><td>
 
 ## Installazione su Windows
@@ -18,7 +18,7 @@
 
 Essendo un software open-source gratuito, il file non possiede una firma digitale a pagamento. Per questo motivo **Windows o il tuo antivirus potrebbero mostrare un avviso di protezione** (la schermata blu di SmartScreen).
 
-<img src="https://raw.githubusercontent.com/Omar-Ceretta/PostiPerfetti/main/dati/screenshot/smartscreen.png" />
+<img src="https://raw.githubusercontent.com/Omar-Ceretta/PostiPerfetti/main/risorse/icone/smartscreen.png" />
 
 **Se appare l'avviso di Windows:**
 
@@ -34,7 +34,7 @@ Essendo un software open-source gratuito, il file non possiede una firma digital
 ---
 
 <table border="0"><tr><td>
-<img src="https://raw.githubusercontent.com/Omar-Ceretta/PostiPerfetti/main/dati/screenshot/linux.png" width="64" />
+<img src="https://raw.githubusercontent.com/Omar-Ceretta/PostiPerfetti/main/risorse/icone/linux.png" width="64" />
 </td><td>
 
 ## Installazione su Linux
