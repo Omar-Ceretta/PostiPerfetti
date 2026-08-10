@@ -4,9 +4,8 @@
 
 «PostiPerfetti» è alla sua prima distribuzione pubblica stabile.
 
-Le correzioni di sicurezza vengono applicate alla versione corrente del
-progetto e alle Release pubbliche attualmenti. 
-Eventuali vecchie copie di sviluppo non saranno supportate.
+Le correzioni di sicurezza vengono applicate alla versione corrente del progetto e alle Release pubbliche attuali. 
+Eventuali vecchie copie di sviluppo NON continueranno ad essere supportate.
 
 ## Segnalare un problema di sicurezza
 
