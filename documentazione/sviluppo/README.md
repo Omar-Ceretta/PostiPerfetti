@@ -1,6 +1,6 @@
 # Officina di sviluppo e validazione
 
-Questa cartella contiene materiale tecnico destinato allo sviluppo e al collaudo di PostiPerfetti, non all'utente finale.
+Questa cartella contiene materiale tecnico destinato allo sviluppo e al collaudo di «PostiPerfetti», non all'utente finale.
 
 - **`strumenti/`** — programmi e infrastrutture usati per eseguire verifiche, campagne, confronti e gate di validazione.
 - **`test/`** — test automatici `pytest` che verificano il programma e gli stessi strumenti di collaudo.
