@@ -1,7 +1,8 @@
-# Mappa dei moduli di PostiPerfetti
+# Mappa dei moduli di «PostiPerfetti»
 
-> **Versione di riferimento:** R0.8  
-> Questo documento descrive in modo sintetico l'organizzazione interna di PostiPerfetti.  
+> **Versione di riferimento:** 0.8.0.
+> 
+> Questo documento descrive in modo sintetico l'organizzazione interna di «PostiPerfetti».  
 > Non è una documentazione delle singole funzioni: serve a capire **quali parti compongono il programma e quale responsabilità ha ciascuna**.
 
 ## 1. Vista d'insieme
@@ -208,4 +209,4 @@ La suddivisione in molti file non indica che il programma esegua decine di passa
 - i moduli di **persistenza** controllano salvataggi, Storico e recupero;
 - i moduli di **diagnostica** osservano il comportamento senza modificarlo.
 
-Questa separazione rende più semplice capire, verificare e mantenere PostiPerfetti senza concentrare tutto il programma in un unico file.
+Questa separazione rende più semplice capire, verificare e mantenere «PostiPerfetti» senza concentrare tutto il programma in un unico file.
