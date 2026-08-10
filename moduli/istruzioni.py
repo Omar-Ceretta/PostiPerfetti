@@ -23,6 +23,7 @@ from PySide6.QtGui import (
 
 from moduli.tema import C
 from moduli.percorsi import get_resource_path
+from moduli.versione import VERSIONE
 from moduli.utilita import (
     adatta_finestra_allo_schermo,
     applica_icona,
@@ -274,13 +275,16 @@ ISTRUZIONI_HTML_TEMPLATE = r"""
 
         <hr>
         <p class="pie-pagina">
-        «PostiPerfetti» — Sviluppato in Python dal prof. Omar Ceretta<br>I.C. di Tombolo e Galliera Veneta (PD)<br>
+        «PostiPerfetti» — Versione [[VERSIONE]]<br>
+        Sviluppato in Python dal prof. Omar Ceretta<br>
+        I.C. di Tombolo e Galliera Veneta (PD)<br>
         Licenza: GNU GPLv3</p>
 
 """
 
 CREDITI_HTML_TEMPLATE = r"""
 <div class="crediti-titolo"><h2>«PostiPerfetti»</h2></div>
+<p class="cella-centro"><b>Versione [[VERSIONE]]</b></p>
 <hr>
 <p><b>Descrizione:</b><br>
 Programma per l'assegnazione automatica dei posti in classe, con gestione di
@@ -453,6 +457,7 @@ def _sincronizza_sfondo_documento(widget: QTextEdit) -> None:
 def _aggiorna_documento(widget: QTextEdit, template: str,
                          conserva_scroll: bool = False) -> None:
     """Rigenera tema e icone, conservando facoltativamente lo scorrimento."""
+    template = template.replace("[[VERSIONE]]", VERSIONE)
     barra = widget.verticalScrollBar()
     massimo_precedente = barra.maximum()
     rapporto = (

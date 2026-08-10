@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+# Parte di «PostiPerfetti». Autore: prof. Omar Ceretta. Licenza: GNU GPLv3.
+
 """Ponti Qt verso i processi di generazione annuale di «PostiPerfetti»."""
 
 from __future__ import annotations

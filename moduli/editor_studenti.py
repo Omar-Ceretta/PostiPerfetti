@@ -14,10 +14,8 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt, Signal, QTimer
 from PySide6.QtGui import QFont, QPixmap
-from html import escape
 import os
-import platform
-import subprocess
+from html import escape
 
 from moduli.tema import C
 from moduli.lingua import quantita
@@ -3002,40 +3000,12 @@ class EditorStudentiWidget(QWidget):
 
         cartella_classi = self._get_cartella_classi()
 
-        try:
-            sistema = platform.system()
+        if apri_file_con_applicazione_default(cartella_classi):
+            return
 
-            if sistema == 'Linux':
-
-
-                subprocess.run(['xdg-open', cartella_classi], check=False)
-
-            elif sistema == 'Windows':
-
-                os.startfile(cartella_classi)
-
-            elif sistema == 'Darwin':
-
-                subprocess.run(['open', cartella_classi], check=False)
-
-            else:
-
-                _popup_info(
-                    self,
-                    "Cartella classi",
-                    "Il sistema operativo non è stato riconosciuto.",
-                    dettagli=f"Apri manualmente la cartella:\n{cartella_classi}",
-                )
-                return
-
-        except Exception as e:
-
-            _popup_avviso(
-                self,
-                "Apertura della cartella non riuscita",
-                "Impossibile aprire automaticamente la cartella delle classi.",
-                dettagli=(
-                    f"Errore: {e}\n\n"
-                    f"Aprila manualmente dal percorso:\n{cartella_classi}"
-                ),
-            )
+        _popup_avviso(
+            self,
+            "Apertura della cartella non riuscita",
+            "Impossibile aprire automaticamente la cartella delle classi.",
+            dettagli=f"Aprila manualmente dal percorso:\n{cartella_classi}",
+        )

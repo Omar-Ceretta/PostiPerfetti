@@ -9,8 +9,6 @@ disposizione è stata completata e marcata come ``DA_SALVARE``.
 Parte di «PostiPerfetti». Autore: prof. Omar Ceretta. Licenza: GNU GPLv3.
 """
 
-from PySide6.QtWidgets import QInputDialog
-
 from moduli.risultati_annuali import (
     descrivi_abbinamenti_coppie as _descrivi_abbinamenti_coppie,
     descrivi_abbinamenti_terzetti as _descrivi_abbinamenti_terzetti,

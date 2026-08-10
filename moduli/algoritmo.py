@@ -7,6 +7,8 @@ dei fallimenti. Applica quattro tentativi progressivi: i primi tre sono
 deterministici ed escludono i riusi; il quarto ammette ripartenze casuali
 riproducibili e penalizza le coppie già utilizzate. Delega i punteggi a
 ``vincoli.py`` e la geometria a ``aula.py``.
+
+Parte di «PostiPerfetti». Autore: prof. Omar Ceretta. Licenza: GNU GPLv3.
 """
 
 import time

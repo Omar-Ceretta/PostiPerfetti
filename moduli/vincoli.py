@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+# Parte di «PostiPerfetti». Autore: prof. Omar Ceretta. Licenza: GNU GPLv3.
+
 """vincoli.py — punteggi di compatibilità e ricerca delle coppie.
 
 Calcola la qualità degli abbinamenti e cerca una disposizione completa con
@@ -257,7 +259,7 @@ class MotoreVincoli:
     def trova_migliori_coppie(
         self,
         studenti: List[Student],
-        num_coppie_desiderate: int = None,
+        num_coppie_desiderate: int | None = None,
         max_coppie_prima_fila: int | None = None
     ) -> List[Tuple]:
             """Cerca il numero richiesto di coppie con backtracking.
@@ -427,7 +429,6 @@ class MotoreVincoli:
 
         nomi = [s.get_nome_completo() for s in studenti]
         adiacenti: dict[str, set[str]] = {nome: set() for nome in nomi}
-        per_nome = {s.get_nome_completo(): s for s in studenti}
         for i, a in enumerate(studenti):
             nome_a = nomi[i]
             for j in range(i + 1, len(studenti)):

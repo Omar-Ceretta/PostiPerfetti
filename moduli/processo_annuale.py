@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+# Parte di «PostiPerfetti». Autore: prof. Omar Ceretta. Licenza: GNU GPLv3.
+
 """Motore annuale eseguibile in un processo Python separato.
 
 Il modulo è deliberatamente privo di import Qt. Riceve una fotografia già

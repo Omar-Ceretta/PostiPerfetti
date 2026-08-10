@@ -41,7 +41,10 @@ from moduli.metrica_pulizia import (
 from moduli.strato_storico import applica_penalita_storico, CHIAVE_BLACKLIST_PER_MODO
 
 from moduli.vincoli import MotoreVincoliConfigurato
-from moduli.aula import pianifica_blocco_finale_terzetti
+from moduli.aula import (
+    pianifica_blocco_finale_terzetti,
+    valida_preferenza_resto2,
+)
 from moduli.casualita import (
     crea_generatore, deriva_seed, risolvi_seed_principale
 )
@@ -111,6 +114,8 @@ def pianifica_resto(n_rimanenti, preferenza_resto2='coppia'):
     Restituisce ``None`` per i casi degeneri che non possono formare gruppi
     validi.
     """
+    valida_preferenza_resto2(preferenza_resto2)
+
     if n_rimanenti < 2:
         return None
 

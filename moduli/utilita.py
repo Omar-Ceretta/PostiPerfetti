@@ -10,8 +10,6 @@ controlli Qt riutilizzati da più moduli.
 """
 
 import os
-import platform
-import subprocess
 import unicodedata
 from html import escape
 
@@ -19,8 +17,8 @@ from PySide6.QtWidgets import (
     QApplication, QMessageBox, QPushButton, QWidget,
     QTextEdit, QDialog, QVBoxLayout, QHBoxLayout, QLabel
 )
-from PySide6.QtGui import QIcon
-from PySide6.QtCore import Qt, QObject, QEvent, QSize
+from PySide6.QtGui import QDesktopServices, QIcon
+from PySide6.QtCore import Qt, QObject, QEvent, QSize, QUrl
 
 from moduli.metrica_pulizia import (
     estrai_gruppi,
@@ -1021,35 +1019,18 @@ def pulisci_nome_file(nome: str) -> str:
 
 
 def apri_file_con_applicazione_default(file_path: str) -> bool:
-    """Apre un file con l'applicazione predefinita del sistema.
-
-    Restituisce ``True`` quando il comando viene avviato, ``False`` in caso di errore.
-    """
+    """Apre un file o una cartella con l'applicazione predefinita del sistema."""
 
     try:
-        if not os.path.isfile(file_path):
+        percorso = os.path.abspath(os.fspath(file_path))
+
+        if not os.path.exists(percorso):
             return False
 
-        sistema = platform.system()
+        url = QUrl.fromLocalFile(percorso)
+        return bool(QDesktopServices.openUrl(url))
 
-        if sistema == 'Linux':
-            risultato = subprocess.run(['xdg-open', file_path], check=False)
-            return risultato.returncode == 0
-
-        elif sistema == 'Windows':
-            os.startfile(file_path)
-            return True
-
-        elif sistema == 'Darwin':
-            risultato = subprocess.run(['open', file_path], check=False)
-            return risultato.returncode == 0
-
-        else:
-            print(f"⚠️ Sistema operativo non riconosciuto: {sistema}")
-            return False
-
-    except Exception as e:
-        print(f"❌ Errore apertura file: {e}")
+    except Exception:
         return False
 
 

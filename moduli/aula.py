@@ -16,6 +16,22 @@ import math
 from dataclasses import dataclass
 
 
+PREFERENZE_RESTO2_VALIDE = frozenset({
+    'coppia',
+    'due_quartetti',
+})
+
+
+def valida_preferenza_resto2(preferenza_resto2):
+    """Valida la strategia usata quando il numero di studenti dà resto 2."""
+    if preferenza_resto2 not in PREFERENZE_RESTO2_VALIDE:
+        raise ValueError(
+            "preferenza_resto2 non valida: "
+            f"{preferenza_resto2!r}. "
+            "Valori ammessi: 'coppia', 'due_quartetti'."
+        )
+
+
 def pianifica_blocco_finale_terzetti(num_rimanenti,
                                      preferenza_resto2='coppia'):
     """Restituisce terzetti pieni e blocchi finali della modalità terzetti.
@@ -23,6 +39,8 @@ def pianifica_blocco_finale_terzetti(num_rimanenti,
     È la fonte unica condivisa da geometria e motore. Ogni blocco finale è una
     coppia ``(larghezza, tipo)`` con tipo ``coppia`` o ``quartetto``.
     """
+    valida_preferenza_resto2(preferenza_resto2)
+
     resto = num_rimanenti % 3
     if resto == 1:
         return (num_rimanenti // 3 - 1, [(4, 'quartetto')])
@@ -151,13 +169,22 @@ class ConfigurazioneAula:
         file_effettive = max(1, min(file_effettive, righe_banchi_necessarie))
 
         fila_trio = None
-        if ha_trio and posizione_trio:
+
+        if ha_trio:
+            posizioni_valide = {"prima", "centro", "ultima"}
+            if posizione_trio not in posizioni_valide:
+                raise ValueError(
+                    "posizione_trio non valida: "
+                    f"{posizione_trio!r}. "
+                    "Valori ammessi: 'prima', 'centro', 'ultima'."
+                )
+
             if posizione_trio == "prima":
                 fila_trio = 0
             elif posizione_trio == "ultima":
                 # Usa file_effettive: l'ultima fila reale, non l'ultima configurata
                 fila_trio = file_effettive - 1
-            elif posizione_trio == "centro":
+            else:  # posizione_trio == "centro"
                 # Usa file_effettive: il centro reale, non il centro delle configurate
                 fila_trio = file_effettive // 2
 
@@ -290,6 +317,14 @@ class ConfigurazioneAula:
         Nei dati la prima fila ha indice 2; il renderer capovolge la griglia per
         mostrarla correttamente dalla prospettiva della cattedra.
         """
+        posizioni_valide = {None, 'prima', 'centro', 'ultima'}
+        if posizione_blocco_finale not in posizioni_valide:
+            raise ValueError(
+                "posizione_blocco_finale non valida: "
+                f"{posizione_blocco_finale!r}. "
+                "Valori ammessi: None, 'prima', 'centro', 'ultima'."
+            )
+
         # === 1) FORMA DELLA PARTIZIONE (regola del resto) =====================
         # Tutti gli studenti siedono in gruppi -> num_rimanenti = N. (ha_fisso NON
         # riduce il conteggio: a terzetti il FISSO è MEMBRO di un terzetto.)
@@ -348,7 +383,7 @@ class ConfigurazioneAula:
                     fila = 0
                 elif scelta == "centro":
                     fila = righe_banchi // 2
-                else:  # "ultima" (o valore non riconosciuto)
+                else:  # scelta == "ultima"
                     fila = righe_banchi - 1
                 fila = max(0, min(fila, righe_banchi - 1))
                 if ha_fisso and fila == 0:        # mai in prima fila col FISSO
@@ -369,7 +404,7 @@ class ConfigurazioneAula:
                     inizio = 0
                 elif scelta == "centro":
                     inizio = (righe_banchi - 2) // 2
-                else:  # "ultima"
+                else:  # scelta == "ultima"
                     inizio = righe_banchi - 2
                 inizio = max(0, min(inizio, righe_banchi - 2))
                 if ha_fisso and inizio == 0:      # libera la prima fila per il FISSO

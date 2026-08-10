@@ -391,7 +391,7 @@ class FlussoMensileUIMixin:
             )
 
     def _elaborazione_terzetti_processo_fallita(
-            self, messaggio_errore: str, report: dict = None):
+            self, messaggio_errore: str, report: dict | None = None):
             """Ripristina la GUI e mostra un errore prodotto dal processo."""
             self._concludi_mensile_terzetti_processo()
             self._contesto_mensile_terzetti_processo = None
@@ -931,7 +931,8 @@ class FlussoMensileUIMixin:
 
             msg_box.exec()
 
-    def _elaborazione_fallita(self, messaggio_errore: str, report: dict = None):
+    def _elaborazione_fallita(
+            self, messaggio_errore: str, report: dict | None = None):
             """Mostra il fallimento dell’elaborazione con gli eventuali dati diagnostici."""
 
             self._contesto_mensile_coppie = None

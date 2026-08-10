@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+# Parte di «PostiPerfetti». Autore: prof. Omar Ceretta. Licenza: GNU GPLv3.
+
 """Watchdog diagnostico, attivabile da ambiente, dell'event loop GUI.
 
 Questo modulo è intenzionalmente estraneo alla semantica di generazione:

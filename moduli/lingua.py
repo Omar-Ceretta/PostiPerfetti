@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+# Parte di «PostiPerfetti». Autore: prof. Omar Ceretta. Licenza: GNU GPLv3.
+
 """Piccoli helper puri per i testi dinamici dell'interfaccia.
 
 Le funzioni centralizzano gli accordi più comuni senza tentare di dedurre

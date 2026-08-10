@@ -155,7 +155,7 @@ def _leggi_file_classe_con_codifica(percorso) -> _LetturaFileClasse:
         testo = dati.decode("utf-8-sig")
         codifica = "UTF-8"
         legacy = False
-    except UnicodeDecodeError as errore_utf8:
+    except UnicodeDecodeError:
         try:
             testo = dati.decode("cp1252")
         except UnicodeDecodeError as errore_legacy:

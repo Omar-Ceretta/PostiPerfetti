@@ -1115,7 +1115,8 @@ class EsportazioneMixin:
             "lavagna": (fmt_lavagna, "LAVAGNA"),
         }
 
-        ws.write(1, 1, nome_assegnazione, fmt_titolo)
+        # Il nome è testo utente: non deve mai essere interpretato come formula.
+        ws.write_string(1, 1, str(nome_assegnazione), fmt_titolo)
 
         configurazione = assegnatore.configurazione_aula
 
@@ -1137,10 +1138,24 @@ class EsportazioneMixin:
 
                 if posto.tipo == 'banco':
                     if posto.occupato_da:
-                        nome_completo = self._estrai_nome_completo_da_id(posto.occupato_da)
-                        ws.write(excel_row, excel_col, nome_completo, fmt_banco_occupato)
+                        nome_completo = self._estrai_nome_completo_da_id(
+                            posto.occupato_da
+                        )
+                        # I dati anagrafici devono restare sempre testo,
+                        # anche se iniziano con caratteri speciali come "=".
+                        ws.write_string(
+                            excel_row,
+                            excel_col,
+                            str(nome_completo),
+                            fmt_banco_occupato,
+                        )
                     else:
-                        ws.write(excel_row, excel_col, "🪑", fmt_banco_libero)
+                        ws.write_string(
+                            excel_row,
+                            excel_col,
+                            "🪑",
+                            fmt_banco_libero,
+                        )
 
                     colonne_con_contenuto.add(excel_col)
 

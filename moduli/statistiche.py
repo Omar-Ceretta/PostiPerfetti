@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+# Parte di «PostiPerfetti». Autore: prof. Omar Ceretta. Licenza: GNU GPLv3.
+
 """Calcolo, visualizzazione ed esportazione delle statistiche storiche."""
 
 import os
@@ -738,7 +740,7 @@ class StatisticheMixin:
         layout_dettaglio.addWidget(combo_studenti)
 
         self.area_dettaglio_studente = QWidget()
-        layout_area_dettaglio = QVBoxLayout(self.area_dettaglio_studente)
+        QVBoxLayout(self.area_dettaglio_studente)
         layout_dettaglio.addWidget(self.area_dettaglio_studente)
 
         combo_studenti.currentIndexChanged.connect(

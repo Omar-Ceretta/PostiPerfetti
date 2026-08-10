@@ -5,6 +5,8 @@ Il modulo non decide nulla e non usa casualità. Quando nessuna istanza di
 ``DiagnosticaRicerca`` viene passata ai motori, il percorso produttivo non crea
 record, firme o messaggi. Le firme usano identità persistenti degli studenti e
 sono quindi confrontabili fra processi diversi.
+
+Parte di «PostiPerfetti». Autore: prof. Omar Ceretta. Licenza: GNU GPLv3.
 """
 
 from __future__ import annotations

@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+# Parte di «PostiPerfetti». Autore: prof. Omar Ceretta. Licenza: GNU GPLv3.
+
 """Strategie della ricerca e prototipi sperimentali.
 
 La strategia produttiva è ``C1``: nel solo backtracking a coppie memoizza gli

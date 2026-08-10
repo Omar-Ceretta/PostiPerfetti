@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+# Parte di «PostiPerfetti». Autore: prof. Omar Ceretta. Licenza: GNU GPLv3.
+
 """Modello dati degli studenti di «PostiPerfetti».
 
 Definisce anagrafica, posizione, affinità e incompatibilità e converte in

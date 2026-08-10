@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
+# Parte di «PostiPerfetti». Autore: prof. Omar Ceretta. Licenza: GNU GPLv3.
+
 """
 Launcher per «PostiPerfetti» — Script di avvio con verifica ambiente.
 
 COSA FA QUESTO SCRIPT:
-1. Verifica che l'ambiente virtuale (.venv) esista
-2. Verifica che le dipendenze necessarie (PySide6, xlsxwriter) siano installate
-3. Se manca qualcosa, mostra un dialogo grafico e offre di installare/riparare
+1. Verifica che l'ambiente virtuale (.venv) sia realmente utilizzabile
+2. Verifica Python, requirements, versioni esatte, pip e import runtime
+3. Se l'ambiente si è danneggiato dopo l'installazione, offre di ripararlo
 4. Avvia l'applicazione principale con il Python del venv
 
 NOTA: Questo script viene eseguito con il Python di SISTEMA (non del venv),
@@ -17,6 +19,7 @@ import sys
 import os
 import subprocess
 import shutil
+import tempfile
 from pathlib import Path
 
 
@@ -26,17 +29,12 @@ CARTELLA_PROGETTO = Path(__file__).resolve().parent.parent
 CARTELLA_VENV = CARTELLA_PROGETTO / ".venv"
 FILE_PRINCIPALE = CARTELLA_PROGETTO / "postiperfetti.py"
 PYTHON_VENV = CARTELLA_VENV / "bin" / "python3"
-PIP_VENV = CARTELLA_VENV / "bin" / "pip"
-# requirements.txt nella radice del progetto: fonte primaria delle
-# dipendenze CON i vincoli di versione (es. PySide6>=6.11,<7).
-# Se assente, si ripiega sui nomi elencati in DIPENDENZE (senza vincoli).
-FILE_REQUIREMENTS = CARTELLA_PROGETTO / "requirements.txt"
 
-# Dipendenze richieste: (nome_pacchetto_pip, nome_import_python)
-DIPENDENZE = [
-    ("PySide6", "PySide6"),
-    ("XlsxWriter", "xlsxwriter"),
-]
+# Fonte unica delle dipendenze runtime e delle loro versioni.
+# In una release valida ogni requisito deve essere congelato con «==».
+# Se il file manca o non rispetta questo contratto, il launcher NON
+# inventa dipendenze alternative: considera l'installazione danneggiata.
+FILE_REQUIREMENTS = CARTELLA_PROGETTO / "requirements.txt"
 
 
 # =====================================================================
@@ -307,160 +305,355 @@ def esegui_con_progresso(comando, titolo="Installazione in corso..."):
 # SEZIONE 3: Verifica e creazione ambiente virtuale
 # =====================================================================
 
-def ambiente_incompleto():
-    """
-    Dice se manca qualcosa per far girare l'app: il venv o una
-    qualsiasi dipendenza. Verifica SILENZIOSA (non stampa nulla):
-    serve solo a decidere, all'avvio, se occorre intervenire.
-
-    Returns:
-        True  se manca il venv OPPURE almeno una dipendenza
-        False se è tutto a posto (l'app può partire subito)
-    """
-    # Se manca il venv, l'ambiente è certamente incompleto: inutile
-    # controllare le dipendenze (girerebbero su un venv inesistente).
-    if not (PYTHON_VENV.is_file() and PIP_VENV.is_file()):
-        return True
-
-    # Il venv c'è: controlliamo che ogni dipendenza sia importabile.
-    for _, nome_import in DIPENDENZE:
+def versione_python_compatibile(eseguibile):
+    """Verifica il contratto Python della release: >= 3.10 e < 3.15."""
+    try:
         risultato = subprocess.run(
-            [str(PYTHON_VENV), "-c", f"import {nome_import}"],
-            capture_output=True   # silenzioso: non mostra nulla a schermo
+            [
+                str(eseguibile),
+                "-c",
+                (
+                    "import sys; "
+                    "raise SystemExit("
+                    "0 if (3, 10) <= sys.version_info[:2] < (3, 15) else 1"
+                    ")"
+                ),
+            ],
+            capture_output=True,
         )
-        if risultato.returncode != 0:
-            return True   # una dipendenza manca → incompleto
+    except OSError:
+        return False
 
-    return False   # venv presente e tutte le dipendenze importabili
-
-def venv_esiste():
-    """
-    Verifica che l'ambiente virtuale esista e sia funzionante.
-
-    Returns:
-        True se il venv esiste e contiene python3 e pip
-    """
-    return PYTHON_VENV.is_file() and PIP_VENV.is_file()
-
-
-def crea_venv():
-    """
-    Crea l'ambiente virtuale da zero.
-
-    Returns:
-        True se la creazione è riuscita
-    """
-    print(f"📦 Creazione ambiente virtuale in {CARTELLA_VENV}...")
-
-    # Rimuovi venv corrotto se esiste
-    if CARTELLA_VENV.exists():
-        print("   🗑️  Rimozione venv corrotto...")
-        shutil.rmtree(CARTELLA_VENV)
-
-    # Crea nuovo venv
-    successo = esegui_con_progresso(
-        [sys.executable, "-m", "venv", str(CARTELLA_VENV)],
-        titolo="Creazione ambiente virtuale..."
-    )
-
-    if successo:
-        print("   ✅ Ambiente virtuale creato con successo")
-    else:
-        print("   ❌ Errore nella creazione del venv")
-
-    return successo
-
-
-# =====================================================================
-# SEZIONE 4: Verifica e installazione dipendenze
-# =====================================================================
-
-def verifica_dipendenza(nome_import):
-    """
-    Verifica se un pacchetto Python è importabile nel venv.
-
-    Args:
-        nome_import: Nome del modulo da importare (es: "PySide6")
-
-    Returns:
-        True se il modulo è disponibile nel venv
-    """
-    risultato = subprocess.run(
-        [str(PYTHON_VENV), "-c", f"import {nome_import}"],
-        capture_output=True
-    )
     return risultato.returncode == 0
 
 
-def verifica_tutte_dipendenze():
-    """
-    Verifica tutte le dipendenze necessarie.
+def venv_funzionante():
+    """Verifica che il venv sia realmente eseguibile e dotato di pip."""
+    if not PYTHON_VENV.is_file():
+        return False
+
+    if not versione_python_compatibile(PYTHON_VENV):
+        return False
+
+    try:
+        risultato = subprocess.run(
+            [str(PYTHON_VENV), "-m", "pip", "--version"],
+            capture_output=True,
+        )
+    except OSError:
+        return False
+
+    return risultato.returncode == 0
+
+
+def leggi_requirements_bloccati():
+    """Legge requirements.txt imponendo il formato «pacchetto==versione».
 
     Returns:
-        Lista di tuple (nome_pip, nome_import) delle dipendenze mancanti
+        (requisiti, errori)
+
+        requisiti:
+            lista di tuple (nome_pacchetto, versione_attesa)
+
+        errori:
+            lista di descrizioni; vuota se il file rispetta il contratto
     """
-    mancanti = []
-    for nome_pip, nome_import in DIPENDENZE:
-        if verifica_dipendenza(nome_import):
-            print(f"   ✅ {nome_pip} — installato")
-        else:
-            print(f"   ❌ {nome_pip} — MANCANTE")
-            mancanti.append((nome_pip, nome_import))
-    return mancanti
+    if not FILE_REQUIREMENTS.is_file():
+        return [], [
+            f"requirements.txt non trovato: {FILE_REQUIREMENTS}"
+        ]
+
+    requisiti = []
+    errori = []
+
+    try:
+        righe = FILE_REQUIREMENTS.read_text(
+            encoding="utf-8"
+        ).splitlines()
+    except OSError as errore:
+        return [], [
+            f"impossibile leggere requirements.txt: {errore}"
+        ]
+
+    for numero, riga_grezza in enumerate(righe, start=1):
+        riga = riga_grezza.split("#", 1)[0].strip()
+
+        if not riga:
+            continue
+
+        parti = riga.split("==")
+
+        if len(parti) != 2:
+            errori.append(
+                f"riga {numero}: requisito non congelato con ==: {riga!r}"
+            )
+            continue
+
+        nome = parti[0].strip()
+        versione_attesa = parti[1].strip()
+
+        if not nome or not versione_attesa:
+            errori.append(
+                f"riga {numero}: requisito non valido: {riga!r}"
+            )
+            continue
+
+        requisiti.append((nome, versione_attesa))
+
+    if not requisiti and not errori:
+        errori.append(
+            "requirements.txt non contiene dipendenze runtime"
+        )
+
+    return requisiti, errori
 
 
-def installa_dipendenze(mancanti):
+def problemi_ambiente():
+    """Restituisce i problemi che impediscono un avvio affidabile.
+
+    La verifica è silenziosa ed è usata anche per decidere se il launcher
+    debba aprire un terminale per eseguire una riparazione.
     """
-    Installa le dipendenze nel venv.
+    requisiti, errori_requirements = leggi_requirements_bloccati()
 
-    Strategia "fonte unica per le versioni":
-    - se requirements.txt esiste, si installa con «pip install -r»,
-      rispettando i VINCOLI DI VERSIONE lì definiti (es. PySide6<7).
-      È il caso normale: le versioni sono dichiarate in UN solo posto.
-    - se requirements.txt manca (installazione danneggiata), si ripiega
-      sui nomi elencati in DIPENDENZE, SENZA vincoli di versione.
+    if errori_requirements:
+        return errori_requirements
 
-    Nota: qualunque manchi tra le dipendenze, reinstalliamo comunque
-    l'intero requirements.txt. È corretto e più semplice: pip salta
-    ciò che è già presente e installa solo il necessario.
+    if not venv_funzionante():
+        return [
+            "ambiente virtuale assente, corrotto oppure con una "
+            "versione di Python non compatibile"
+        ]
 
-    Args:
-        mancanti: Lista di tuple (nome_pip, nome_import). Usata per il
-                  messaggio e come fallback se requirements.txt manca.
+    problemi = []
 
-    Returns:
-        True se l'installazione è riuscita
+    # importlib.metadata interroga le versioni realmente installate nel venv.
+    script_versione = (
+        "from importlib.metadata import PackageNotFoundError, version; "
+        "import sys; "
+        "nome, attesa = sys.argv[1], sys.argv[2]; "
+        "\ntry:\n"
+        "    installata = version(nome)\n"
+        "except PackageNotFoundError:\n"
+        "    raise SystemExit(2)\n"
+        "raise SystemExit(0 if installata == attesa else 1)"
+    )
+
+    for nome, versione_attesa in requisiti:
+        try:
+            risultato = subprocess.run(
+                [
+                    str(PYTHON_VENV),
+                    "-c",
+                    script_versione,
+                    nome,
+                    versione_attesa,
+                ],
+                capture_output=True,
+            )
+        except OSError:
+            problemi.append(
+                f"{nome}: impossibile interrogare il Python del venv"
+            )
+            continue
+
+        if risultato.returncode == 2:
+            problemi.append(
+                f"{nome}: non installato "
+                f"(richiesta versione {versione_attesa})"
+            )
+        elif risultato.returncode != 0:
+            # Recuperiamo la versione effettiva per dare una diagnosi utile.
+            try:
+                versione_reale = subprocess.run(
+                    [
+                        str(PYTHON_VENV),
+                        "-c",
+                        (
+                            "from importlib.metadata import version; "
+                            "import sys; print(version(sys.argv[1]))"
+                        ),
+                        nome,
+                    ],
+                    capture_output=True,
+                    text=True,
+                ).stdout.strip()
+            except OSError:
+                versione_reale = "sconosciuta"
+
+            problemi.append(
+                f"{nome}: installata {versione_reale or 'sconosciuta'}, "
+                f"richiesta {versione_attesa}"
+            )
+
+    # pip check individua dipendenze interne mancanti o incompatibili.
+    try:
+        controllo_pip = subprocess.run(
+            [str(PYTHON_VENV), "-m", "pip", "check"],
+            capture_output=True,
+            text=True,
+        )
+    except OSError:
+        controllo_pip = None
+
+    if controllo_pip is None:
+        problemi.append("impossibile eseguire «pip check»")
+    elif controllo_pip.returncode != 0:
+        dettaglio = (
+            controllo_pip.stdout.strip()
+            or controllo_pip.stderr.strip()
+            or "incompatibilità non specificata"
+        )
+        problemi.append(
+            f"pip segnala dipendenze incoerenti: {dettaglio}"
+        )
+
+    # Ultimo controllo funzionale: i moduli usati direttamente
+    # dall'applicazione devono essere realmente importabili.
+    try:
+        controllo_import = subprocess.run(
+            [
+                str(PYTHON_VENV),
+                "-c",
+                "import PySide6, xlsxwriter",
+            ],
+            capture_output=True,
+            text=True,
+        )
+    except OSError:
+        controllo_import = None
+
+    if controllo_import is None:
+        problemi.append(
+            "impossibile verificare gli import runtime"
+        )
+    elif controllo_import.returncode != 0:
+        problemi.append(
+            "PySide6 o XlsxWriter non risultano importabili"
+        )
+
+    return problemi
+
+
+def ambiente_incompleto():
+    """True se l'ambiente richiede una riparazione."""
+    return bool(problemi_ambiente())
+
+
+def venv_esiste():
+    """True soltanto se il venv è realmente utilizzabile."""
+    return venv_funzionante()
+
+
+def crea_venv():
+    """Ricrea da zero l'ambiente virtuale.
+
+    Usa il Python di sistema che sta eseguendo il launcher, ma soltanto
+    se appartiene all'intervallo supportato dalla release.
     """
-    nomi_pip = [nome for nome, _ in mancanti]
-    elenco_nomi = ", ".join(nomi_pip)
+    print(f"📦 Creazione ambiente virtuale in {CARTELLA_VENV}...")
 
-    # Scegliamo il comando pip in base alla presenza di requirements.txt.
-    # L'informazione sulla fonte va nel TITOLO: sarà esegui_con_progresso
-    # a stamparlo una sola volta, evitando intestazioni doppie.
-    # --disable-pip-version-check: sopprime l'avviso "a new release of pip
-    # is available". È solo informativo e non riguarda PostiPerfetti; NON
-    # aggiorna pip (che resterebbe soggetto a possibili incompatibilità
-    # future), si limita a non stampare il notice.
-    if FILE_REQUIREMENTS.is_file():
-        # Fonte primaria: il file con i vincoli di versione.
-        comando_pip = [str(PIP_VENV), "install", "--disable-pip-version-check",
-                       "-r", str(FILE_REQUIREMENTS)]
-        titolo = "Installazione dipendenze (da requirements.txt)..."
-    else:
-        # Fallback: nomi da DIPENDENZE, senza vincoli. Avvisiamo, perché
-        # l'assenza del file è un'anomalia (installazione incompleta).
-        print("⚠️  requirements.txt non trovato: uso l'elenco interno.")
-        comando_pip = [str(PIP_VENV), "install", "--disable-pip-version-check"] + nomi_pip
-        titolo = f"Installazione dipendenze ({elenco_nomi})..."
+    if not versione_python_compatibile(sys.executable):
+        versione = (
+            f"{sys.version_info.major}."
+            f"{sys.version_info.minor}."
+            f"{sys.version_info.micro}"
+        )
+        print(
+            "   ❌ Il Python di sistema non è compatibile "
+            f"con questa release: {versione}"
+        )
+        print("   Sono supportate le versioni Python da 3.10 a 3.14.")
+        return False
 
-    successo = esegui_con_progresso(comando_pip, titolo=titolo)
+    # Solo dopo aver verificato che possiamo ricrearlo eliminiamo
+    # un eventuale ambiente già danneggiato.
+    if CARTELLA_VENV.exists():
+        print("   🗑️  Rimozione venv non utilizzabile...")
+        try:
+            shutil.rmtree(CARTELLA_VENV)
+        except OSError as errore:
+            print(f"   ❌ Impossibile rimuovere il vecchio venv: {errore}")
+            return False
 
-    if successo:
-        print(f"   ✅ Dipendenze installate con successo")
-    else:
-        print(f"   ❌ Errore nell'installazione")
+    successo = esegui_con_progresso(
+        [sys.executable, "-m", "venv", str(CARTELLA_VENV)],
+        titolo="Creazione ambiente virtuale...",
+    )
 
-    return successo
+    if not successo:
+        print("   ❌ Errore nella creazione del venv")
+        return False
+
+    if not venv_funzionante():
+        print(
+            "   ❌ Il venv è stato creato, ma Python o pip "
+            "non risultano utilizzabili"
+        )
+        return False
+
+    print("   ✅ Ambiente virtuale creato con successo")
+    return True
+
+
+# =====================================================================
+# SEZIONE 4: Verifica e riparazione delle dipendenze
+# =====================================================================
+
+def installa_dipendenze():
+    """Riconcilia il venv con requirements.txt.
+
+    requirements.txt è obbligatorio e deve contenere esclusivamente
+    dipendenze runtime congelate con «==». Non esiste alcun fallback
+    non versionato.
+    """
+    requisiti, errori = leggi_requirements_bloccati()
+
+    if errori:
+        print("   ❌ requirements.txt non è utilizzabile:")
+        for errore in errori:
+            print(f"      • {errore}")
+        return False
+
+    elenco = ", ".join(
+        f"{nome}=={versione}"
+        for nome, versione in requisiti
+    )
+
+    print(f"   Versioni richieste: {elenco}")
+
+    comando_pip = [
+        str(PYTHON_VENV),
+        "-m",
+        "pip",
+        "install",
+        "--disable-pip-version-check",
+        "-r",
+        str(FILE_REQUIREMENTS),
+    ]
+
+    successo = esegui_con_progresso(
+        comando_pip,
+        titolo="Riparazione dipendenze da requirements.txt...",
+    )
+
+    if not successo:
+        print("   ❌ Errore nell'installazione delle dipendenze")
+        return False
+
+    problemi = problemi_ambiente()
+
+    if problemi:
+        print(
+            "   ❌ La riparazione si è conclusa, "
+            "ma l'ambiente non è ancora coerente:"
+        )
+        for problema in problemi:
+            print(f"      • {problema}")
+        return False
+
+    print("   ✅ Dipendenze installate e verificate")
+    return True
 
 
 # =====================================================================
@@ -468,70 +661,207 @@ def installa_dipendenze(mancanti):
 # =====================================================================
 
 def avvia_applicazione():
+    """Avvia PostiPerfetti come processo indipendente.
+
+    Per circa due secondi cattura stderr in un file temporaneo, così un
+    eventuale crash immediato di Python, Qt o di una libreria nativa
+    conserva la vera diagnostica.
+
+    Se l'applicazione resta viva, il file temporaneo viene eliminato e
+    non viene conservato alcun log di avvio permanente.
     """
-    Avvia PostiPerfetti come processo INDIPENDENTE dal terminale.
+    print("\n🚀 Avvio «PostiPerfetti»...")
 
-    A differenza di os.execv (che rimpiazzava il launcher facendo
-    ereditare all'app il terminale, così che chiudere il terminale
-    uccidesse anche la GUI), qui generiamo l'app in una SESSIONE
-    NUOVA e separata: il terminale può essere chiuso liberamente e
-    la GUI resta viva.
+    cartella_log = CARTELLA_PROGETTO / "log"
+    file_diagnostica = cartella_log / "diagnostica_avvio.log"
 
-    Strategia "sorveglia un istante, poi lascia andare":
-    - avvia l'app staccata;
-    - attende brevemente per intercettare un eventuale crash immediato
-      (dipendenza rotta, errore di import): in tal caso stampa l'errore;
-    - se dopo l'attesa l'app è ancora viva, esce lasciandola autonoma.
-    """
-    print(f"\n🚀 Avvio «PostiPerfetti»...")
+    try:
+        cartella_log.mkdir(parents=True, exist_ok=True)
+    except OSError:
+        # L'impossibilità di creare il log non deve, da sola,
+        # impedire l'avvio dell'applicazione.
+        pass
 
-    # start_new_session=True → equivale a setsid: nuova sessione,
-    # scollegata dal terminale. È Python puro (libreria standard),
-    # senza dipendere dal comando esterno «setsid».
+    # Una vecchia diagnosi non deve essere scambiata per il problema
+    # dell'avvio corrente.
+    try:
+        file_diagnostica.unlink(missing_ok=True)
+    except OSError:
+        pass
+
+    try:
+        stderr_temporaneo = tempfile.NamedTemporaryFile(
+            mode="w+b",
+            prefix=".postiperfetti-avvio-",
+            suffix=".log",
+            dir=cartella_log if cartella_log.is_dir() else None,
+            delete=False,
+        )
+    except OSError:
+        stderr_temporaneo = tempfile.NamedTemporaryFile(
+            mode="w+b",
+            prefix=".postiperfetti-avvio-",
+            suffix=".log",
+            delete=False,
+        )
+
+    percorso_temporaneo = Path(stderr_temporaneo.name)
+
     try:
         processo_app = subprocess.Popen(
             [str(PYTHON_VENV), str(FILE_PRINCIPALE)],
-            start_new_session=True
+            start_new_session=True,
+            stderr=stderr_temporaneo,
         )
     except Exception as errore:
-        # Se non riusciamo nemmeno ad avviare il processo, è un problema
-        # serio (Python del venv mancante?): segnaliamolo e usciamo male.
+        stderr_temporaneo.close()
+
+        try:
+            percorso_temporaneo.unlink(missing_ok=True)
+        except OSError:
+            pass
+
         messaggio = f"Impossibile avviare il programma:\n{errore}"
+
         if in_terminale():
             print(f"\n❌ {messaggio}")
         else:
-            mostra_dialogo("Errore — «PostiPerfetti»", messaggio, tipo="errore")
+            mostra_dialogo(
+                "Errore — «PostiPerfetti»",
+                messaggio,
+                tipo="errore",
+            )
+
         sys.exit(1)
 
-    # --- Sorveglianza breve: l'app crasha all'istante? ---------------
-    # Attendiamo fino a ~2 secondi. Se il processo termina entro questo
-    # tempo con un codice d'errore, quasi certamente è un crash di avvio
-    # e vale la pena mostrarlo. Se resta vivo, l'avvio è riuscito.
     try:
         codice = processo_app.wait(timeout=2)
-        # Se siamo qui, il processo è GIÀ terminato entro il timeout.
-        if codice != 0:
-            messaggio = (
-                f"«PostiPerfetti» si è chiuso subito dopo l'avvio "
-                f"(codice {codice}).\n"
-                "Potrebbe esserci un problema con l'installazione."
-            )
-            if in_terminale():
-                print(f"\n❌ {messaggio}")
-            else:
-                mostra_dialogo("Errore — «PostiPerfetti»", messaggio, tipo="errore")
-            sys.exit(1)
-        # codice == 0: l'app è partita e si è chiusa subito ma
-        # regolarmente (raro, ma legittimo). Nulla da segnalare.
-    except subprocess.TimeoutExpired:
-        # Caso NORMALE: dopo 2 secondi l'app è ancora viva → avvio
-        # riuscito. Il launcher ha finito: esce lasciando la GUI
-        # indipendente, e il terminale torna libero.
-        if in_terminale():
-            print("   ✅ Programma avviato. Puoi chiudere questo terminale.")
 
-    # Il launcher termina qui. La GUI, in sessione separata, prosegue.
-    sys.exit(0)
+    except subprocess.TimeoutExpired:
+        # Caso normale: dopo due secondi l'applicazione è ancora viva.
+        #
+        # Chiudiamo la nostra copia del descrittore e cancelliamo il nome
+        # del file temporaneo. Su Linux il processo figlio può continuare
+        # a usare il descrittore già aperto, ma non resta alcun file di
+        # diagnostica visibile sul disco dopo un avvio riuscito.
+        stderr_temporaneo.close()
+
+        try:
+            percorso_temporaneo.unlink(missing_ok=True)
+        except OSError:
+            pass
+
+        if in_terminale():
+            print(
+                "   ✅ Programma avviato. "
+                "Puoi chiudere questo terminale."
+            )
+
+        sys.exit(0)
+
+    # Se arriviamo qui, il processo si è già chiuso entro i due secondi.
+    stderr_temporaneo.close()
+
+    try:
+        dati_stderr = percorso_temporaneo.read_bytes()
+    except OSError:
+        dati_stderr = b""
+
+    try:
+        percorso_temporaneo.unlink(missing_ok=True)
+    except OSError:
+        pass
+
+    # Un'uscita immediata ma regolare non è un crash.
+    if codice == 0:
+        sys.exit(0)
+
+    # Limitiamo la diagnostica a 64 KiB: ci interessano gli errori
+    # dell'avvio, non creare un sistema generale di logging.
+    limite = 64 * 1024
+    stderr_troncato = len(dati_stderr) > limite
+
+    if stderr_troncato:
+        dati_stderr = dati_stderr[-limite:]
+
+    dettaglio_stderr = dati_stderr.decode(
+        "utf-8",
+        errors="replace",
+    ).strip()
+
+    if codice < 0:
+        descrizione_uscita = (
+            f"terminazione tramite segnale {-codice}"
+        )
+    else:
+        descrizione_uscita = f"codice di uscita {codice}"
+
+    righe_log = [
+        "Diagnostica avvio «PostiPerfetti»",
+        "=================================",
+        "",
+        f"Esito: {descrizione_uscita}",
+        "",
+        "--- stderr iniziale ---",
+    ]
+
+    if stderr_troncato:
+        righe_log.extend([
+            "(output molto lungo: conservati soltanto gli ultimi 64 KiB)",
+            "",
+        ])
+
+    righe_log.append(
+        dettaglio_stderr
+        if dettaglio_stderr
+        else "(nessun messaggio ricevuto su stderr)"
+    )
+
+    testo_log = "\n".join(righe_log) + "\n"
+
+    log_salvato = False
+
+    try:
+        cartella_log.mkdir(parents=True, exist_ok=True)
+        file_diagnostica.write_text(
+            testo_log,
+            encoding="utf-8",
+        )
+        log_salvato = True
+    except OSError:
+        pass
+
+    messaggio = (
+        "«PostiPerfetti» si è chiuso subito dopo l'avvio "
+        f"({descrizione_uscita}).\n\n"
+        "Il problema può dipendere dall'ambiente Python, da Qt "
+        "o da una libreria di sistema."
+    )
+
+    if log_salvato:
+        messaggio += (
+            "\n\nLa diagnostica tecnica è stata salvata in:\n"
+            f"{file_diagnostica}"
+        )
+
+    # Nel terminale mostriamo anche stderr direttamente: è utile durante
+    # installazione e collaudo e non richiede all'utente di aprire il log.
+    if in_terminale():
+        print(f"\n❌ {messaggio}")
+
+        if dettaglio_stderr:
+            print("\n--- Dettaglio tecnico ---")
+            print(dettaglio_stderr)
+            print("-------------------------")
+    else:
+        # Nel popup evitiamo muri di testo tecnico: indichiamo il log.
+        mostra_dialogo(
+            "Errore di avvio — «PostiPerfetti»",
+            messaggio,
+            tipo="errore",
+        )
+
+    sys.exit(1)
 
 
 # =====================================================================
@@ -685,81 +1015,100 @@ def main():
         if not crea_venv():
             mostra_dialogo(
                 "Errore — «PostiPerfetti»",
-                "Impossibile creare l'ambiente virtuale.\n\n"
-                "Verifica che l'installazione di Python 3 includa il supporto "
-                "agli ambienti virtuali (modulo «venv»).\n"
-                "Su alcune distribuzioni il componente è fornito in un "
-                "pacchetto separato (per esempio «python3-venv» su "
-                "Debian/Ubuntu).\n\n"
-                "Oppure prova a creare il venv manualmente:\n"
-                f"  python3 -m venv {CARTELLA_VENV}",
-                tipo="errore"
+                "Impossibile creare un ambiente virtuale compatibile.\n\n"
+                "Questa release richiede Python 3.10, 3.11, 3.12, "
+                "3.13 oppure 3.14 e il supporto al modulo «venv».\n\n"
+                "Se PostiPerfetti era già stato installato correttamente, "
+                "riesegui l'installer Linux: verificherà anche i "
+                "prerequisiti di sistema.",
+                tipo="errore",
             )
             sys.exit(1)
     else:
         print("   ✅ Ambiente virtuale trovato")
 
-    # --- STEP 3: Verifica dipendenze ---
-    print(f"\n🔍 Verifica dipendenze...")
-    mancanti = verifica_tutte_dipendenze()
+        # --- STEP 3: Verifica rigorosa dell'ambiente runtime ---
+    print("\n🔍 Verifica dipendenze e versioni...")
+    problemi = problemi_ambiente()
 
-    if mancanti:
-        nomi_mancanti = ", ".join(nome for nome, _ in mancanti)
+    if problemi:
+        print("\n⚠️  L'ambiente Python richiede una riparazione:")
+        for problema in problemi:
+            print(f"     • {problema}")
 
-        # Stessa logica del punto precedente: terminale → testo, menu → grafico.
+        requisiti, errori_requirements = leggi_requirements_bloccati()
+
+        # requirements.txt è parte del programma, non qualcosa che il
+        # launcher possa ricostruire dalla rete o da un elenco interno.
+        if errori_requirements:
+            testo_errore = (
+                "L'installazione di «PostiPerfetti» risulta incompleta "
+                "o danneggiata:\n\n"
+                + "\n".join(
+                    f"  • {errore}"
+                    for errore in errori_requirements
+                )
+                + "\n\nRiesegui l'installer Linux per ripristinare "
+                "i file ufficiali del programma."
+            )
+
+            if in_terminale():
+                print(f"\n❌ {testo_errore}")
+            else:
+                mostra_dialogo(
+                    "Installazione danneggiata — «PostiPerfetti»",
+                    testo_errore,
+                    tipo="errore",
+                )
+
+            sys.exit(1)
+
         if in_terminale():
-            print("\n⚠️  Dipendenze mancanti:")
-            for nome, _ in mancanti:
-                print(f"     • {nome}")
-            print("   L'installazione richiede una connessione a internet.")
-            risposta = chiedi_conferma_terminale("   Vuoi installarle adesso?")
+            print(
+                "\n   La riparazione può richiedere una connessione "
+                "a internet."
+            )
+            risposta = chiedi_conferma_terminale(
+                "   Vuoi riparare l'ambiente adesso?"
+            )
         else:
             risposta = mostra_dialogo(
-                "Dipendenze mancanti — «PostiPerfetti»",
-                f"Le seguenti dipendenze sono mancanti:\n\n"
-                f"  • {chr(10) + '  • '.join(nome for nome, _ in mancanti)}\n\n"
-                f"Vuoi installarle adesso?\n\n"
-                f"(Richiede connessione a internet)",
-                si_no=True
+                "Riparazione ambiente — «PostiPerfetti»",
+                "L'ambiente Python di «PostiPerfetti» non corrisponde "
+                "alla configurazione prevista dalla release.\n\n"
+                "Vuoi ripararlo adesso?\n\n"
+                "Se occorre scaricare nuovamente qualche componente, "
+                "sarà necessaria una connessione a internet.",
+                si_no=True,
             )
 
         if not risposta:
             print("   ⏹️  Operazione annullata dall'utente")
             sys.exit(0)
 
-        # Installa le dipendenze
-        if not installa_dipendenze(mancanti):
-            # Messaggio con DUE possibili cause: rete assente, oppure
-            # versioni richieste non più disponibili/compatibili (caso
-            # dell'"invecchiamento" dei vincoli in requirements.txt).
+        if not installa_dipendenze():
             testo_errore = (
-                f"Impossibile installare le dipendenze: {nomi_mancanti}\n\n"
-                "Possibili cause:\n"
-                "  • assenza di connessione a internet;\n"
-                "  • le versioni richieste non sono più disponibili\n"
-                "    o compatibili con questo sistema.\n\n"
-                "Puoi provare a installarle manualmente:\n"
-                f"  {PIP_VENV} install -r {FILE_REQUIREMENTS}"
+                "Non è stato possibile ripristinare correttamente "
+                "l'ambiente Python di «PostiPerfetti».\n\n"
+                "Riesegui l'installer Linux: effettuerà anche i "
+                "controlli sui prerequisiti di sistema e sul runtime Qt."
             )
+
             if in_terminale():
                 print(f"\n❌ {testo_errore}")
             else:
-                mostra_dialogo("Errore — «PostiPerfetti»", testo_errore, tipo="errore")
+                mostra_dialogo(
+                    "Errore — «PostiPerfetti»",
+                    testo_errore,
+                    tipo="errore",
+                )
+
             sys.exit(1)
 
-        # Verifica post-installazione
-        ancora_mancanti = verifica_tutte_dipendenze()
-        if ancora_mancanti:
-            nomi_ancora = ", ".join(nome for nome, _ in ancora_mancanti)
-            mostra_dialogo(
-                "Errore — «PostiPerfetti»",
-                f"L'installazione si è completata ma queste dipendenze\n"
-                f"risultano ancora mancanti:\n\n  {nomi_ancora}\n\n"
-                f"Prova a installarle manualmente:\n"
-                f"  {PIP_VENV} install {nomi_ancora}",
-                tipo="errore"
-            )
-            sys.exit(1)
+    else:
+        print("   ✅ Versioni richieste presenti")
+        print("   ✅ Dipendenze Python coerenti")
+        print("   ✅ Import runtime verificati")
 
     # --- STEP 4: Tutto ok, avvia l'applicazione ---
     print("\n✅ Tutte le verifiche superate!")

@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+# Parte di «PostiPerfetti». Autore: prof. Omar Ceretta. Licenza: GNU GPLv3.
+
 """Profilazione diagnostica leggera delle operazioni sincrone della GUI.
 
 Attiva soltanto con POSTIPERFETTI_GUI_PROFILE=1. Non modifica dati, seed,
