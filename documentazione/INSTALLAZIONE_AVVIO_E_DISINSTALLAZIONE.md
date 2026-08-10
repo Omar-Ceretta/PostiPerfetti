@@ -16,20 +16,19 @@
 
 ### ❗ Nota sulla sicurezza (SmartScreen e antivirus)
 
-Essendo un software open-source gratuito, il file non possiede una firma digitale a pagamento. Per questo motivo **Windows o il tuo antivirus potrebbero mostrare un avviso di protezione** (la schermata blu di SmartScreen).
+La versione attuale di «PostiPerfetti» non è firmata digitalmente con un certificato commerciale. Per questo motivo Windows SmartScreen o un software antivirus possono mostrare un avviso prima dell'esecuzione.
 
 <img src="https://raw.githubusercontent.com/Omar-Ceretta/PostiPerfetti/main/risorse/icone/smartscreen.png" />
 
-**Se appare l'avviso di Windows:**
+Scarica l'installer soltanto dalla **Release ufficiale di «PostiPerfetti»** su GitHub.
 
-1. Nella schermata blu, fai clic sulla scritta **«Ulteriori informazioni»**.
-2. Comparirà un nuovo pulsante in basso: fai clic su **«Esegui comunque»**.
-3. L'installazione partirà normalmente.
+**Se appare l'avviso di Windows SmartScreen:**
 
-**Se il tuo antivirus blocca il file:**
+1. verifica che il file provenga dalla Release ufficiale;
+2. nella schermata blu fai clic su **«Ulteriori informazioni»**;
+3. per procedere fai clic su **«Esegui comunque»**.
 
-1. Aggiungi il file alle eccezioni, **oppure**
-2. Disattiva temporaneamente l'antivirus per la sola durata dell'installazione.
+**Se un antivirus blocca o mette in quarantena il file**, non è consigliato disattivare la protezione del sistema. Dopo aver verificato che il file proviene dal repository di «PostiPerfetti», aggiungilo alle eccezioni.
 
 ---
 
@@ -41,118 +40,63 @@ Essendo un software open-source gratuito, il file non possiede una firma digital
 
 </td></tr></table>
 
-L'installazione su Linux è **automatica**: un unico script Bash scarica il programma da GitHub, lo installa nella cartella personale dell'utente e crea la relativa voce nel Menu applicazioni.
+L'installazione su Linux è gestita da uno script Bash distribuito insieme alla Release ufficiale.
 
-L'installer **non richiede privilegi di amministratore** e non esegue comandi tramite `sudo`. Se sul sistema manca uno dei prerequisiti necessari, tuttavia, la sua installazione tramite il gestore pacchetti della distribuzione potrebbe richiedere i normali privilegi amministrativi.
+### Requisiti
 
-### Cosa serve
+«PostiPerfetti» supporta **Python 3.10, 3.11, 3.12, 3.13 e 3.14**.
 
-Lo script verifica automaticamente, prima di modificare qualsiasi file, la presenza di:
+L'installer verifica automaticamente i prerequisiti necessari. Se ne manca qualcuno e la distribuzione è riconosciuta, propone di installarlo chiedendo conferma prima di usare `sudo`.
 
-- **Python 3** e del supporto agli ambienti virtuali (`venv`);
-- **tar**, per estrarre l'archivio scaricato;
-- **rsync**, per installare e aggiornare in sicurezza i file del programma;
-- **curl** oppure **wget**, per effettuare il download.
-
-È consigliato **Python 3.10 o successivo**.
-
-Per controllare la versione installata:
-
-```bash
-python3 --version
-```
-
-Se manca un componente necessario, l'installer si interrompe e indica il comando appropriato per installarlo sulle principali famiglie di distribuzioni Linux.
-
-> **Nota per Debian, Ubuntu e derivate:** il supporto agli ambienti virtuali può essere distribuito separatamente. In tal caso è sufficiente installare:
->
-> ```bash
-> sudo apt install python3-venv
-> ``
+> L'installer va avviato come **utente normale**, non con `sudo`.
 
 ### Installazione
 
-Apri un terminale e scarica lo script di installazione con **wget**:
+Apri un terminale e usa uno dei due metodi seguenti.
+
+Con `wget`:
 
 ```bash
-wget https://raw.githubusercontent.com/Omar-Ceretta/PostiPerfetti/main/install.sh
+wget -O install.sh \
+  https://github.com/Omar-Ceretta/PostiPerfetti/releases/latest/download/install.sh
+
 bash install.sh
 ```
 
-Se sul tuo sistema è disponibile `curl` anziché `wget`, puoi usare:
+Oppure con `curl`:
 
 ```bash
-curl -fL -o install.sh https://raw.githubusercontent.com/Omar-Ceretta/PostiPerfetti/main/packaging/linux/install.sh
+curl -fL -o install.sh \
+  https://github.com/Omar-Ceretta/PostiPerfetti/releases/latest/download/install.sh
+
 bash install.sh
 ```
 
-Lo script scaricherà l'ultima versione di «PostiPerfetti» da GitHub e installerà i soli file necessari all'esecuzione del programma in:
+Il programma viene installato normalmente in:
 
 ```text
 ~/PostiPerfetti
 ```
 
-Alla prima installazione verranno inoltre aggiunti due file-classe di esempio.
+L'installer scarica il pacchetto della Release corrispondente, ne verifica l'integrità e prepara anche l'ambiente Python necessario. Al termine propone di avviare subito «PostiPerfetti».
 
-L'installer creerà infine la voce «PostiPerfetti» nel Menu applicazioni e installerà la relativa icona secondo gli standard freedesktop.org.
+Una volta completata l'installazione, il normale utilizzo del programma non richiede una connessione a Internet.
 
-I file principali del programma e i dati dell'utente resteranno all'interno di `~/PostiPerfetti`. Alcuni piccoli file necessari all'integrazione con il desktop — la voce del Menu applicazioni e l'icona — vengono collocati nelle directory standard dell'ambiente desktop, normalmente sotto `~/.local/share`.
+### Aggiornamento
 
-Tutti i file temporanei utilizzati per il download e l'estrazione vengono rimossi automaticamente al termine dell'installazione.
+Per aggiornare «PostiPerfetti» è sufficiente scaricare ed eseguire nuovamente l'installer con uno dei comandi precedenti.
 
-Il file `install.sh` scaricato manualmente rimane invece nella cartella dalla quale hai eseguito il comando e, dopo l'installazione, può essere eliminato senza problemi.
+L'installazione esistente viene riconosciuta automaticamente e **classi, impostazioni e log vengono preservati**.
 
-### Primo avvio
+### Disinstallazione
 
-Al termine dell'installazione viene proposto di avviare subito «PostiPerfetti». Premendo semplicemente **Invio** alla richiesta `[S/n]` si conferma l'avvio.
-
-La prima volta, il launcher prepara automaticamente l'ambiente Python del programma:
-
-- crea l'ambiente virtuale privato `~/PostiPerfetti/.venv`;
-- verifica le librerie necessarie;
-- scarica e installa automaticamente quelle mancanti, fra cui PySide6 e XlsxWriter;
-- avvia infine «PostiPerfetti».
-
-È quindi necessaria una connessione a Internet durante **l'installazione o l'aggiornamento del programma** e quando il launcher deve creare o riparare l'ambiente virtuale. Una volta completata la preparazione, i normali avvii successivi non richiedono nuovi download.
-
-### Avvii successivi
-
-Troverai «PostiPerfetti» nel Menu delle applicazioni del tuo ambiente desktop e potrai avviarlo normalmente facendo clic sulla sua icona.
-
-Se la voce non compare immediatamente dopo l'installazione, potrebbe essere necessario terminare la sessione utente e accedere nuovamente.
-
-### Aggiornare il programma
-
-Per aggiornare «PostiPerfetti» all'ultima versione disponibile, riesegui semplicemente gli stessi comandi utilizzati per l'installazione:
-
-```bash
-wget -O install.sh https://raw.githubusercontent.com/Omar-Ceretta/PostiPerfetti/main/packaging/linux/install.sh
-bash install.sh
-```
-
-oppure, con `curl`:
-
-```bash
-curl -fL -o install.sh https://raw.githubusercontent.com/Omar-Ceretta/PostiPerfetti/main/packaging/linux/install.sh
-bash install.sh
-```
-
-L'installer riconoscerà automaticamente l'installazione esistente e aggiornerà soltanto i file del programma.
-
-Le classi create dall'utente, le impostazioni e gli altri dati personali **non verranno sovrascritti**.
-
-
-### Disinstallare PostiPerfetti
-
-L'installer aggiunge nella cartella del programma anche uno script di disinstallazione.
-
-Per rimuovere PostiPerfetti apri un terminale ed esegui:
+Per una disinstallazione normale:
 
 ```bash
 ~/PostiPerfetti/uninstall.sh
 ```
 
-La disinstallazione normale rimuove il programma, il suo ambiente virtuale, la voce nel Menu applicazioni e l'icona installata, ma **conserva le classi, le impostazioni e i log** presenti in:
+Vengono rimossi il programma, il relativo ambiente virtuale e l'integrazione desktop. Restano invece conservati:
 
 ```text
 ~/PostiPerfetti/classi
@@ -160,91 +104,110 @@ La disinstallazione normale rimuove il programma, il suo ambiente virtuale, la v
 ~/PostiPerfetti/log
 ```
 
-In questo modo è possibile reinstallare successivamente il programma senza perdere i propri dati.
+Questi dati permettono una successiva reinstallazione senza perdere classi, impostazioni e Storico.
 
-Per eliminare invece **completamente** PostiPerfetti, comprese classi, impostazioni e log, usa:
+Per eliminare anche tutti i dati locali di «PostiPerfetti»:
 
 ```bash
 ~/PostiPerfetti/uninstall.sh --purge
 ```
 
-Prima di procedere viene richiesta una conferma esplicita.
-
-> **Attenzione:** l'opzione `--purge` elimina definitivamente anche i dati personali di PostiPerfetti. Usala soltanto se non desideri conservarli.
-
----
+> **Attenzione:** `--purge` elimina definitivamente classi, impostazioni, Storico e log. Usalo soltanto se non desideri conservarli.
 
 <details>
-<summary><b> 🔍 Per utenti ESPERTI: avvio manuale del launcher</b></summary>
+<summary><b>🔎 Cosa controlla l'installer</b></summary>
 
 <br>
 
-È possibile anche scaricare manualmente l'intero sorgente e avviare direttamente il launcher, senza utilizzare lo script di installazione.
+Prima di dichiarare conclusa l'installazione, lo script:
 
-In alternativa ai comandi seguenti, il sorgente può essere scaricato dalla pagina principale del repository tramite **Code → Download ZIP**.
+- controlla la versione di Python e la capacità di creare ambienti virtuali;
+- verifica gli strumenti di sistema necessari;
+- scarica il pacchetto appartenente alla propria Release;
+- verifica lo **SHA-256** del pacchetto e la versione del codice contenuto;
+- prepara o riutilizza `~/PostiPerfetti/.venv`;
+- installa le versioni esatte definite in `requirements.txt`;
+- esegue `pip check`;
+- verifica PySide6 e XlsxWriter;
+- controlla il runtime grafico Qt e le dipendenze del plugin `libqxcb.so`;
+- esegue un breve test di inizializzazione dell'interfaccia grafica.
 
-```bash
-# Scarica l'ultima versione del codice
-wget -O postiperfetti-main.tar.gz \
-  https://github.com/Omar-Ceretta/PostiPerfetti/archive/refs/heads/main.tar.gz
+Se una verifica essenziale fallisce, l'installazione viene interrotta invece di essere dichiarata completata.
 
-# Estrai l'archivio
-tar xzf postiperfetti-main.tar.gz
-
-# Se ~/PostiPerfetti NON esiste già, rinomina e sposta la cartella
-mv PostiPerfetti-main ~/PostiPerfetti
-cd ~/PostiPerfetti
-
-# Avvia il launcher
-python3 moduli/postiperfetti_launcher.py
-```
-
-> **Attenzione:** i comandi precedenti presuppongono che `~/PostiPerfetti` non esista già. Per aggiornare un'installazione esistente è preferibile utilizzare lo script `install.sh`, che preserva automaticamente i dati dell'utente.
-
-Il launcher verifica l'ambiente, crea `.venv` e installa le dipendenze mancanti prima di avviare il programma.
-
-> **Nota:** con l'installazione manuale l'integrazione con il desktop NON viene effettuata automaticamente. Per aggiungere «PostiPerfetti» al Menu applicazioni occorre creare manualmente il relativo file `.desktop` e installare l'icona nel tema del sistema. L'icona sorgente si trova in `risorse/icone/postiperfetti_icon.png`.
+I privilegi amministrativi, quando necessari, vengono richiesti soltanto per installare prerequisiti di sistema tramite il gestore dei pacchetti. I file di «PostiPerfetti» restano nella cartella dell'utente.
 
 </details>
 
----
+<details>
+<summary><b>🔧 Per utenti esperti: esecuzione manuale dal sorgente</b></summary>
 
-## ❓ Risoluzione problemi (Linux)
+<br>
 
-▪️ **«python3» non trovato**
+È possibile scaricare il ramo `main` ed eseguire direttamente il launcher Python:
 
-Python 3 non è installato oppure non è disponibile nel `PATH` del sistema. Installalo con il gestore pacchetti della tua distribuzione e ripeti l'installazione.
+```bash
+wget -O postiperfetti-main.tar.gz \
+  https://github.com/Omar-Ceretta/PostiPerfetti/archive/refs/heads/main.tar.gz
 
-▪️ **Errore relativo a `venv` o `ensurepip`**
+tar xzf postiperfetti-main.tar.gz
+cd PostiPerfetti-main
 
-Il supporto agli ambienti virtuali Python non è disponibile. Su Debian, Ubuntu e derivate puoi installarlo con:
+python3 moduli/postiperfetti_launcher.py
+```
+
+Questa modalità è pensata per sviluppo e collaudo e **non equivale all'installazione Linux ufficiale**: non esegue la gestione dei prerequisiti di sistema, la verifica preventiva del runtime Qt o l'integrazione con il Menu applicazioni.
+
+Per installare o aggiornare normalmente il programma è preferibile usare l'`install.sh` della Release ufficiale.
+
+</details>
+
+<details>
+<summary><b>❓ Risoluzione problemi</b></summary>
+
+<br>
+
+**Versione di Python non compatibile**
+
+Questa release richiede Python da **3.10 a 3.14**:
+
+```bash
+python3 --version
+```
+
+Se il Python di sistema è già presente ma non compatibile, l'installer non tenta di sostituirlo automaticamente.
+
+**Problemi con `venv` o `pip`**
+
+Su Debian, Ubuntu e derivate può essere necessario:
 
 ```bash
 sudo apt install python3-venv
 ```
 
-Quindi riesegui `install.sh`.
+Sulle distribuzioni riconosciute è lo stesso installer a proporre il download dei prerequisiti mancanti.
 
-▪️ **«tar», «rsync», «curl» o «wget» non trovato**
+**Errore durante l'installazione delle dipendenze Python**
 
-Manca uno degli strumenti di sistema richiesti. L'installer indica automaticamente il comando di installazione appropriato per le principali famiglie di distribuzioni Linux.
+Controlla la connessione a Internet e i messaggi prodotti da `pip`, quindi riesegui l'installer della Release ufficiale.
 
-È sufficiente avere **uno solo tra `curl` e `wget`**.
+**Errore Qt/XCB o mancato avvio dell'interfaccia**
 
-▪️ **Errore durante l'installazione di PySide6 o XlsxWriter**
-
-Verifica innanzitutto che la connessione a Internet sia attiva e che Python sia aggiornato (`python3 --version`).
-
-Puoi quindi chiudere e riavviare «PostiPerfetti»: il launcher controllerà nuovamente l'ambiente e proporrà di installare le dipendenze mancanti.
-
-▪️ **Il programma si avvia ma la finestra è vuota o non risponde**
-
-Chiudi completamente «PostiPerfetti» e riaprilo.
-
-Se il problema persiste, puoi ricreare l'ambiente virtuale eliminando:
+Quando disponibile, la diagnostica dell'installazione viene salvata in:
 
 ```text
-~/PostiPerfetti/.venv
+~/PostiPerfetti/log/diagnostica_installazione_qt.log
 ```
 
-Al successivo avvio il launcher proporrà di ricrearlo e di reinstallare automaticamente le dipendenze necessarie. Questa operazione non elimina le classi o le impostazioni personali.
+Se invece l'applicazione si chiude subito dopo l'avvio, il launcher può salvare:
+
+```text
+~/PostiPerfetti/log/diagnostica_avvio.log
+```
+
+Un avvio riuscito non lascia quest'ultimo log permanente.
+
+**Ambiente Python danneggiato dopo l'installazione**
+
+Il launcher controlla l'ambiente e può proporre una riparazione delle dipendenze. Se il problema riguarda Python di sistema o librerie native Qt, riesegui l'installer Linux ufficiale.
+
+</details>
