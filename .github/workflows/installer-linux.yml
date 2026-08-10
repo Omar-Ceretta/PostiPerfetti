@@ -1,0 +1,167 @@
+name: Contratto installer Linux
+
+on:
+  workflow_dispatch:
+
+  push:
+    branches:
+      - main
+    paths:
+      - "packaging/linux/**"
+      - "requirements.txt"
+      - "moduli/versione.py"
+      - ".github/workflows/installer-linux.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  distro:
+    name: ${{ matrix.nome }}
+
+    runs-on: ubuntu-24.04
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - nome: Ubuntu 24.04
+            image: ubuntu:24.04
+            famiglia: debian
+
+          - nome: Fedora 44
+            image: fedora:44
+            famiglia: fedora
+
+          - nome: Arch Linux
+            image: archlinux:base
+            famiglia: arch
+
+          - nome: openSUSE Tumbleweed
+            image: opensuse/tumbleweed:latest
+            famiglia: suse
+
+    container:
+      image: ${{ matrix.image }}
+
+    steps:
+      - name: Prepara il container
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          case "${{ matrix.famiglia }}" in
+            debian)
+              apt-get update
+              DEBIAN_FRONTEND=noninteractive \
+                apt-get install -y git ca-certificates
+              ;;
+            fedora)
+              dnf install -y git ca-certificates
+              ;;
+            arch)
+              pacman -Syu --noconfirm git ca-certificates
+              ;;
+            suse)
+              zypper --non-interactive refresh
+              zypper --non-interactive install git ca-certificates
+              ;;
+          esac
+
+      - name: Scarica il repository
+        uses: actions/checkout@v7
+
+      - name: Controlla la sintassi degli script
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          bash -n packaging/linux/install.sh
+          bash -n packaging/linux/uninstall.sh
+
+      - name: Carica il contratto dell'installer
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          awk '/BLOCCO 1/{exit} {print}' \
+            packaging/linux/install.sh \
+            > /tmp/postiperfetti-installer-defs.sh
+
+          source /tmp/postiperfetti-installer-defs.sh
+
+          famiglia="$(famiglia_distro)"
+
+          echo "Famiglia rilevata: $famiglia"
+          echo "Famiglia attesa:   ${{ matrix.famiglia }}"
+
+          test "$famiglia" = "${{ matrix.famiglia }}"
+
+          echo "Python:     $(pacchetto_python)"
+          echo "venv:       $(pacchetto_venv)"
+          echo "XCB cursor: $(pacchetto_xcb_cursor)"
+          echo "EGL:        $(pacchetto_egl)"
+
+      - name: Installa e verifica i prerequisiti dichiarati
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          source /tmp/postiperfetti-installer-defs.sh
+
+          famiglia="$(famiglia_distro)"
+
+          python_pkg="$(pacchetto_python)"
+          venv_pkg="$(pacchetto_venv)"
+          xcb_pkg="$(pacchetto_xcb_cursor)"
+          egl_pkg="$(pacchetto_egl)"
+
+          case "$famiglia" in
+            debian)
+              apt-get update
+              DEBIAN_FRONTEND=noninteractive \
+                apt-get install -y \
+                  "$python_pkg" \
+                  "$venv_pkg" \
+                  "$xcb_pkg" \
+                  "$egl_pkg" \
+                  tar rsync curl
+              ;;
+
+            fedora)
+              dnf install -y \
+                "$python_pkg" \
+                "$venv_pkg" \
+                "$xcb_pkg" \
+                "$egl_pkg" \
+                tar rsync curl
+              ;;
+
+            arch)
+              pacman -S --needed --noconfirm \
+                "$python_pkg" \
+                "$venv_pkg" \
+                "$xcb_pkg" \
+                "$egl_pkg" \
+                tar rsync curl
+              ;;
+
+            suse)
+              zypper --non-interactive install \
+                "$python_pkg" \
+                "$venv_pkg" \
+                "$xcb_pkg" \
+                "$egl_pkg" \
+                tar rsync curl
+              ;;
+          esac
+
+          python3 --version
+
+          python_versione_compatibile
+          python_puo_creare_venv
+          ha_libreria_xcb_cursor
+          ha_libreria_egl
+
+          echo
+          echo "CONTRATTO INSTALLER: OK"
