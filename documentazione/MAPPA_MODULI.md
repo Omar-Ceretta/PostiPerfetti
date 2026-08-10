@@ -3,7 +3,7 @@
 > **Versione di riferimento:** 0.8.0.
 > 
 > Questo documento descrive in modo sintetico l'organizzazione interna di «PostiPerfetti».  
-> Non è una documentazione delle singole funzioni: serve a capire **quali parti compongono il programma e quale responsabilità ha ciascuna**.
+> Serve a capire **quali parti compongono il programma e quale responsabilità ha ciascuna**.
 
 ## 1. Vista d'insieme
 
@@ -29,8 +29,8 @@ VALUTAZIONE E SELEZIONE
 ANTEPRIMA, STORICO, REPORT ED ESPORTAZIONI
 ```
 
-La directory `moduli/` contiene **51 file Python**: 50 moduli operativi più `__init__.py`, che identifica esplicitamente la directory come package Python.  
-A questi si aggiunge `postiperfetti.py`, nella root del progetto, che compone l'applicazione principale.
+La directory `moduli/` contiene **51 file Python**: 50 moduli operativi più `__init__.py`, che identifica la directory come package Python.  
+A questi si aggiunge `postiperfetti.py`, nella root del progetto, che rappresenta l'applicazione principale.
 
 ---
 
