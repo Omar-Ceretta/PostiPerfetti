@@ -32,7 +32,7 @@
 
 📦 **[Scarica «PostiPerfetti» per Windows e Linux](https://github.com/Omar-Ceretta/PostiPerfetti/releases/latest)**
 
-💬 **[Come si installa, si avvia e si disinstalla](INSTALLAZIONE.md)** — Windows e Linux, passo per passo.
+💬 **[Come si installa, si avvia e si disinstalla](documentazione/INSTALLAZIONE_AVVIO_E_DISINSTALLAZIONE.md)** — Windows e Linux, passo per passo.
 
 ------
 
@@ -340,7 +340,7 @@ La Tab "📊 STATISTICHE" analizza l'intero "Storico" della classe (o di più cl
 
 | Documento | Cosa contiene |
 |---|---|
-| **[INSTALLAZIONE.md](INSTALLAZIONE.md)** | Installazione, avvio e disinstallazione su Windows e Linux. |
+| **[Installazione e avvio](documentazione/INSTALLAZIONE_AVVIO_E_DISINSTALLAZIONE.md)** | Installazione, aggiornamento e disinstallazione su Windows e Linux, passo per passo. |
 | **[CHANGELOG.md](CHANGELOG.md)** | Le novità e le correzioni di ogni versione pubblicata. |
 | **[SECURITY.md](SECURITY.md)** | Come segnalare un problema di sicurezza — e, soprattutto, **quali dati non allegare mai** a una segnalazione. |
 | **[TERZE_PARTI.md](TERZE_PARTI.md)** | Le librerie, il carattere e le icone di altri autori usati dal programma, con le rispettive licenze. |
