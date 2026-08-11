@@ -287,8 +287,8 @@ CREDITI_HTML_TEMPLATE = r"""
 <p class="cella-centro"><b>Versione [[VERSIONE]]</b></p>
 <hr>
 <p><b>Descrizione:</b><br>
-Programma per l'assegnazione automatica dei posti in classe, con gestione di
-vincoli, affinità, incompatibilità, rotazione allievi e storico assegnazioni.</p>
+Programma per l'assegnazione automatica dei posti in classe, con gestione di affinità, 
+incompatibilità, posizione, genere misto, rotazione allievi e storico assegnazioni.</p>
 <p><b>Autore:</b><br>
 Prof. Omar Ceretta<br>
 I.C. di Tombolo e Galliera Veneta (PD)</p>
