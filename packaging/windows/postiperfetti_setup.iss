@@ -47,7 +47,7 @@ InfoAfterFile=info_dopo_installazione.txt
 
 ; Output dell'installer, sempre relativo alla root del repository.
 OutputDir=..\..\dist-installer
-OutputBaseFilename=PostiPerfetti_setup
+OutputBaseFilename=PostiPerfetti-{#MyAppVersion}-setup
 Compression=lzma2
 SolidCompression=yes
 
