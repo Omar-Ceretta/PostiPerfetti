@@ -22,9 +22,9 @@
 >
 > A seconda delle tue preferenze, per usare l'interfaccia puoi selezionare un **🌙 Tema scuro** o un **☀️ Tema chiaro**, che apparirà come nei seguenti screenshot (clicca per allargare le immagini):
 > 
-> [![Schermata "Editor" con 'Tema scuro'](documentazione/immagini/000_editor-scuro.png)](https://raw.githubusercontent.com/Omar-Ceretta/PostiPerfetti/refs/heads/main/screens/000_editor-scuro.png)
+> [![Editor di PostiPerfetti - tema scuro](documentazione/immagini/000_editor-scuro.png)](documentazione/immagini/000_editor-scuro.png)
 > 
-> [![Schermata "Editor" con 'Tema chiaro'](documentazione/immagini/000_editor-chiaro.png)]
+> [![Editor di PostiPerfetti - tema chiaro](documentazione/immagini/000_editor-chiaro.png)](documentazione/immagini/000_editor-chiaro.png)
 
 ------
 
@@ -227,9 +227,9 @@ Quando il file della classe sarà pronto e caricato, clicca su **"🚀 Assegna i
 
 ### 🍀 La Tab "🏫 AULA"
 
-[![Schermata "Aula" con 'Tema scuro'](documentazione/immagini/001_aula-scuro.png)]
+[![Aula di PostiPerfetti - tema scuro](documentazione/immagini/001_aula-scuro.png)](documentazione/immagini/001_aula-scuro.png)
 
-[![Schermata "Aula" con 'Tema chiaro'](documentazione/immagini/001_aula-chiaro.png)]
+[![Aula di PostiPerfetti - tema chiaro](documentazione/immagini/001_aula-chiaro.png)](documentazione/immagini/001_aula-chiaro.png)
 
 La Tab "🏫 AULA" mostra la disposizione grafica dell'aula. Gli arredi (LIM, cattedra, lavagna) sono in basso, le file di banchi salgono verso l'alto. Da qui potrai agire sui pulsanti:
 
