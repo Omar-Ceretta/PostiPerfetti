@@ -1,0 +1,103 @@
+# Configurazione degli strumenti di sviluppo di «PostiPerfetti».
+#
+# Questo file NON rende il progetto un pacchetto installabile con pip:
+# «PostiPerfetti» si distribuisce come applicazione (installer Windows,
+# pacchetto Linux), non come libreria. Qui vive soltanto la configurazione
+# degli strumenti di collaudo, perché «ruff check» dia lo stesso risultato
+# sul computer dello sviluppatore e in CI.
+#
+# Parte di «PostiPerfetti». Autore: prof. Omar Ceretta. Licenza: GNU GPLv3.
+
+[tool.ruff]
+# Versione minima supportata: la stessa dichiarata da installer e CI.
+target-version = "py310"
+
+# Il codice sta sotto le 100 colonne (99° percentile: 96).
+line-length = 100
+
+exclude = [
+    ".venv",
+    "build",
+    "dist",
+    "dist-installer",
+    "dist-linux",
+    "dist-release",
+]
+
+
+# ─────────────────────────────────────────────────────────────────────────
+#  PROFILO BLOCCANTE
+#
+#  Queste sono le regole che fanno fallire la CI. La selezione è volutamente
+#  stretta: contiene solo ciò che segnala un DIFETTO, non una preferenza di
+#  stile.
+#
+#    F    Pyflakes  — import morti, nomi non definiti, variabili assegnate
+#                     e mai usate: quasi sempre residui di una modifica.
+#    E9   errori di sintassi e di I/O che impedirebbero l'esecuzione.
+#    PLE  errori certi di Pylint (non avvisi, errori).
+#    B    flake8-bugbear — classi di bug veri, non estetica.
+#
+#  Il profilo più ampio (stile, semplificazioni, ammodernamenti) gira in CI
+#  in modo NON bloccante: vedi lo step "Ruff — profilo esteso" nel workflow.
+# ─────────────────────────────────────────────────────────────────────────
+
+[tool.ruff.lint]
+select = ["F", "E9", "PLE", "B"]
+
+ignore = [
+    # f-string senza segnaposto: usate per uniformità visiva nei blocchi di
+    # messaggi all'utente, dove le righe adiacenti sono f-string vere.
+    "F541",
+    # Variabile di ciclo non usata nel corpo: nei cicli su coppie di studenti
+    # nominare entrambi rende esplicito su cosa si sta iterando.
+    "B007",
+    # zip() senza strict=: le sequenze accoppiate qui hanno lunghezza garantita
+    # dalla geometria dell'aula, già validata a monte.
+    "B905",
+]
+
+# ─────────────────────────────────────────────────────────────────────────
+#  Le voci qui sotto riguardano regole che NON sono nel profilo bloccante.
+#  Servono al profilo esteso, e soprattutto servono a mettere per iscritto
+#  una scelta deliberata di progetto, che non è dovuta a trascuratezza.
+#
+#    BLE001  except Exception generico
+#    S110    except: pass silenzioso
+#
+#  In questi moduli «except Exception» è dovuto alla scelta di non
+#  far mai cadere l'applicazione mentre un utente ci sta lavorando.
+#  Ogni gestore o mostra aun avviso comprensibile, oppure sta su
+#  un percorso di chiusura in cui non esiste più nessuno a cui riferire.
+# ─────────────────────────────────────────────────────────────────────────
+
+[tool.ruff.lint.per-file-ignores]
+
+# Perimetro attorno a un'azione dell'utente: l'errore finisce sempre in una
+# finestra di dialogo con un messaggio in italiano.
+"postiperfetti.py" = ["BLE001"]
+"moduli/esportazione.py" = ["BLE001"]
+"moduli/storico_ui.py" = ["BLE001"]
+"moduli/flusso_mensile_ui.py" = ["BLE001"]
+"moduli/flusso_annuale_ui.py" = ["BLE001"]
+"moduli/editor_studenti.py" = ["BLE001"]
+"moduli/sessione_classe_ui.py" = ["BLE001"]
+"moduli/statistiche.py" = ["BLE001"]
+"moduli/utilita.py" = ["BLE001"]
+
+# Persistenza: conservare una copia di un file danneggiato è un tentativo
+# "best effort". Se fallisce anche quello, l'errore vero è già stato
+# catturato ed è comunque riportato all'utente.
+"moduli/configurazione.py" = ["BLE001", "S110"]
+
+# Avvio, chiusura e sorveglianza dei processi figli: durante il teardown
+# un'eccezione non ha più nessuna destinazione utile.
+"moduli/ponte_processo.py" = ["BLE001", "S110"]
+"moduli/supervisione_processi.py" = ["BLE001", "S110"]
+"moduli/processo_mensile.py" = ["BLE001", "S110"]
+"moduli/processo_annuale.py" = ["BLE001", "S110"]
+"moduli/watchdog_gui.py" = ["BLE001", "S110"]
+"moduli/postiperfetti_launcher.py" = ["BLE001", "S110"]
+
+# I test usano asserzioni e costrutti che altrove sarebbero rumore.
+"documentazione/sviluppo/test/**" = ["S101", "BLE001"]
