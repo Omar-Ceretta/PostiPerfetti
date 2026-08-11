@@ -167,7 +167,7 @@ Per installare o aggiornare normalmente il programma è preferibile usare l'`ins
 
 <br>
 
-**Versione di Python non compatibile**
+⓵ **Versione di Python non compatibile**
 
 Questa release richiede Python da **3.10 a 3.14**:
 
@@ -187,11 +187,11 @@ sudo apt install python3-venv
 
 Sulle distribuzioni riconosciute è lo stesso installer a proporre il download dei prerequisiti mancanti.
 
-**Errore durante l'installazione delle dipendenze Python**
+**⓶ Errore durante l'installazione delle dipendenze Python**
 
 Controlla la connessione a Internet e i messaggi prodotti da `pip`, quindi riesegui l'installer della Release ufficiale.
 
-**Errore Qt/XCB o mancato avvio dell'interfaccia**
+⓷ **Errore Qt/XCB o mancato avvio dell'interfaccia**
 
 Quando disponibile, la diagnostica dell'installazione viene salvata in:
 
