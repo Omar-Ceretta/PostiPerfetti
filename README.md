@@ -30,9 +30,9 @@
 
 ## 📥 Download
 
-**[Scarica «PostiPerfetti» per Windows e Linux](https://github.com/Omar-Ceretta/PostiPerfetti/releases/latest)**
+📦 **[Scarica «PostiPerfetti» per Windows e Linux](https://github.com/Omar-Ceretta/PostiPerfetti/releases/latest)**
 
-📦 **[Come si installa, si avvia e si disinstalla](INSTALLAZIONE.md)** — Windows e Linux, passo per passo.
+💬 **[Come si installa, si avvia e si disinstalla](INSTALLAZIONE.md)** — Windows e Linux, passo per passo.
 
 ------
 
