@@ -41,8 +41,9 @@ Scarica l'installer soltanto dalla **Release ufficiale di «PostiPerfetti»** su
 </td></tr></table>
 
 L'installazione su Linux è gestita da uno script Bash distribuito insieme alla Release ufficiale.
+Sono state testate le seguenti distribuzioni: Debian e derivate (Linux Mint / Tuxedo OS / Ubuntu / Zorin OS / Pop_OS!), Fedora, Arch Linux e derivate (Endeavour OS / Manjaro), Open Suse.
 
-### Requisiti
+### ✰ Requisiti
 
 «PostiPerfetti» supporta **Python 3.10, 3.11, 3.12, 3.13 e 3.14**.
 
@@ -50,7 +51,7 @@ L'installer verifica automaticamente i prerequisiti necessari. Se ne manca qualc
 
 > L'installer va avviato come **utente normale**, non con `sudo`.
 
-### Installazione
+### ✰ Installazione
 
 Apri un terminale e usa uno dei due metodi seguenti.
 
@@ -88,7 +89,7 @@ Per aggiornare «PostiPerfetti» è sufficiente scaricare ed eseguire nuovamente
 
 L'installazione esistente viene riconosciuta automaticamente e **classi, impostazioni e log vengono preservati**.
 
-### Disinstallazione
+### ✰ Disinstallazione
 
 Per una disinstallazione normale:
 
