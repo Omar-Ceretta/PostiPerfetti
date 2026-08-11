@@ -334,7 +334,7 @@ La Tab "📊 STATISTICHE" analizza l'intero "Storico" della classe (o di più cl
 
 ------
 
-![](documentazione/immagini/postiperfetti_icon.png)
+![](risorse/icone/postiperfetti_icon.png)
 
 «PostiPerfetti» — Sviluppato in Python dal prof. Omar Ceretta
 
