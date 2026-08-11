@@ -32,6 +32,8 @@
 
 **[Scarica «PostiPerfetti» per Windows e Linux](https://github.com/Omar-Ceretta/PostiPerfetti/releases/latest)**
 
+📦 **[Come si installa, si avvia e si disinstalla](INSTALLAZIONE.md)** — Windows e Linux, passo per passo.
+
 ------
 
 ## [1] - GUIDA AL PRIMO UTILIZZO
@@ -334,10 +336,24 @@ La Tab "📊 STATISTICHE" analizza l'intero "Storico" della classe (o di più cl
 
 ------
 
+## 📚 Altri documenti
+
+| Documento | Cosa contiene |
+|---|---|
+| **[INSTALLAZIONE.md](INSTALLAZIONE.md)** | Installazione, avvio e disinstallazione su Windows e Linux. |
+| **[CHANGELOG.md](CHANGELOG.md)** | Le novità e le correzioni di ogni versione pubblicata. |
+| **[SECURITY.md](SECURITY.md)** | Come segnalare un problema di sicurezza — e, soprattutto, **quali dati non allegare mai** a una segnalazione. |
+| **[TERZE_PARTI.md](TERZE_PARTI.md)** | Le librerie, il carattere e le icone di altri autori usati dal programma, con le rispettive licenze. |
+| **[LICENSE](LICENSE)** | Il testo completo della GNU GPL versione 3. |
+
+La documentazione tecnica più estesa (funzionamento dell'algoritmo, mappa dei moduli, trattamento dei dati) si trova nella cartella **[`documentazione/`](documentazione/)**.
+
+------
+
 ![](risorse/icone/postiperfetti_icon.png)
 
 «PostiPerfetti» — Sviluppato in Python dal prof. Omar Ceretta
 
-~ Istituto Comprensivo di Tombolo e Galliera Veneta (PADOVA) ~
+🇮🇹 Istituto Comprensivo di Tombolo e Galliera Veneta (PADOVA) 🇮🇹
 
 LICENZA: GNU GPLv3
