@@ -3,7 +3,7 @@
 ---
 
 <table border="0"><tr><td>
-<img src="https://raw.githubusercontent.com/Omar-Ceretta/PostiPerfetti/main/risorse/icone/windows11.png" width="64" />
+<img src="https://raw.githubusercontent.com/Omar-Ceretta/PostiPerfetti/main/documentazione/immagini/windows11.png" width="64" />
 </td><td>
 
 ## Installazione su Windows
