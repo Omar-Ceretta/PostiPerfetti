@@ -230,54 +230,54 @@ L'incompatibilità di livello 3 viene esclusa **prima** di qualunque confronto n
 
 Questa sezione ha lo scopo di mostrare in forma compatta come diverse informazioni vengono trasformate in un punteggio.
 
-Per una possibile vicinanza fra due studenti \(a\) e \(b\), il punteggio locale può essere rappresentato schematicamente come:
+Per una possibile vicinanza fra due studenti $`a`$ e $`b`$, il punteggio locale può essere rappresentato schematicamente come:
 
-\[
+```math
 S_T(a,b)=I_T(a,b)+A_T(a,b)+G_T(a,b)+P_T(a,b)-500\,r(a,b)
-\]
+```
 
 dove:
 
-- \(T\) indica il Tentativo corrente;
-- \(I_T\) rappresenta le penalità per incompatibilità ancora attive;
-- \(A_T\) rappresenta i bonus per affinità ancora attive;
-- \(G_T\) rappresenta l'eventuale bonus per il genere misto;
-- \(P_T\) rappresenta le preferenze di posizione;
-- \(r(a,b)\) è il numero di utilizzi precedenti di quella vicinanza.
+- $`T`$ indica il Tentativo corrente;
+- $`I_T`$ rappresenta le penalità per incompatibilità ancora attive;
+- $`A_T`$ rappresenta i bonus per affinità ancora attive;
+- $`G_T`$ rappresenta l'eventuale bonus per il genere misto;
+- $`P_T`$ rappresenta le preferenze di posizione;
+- $`r(a,b)`$ è il numero di utilizzi precedenti di quella vicinanza.
 
 Le incompatibilità e le affinità usano una scala crescente:
 
-\[
+```math
 m_1=1,\qquad m_2=4,\qquad m_3=20
-\]
+```
 
 e, quando i rispettivi livelli sono attivi, i contributi di base seguono la forma:
 
-\[
+```math
 I_T(a,b)=-100\sum_{\ell \in L_I(T)}m_\ell\,n^I_\ell(a,b)
-\]
+```
 
-\[
+```math
 A_T(a,b)=+50\sum_{\ell \in L_A(T)}m_\ell\,n^A_\ell(a,b)
-\]
+```
 
-Qui \(n^I_\ell\) e \(n^A_\ell\) indicano quante dichiarazioni di incompatibilità o affinità di livello \(\ell\) sono presenti fra i due studenti nelle due possibili direzioni.
+Qui $`n^I_\ell`$ e $`n^A_\ell`$ indicano quante dichiarazioni di incompatibilità o affinità di livello $`\ell`$ sono presenti fra i due studenti nelle due possibili direzioni.
 
 Quando è richiesta la preferenza per il genere misto:
 
-\[
+```math
 G_T(a,b)=
 \begin{cases}
 100 & \text{se i due studenti appartengono a generi diversi}\\
 0 & \text{altrimenti}
 \end{cases}
-\]
+```
 
 La componente relativa alla posizione può invece assumere, nei casi previsti, valori come:
 
-\[
+```math
 P_T(a,b)\in\{-50,\ 0,\ +10\}
-\]
+```
 
 per distinguere, ad esempio, un conflitto fra richieste di fila, una situazione neutra o la compatibilità fra due richieste ULTIMA.
 
@@ -415,22 +415,22 @@ Il punteggio locale serve soprattutto a **guidare la ricerca**.
 
 Quando invece esistono più disposizioni complete, «PostiPerfetti» usa una seconda valutazione, più importante, che stabilisce quale soluzione preferire.
 
-Per una disposizione completa \(A\), la chiave di confronto è:
+Per una disposizione completa $`A`$, la chiave di confronto è:
 
-\[
+```math
 K(A)=
 \left(
 R(A),\;
 I_1(A)+10I_2(A)+1000I_3(A),\;
 -F(A)
 \right)
-\]
+```
 
 dove:
 
-- \(R(A)\) è il numero di vicinanze già utilizzate;
-- \(I_1(A), I_2(A), I_3(A)\) sono le incompatibilità tollerate ai tre livelli;
-- \(F(A)\) è il numero di affinità soddisfatte.
+- $`R(A)`$ è il numero di vicinanze già utilizzate;
+- $`I_1(A), I_2(A), I_3(A)`$ sono le incompatibilità tollerate ai tre livelli;
+- $`F(A)`$ è il numero di affinità soddisfatte.
 
 La chiave viene confrontata **da sinistra verso destra** e si cerca il valore più piccolo.
 
@@ -441,7 +441,7 @@ Questo produce una gerarchia molto precisa:
 3. il peso 1000 del livello 3 funziona come sentinella: quel livello dovrebbe comunque essere impedito dai vincoli assoluti;
 4. soltanto a parità dei criteri precedenti, vengono preferite **più affinità**.
 
-Il segno meno davanti a \(F(A)\) serve proprio a trasformare “più affinità” in un valore matematicamente più piccolo.
+Il segno meno davanti a $`F(A)`$ serve proprio a trasformare “più affinità” in un valore matematicamente più piccolo.
 
 In altre parole, molte affinità **non possono compensare** un numero maggiore di riusi o una situazione peggiore sul piano delle incompatibilità.
 
@@ -551,15 +551,15 @@ Il programma può generare molte annate candidate.
 
 La loro valutazione complessiva deriva dalla somma, componente per componente, delle chiavi dei singoli mesi:
 
-\[
+```math
 K_{\text{anno}}
 =
 \sum_{m=1}^{M} K(A_m)
-\]
+```
 
 In forma esplicita:
 
-\[
+```math
 K_{\text{anno}}
 =
 \left(
@@ -567,7 +567,7 @@ K_{\text{anno}}
 \sum_m I(A_m),\;
 -\sum_m F(A_m)
 \right)
-\]
+```
 
 Anche qui la priorità resta la stessa:
 
