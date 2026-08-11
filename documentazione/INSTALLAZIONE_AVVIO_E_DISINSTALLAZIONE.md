@@ -83,7 +83,7 @@ L'installer scarica il pacchetto della Release, ne verifica l'integrità e prepa
 
 Una volta completata l'installazione, l'uso del programma non richiede una connessione a Internet.
 
-### Aggiornamento
+### ✰ Aggiornamento
 
 Per aggiornare «PostiPerfetti» è sufficiente scaricare ed eseguire nuovamente l'installer con uno dei comandi precedenti.
 
