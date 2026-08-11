@@ -296,10 +296,9 @@ I.C. di Tombolo e Galliera Veneta (PD)</p>
 Python 3 · PySide6 (Qt) · XlsxWriter</p>
 <hr>
 <p><b>Componenti di terze parti</b></p>
-<p>«PostiPerfetti» include componenti realizzati da altri autori, ciascuno
-distribuito con la propria licenza libera:</p>
+<p>«PostiPerfetti» include componenti realizzati da altri autori:</p>
 <p>[[ICON:circle-check:16]] <b>PySide6 (Qt for Python)</b> — © The Qt Company e
-Qt Project. Licenza LGPL v3 (in alternativa GPL v2 o GPL v3).<br>
+Qt Project. Licenza LGPL v3.<br>
 Codice sorgente: <a href="https://download.qt.io/">download.qt.io</a></p>
 <p>[[ICON:circle-check:16]] <b>XlsxWriter</b> — © John McNamara. Licenza BSD a
 2 clausole.<br>
@@ -307,12 +306,10 @@ Il software è fornito «così com'è» dai suoi autori, che declinano ogni
 garanzia e ogni responsabilità per danni derivanti dal suo utilizzo.<br>
 Codice sorgente: <a href="https://github.com/jmcnamara/XlsxWriter">github.com/jmcnamara/XlsxWriter</a></p>
 <p>[[ICON:circle-check:16]] <b>Noto Color Emoji</b> — © Google Inc. Licenza SIL
-Open Font License 1.1. Testo completo nel file <code>risorse/font/LICENSE</code>
-incluso nell'installazione.</p>
+Open Font License 1.1. Testo completo nel file <code>risorse/font/LICENSE</code>.</p>
 <p>[[ICON:circle-check:16]] <b>Lucide Icons</b> — © Lucide Icons and
 Contributors, derivato da Feather Icons © Cole Bemis. Licenza ISC. Testo
-completo nel file <code>risorse/icone/lucide/LICENSE</code> incluso
-nell'installazione.</p>
+completo nel file <code>risorse/icone/lucide/LICENSE</code>.</p>
 <hr>
 <p><b>Licenza — GNU General Public License v3.0 (GPLv3)</b></p>
 <p>[[ICON:circle-check:16]] Questo software è libero: puoi usarlo, copiarlo,
@@ -322,8 +319,11 @@ mantenere l'attribuzione al creatore originale e a rendere pubblico il codice
 sorgente delle tue modifiche con la stessa licenza GPLv3.</p>
 <p>[[ICON:info:16]] Il software è distribuito <i>«così com'è»</i>, senza alcuna
 garanzia espressa o implicita.</p>
+<hr>
 <p>Pagina GitHub con il codice sorgente:<br>
 <a href="https://github.com/Omar-Ceretta/PostiPerfetti">github.com/Omar-Ceretta/PostiPerfetti</a></p>
+<p>Sito web:<br>
+<a href="https://postiperfetti.it/">postiperfetti.it/</a></p>
 
 """
 
