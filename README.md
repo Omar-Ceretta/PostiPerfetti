@@ -314,7 +314,7 @@ La Tab "📊 STATISTICHE" analizza l'intero "Storico" della classe (o di più cl
 >
 > ### ⚙️ Modifica dei vincoli o del numero di allievi in corso d'anno
 >
-> Se le dinamiche della classe dovessero cambiare, modifica con "✏️ Editor studenti" il file .txt della classe - aggiornando 'posizione', 'incompatibilità' e 'affinità' - e poi salvalo. Lo stesso vale se cambia il **numero di allievi** (un nuovo iscritto o un trasferimento).
+> Se le dinamiche della classe dovessero cambiare, modifica con "✏️ Editor studenti" il file .txt della classe — aggiornando 'posizione', 'incompatibilità' e 'affinità' — e poi salvalo. Se invece cambia il numero di allievi (un nuovo iscritto o un trasferimento), apri manualmente il file .txt dalla cartella delle classi, aggiungi o rimuovi la riga corrispondente e poi seleziona nuovamente il file nell'Editor.
 >
 > ⚠️ **Importante:** se hai già generato e salvato nello "Storico" delle assegnazioni che **non hai ancora usato davvero in classe**, è necessario **eliminarle** (pulsante "🗑️ Elimina" nella tab "📚 STORICO") prima di rigenerare. Così il programma — sia in modalità "Mensile" sia "Annuale" — **non eviterà coppie che in realtà non si sono mai sedute insieme**, ma soltanto quelle realmente già sperimentate.
 
