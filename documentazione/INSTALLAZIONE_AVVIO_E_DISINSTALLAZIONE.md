@@ -3,7 +3,7 @@
 ---
 
 <table border="0"><tr><td>
-<img src="documentazione/immagini/windows11.png" width="64" />
+<img src="https://raw.githubusercontent.com/Omar-Ceretta/PostiPerfetti/main/documentazione/immagini/windows11.png" width="64" />
 </td><td>
 
 ## Installazione su Windows
@@ -18,7 +18,7 @@
 
 La versione attuale di «PostiPerfetti» non è firmata digitalmente con un certificato commerciale. Per questo motivo Windows SmartScreen o un software antivirus possono mostrare un avviso prima dell'esecuzione.
 
-<img src="https://raw.githubusercontent.com/Omar-Ceretta/PostiPerfetti/main/risorse/icone/smartscreen.png" />
+<img src="https://raw.githubusercontent.com/Omar-Ceretta/PostiPerfetti/main/documentazione/immagini/smartscreen.png" />
 
 Scarica l'installer soltanto dalla **Release ufficiale di «PostiPerfetti»** su GitHub.
 
@@ -33,7 +33,7 @@ Scarica l'installer soltanto dalla **Release ufficiale di «PostiPerfetti»** su
 ---
 
 <table border="0"><tr><td>
-<img src="https://raw.githubusercontent.com/Omar-Ceretta/PostiPerfetti/main/risorse/icone/linux.png" width="64" />
+<img src="https://raw.githubusercontent.com/Omar-Ceretta/PostiPerfetti/main/documentazione/immagini/linux.png" width="64" />
 </td><td>
 
 ## Installazione su Linux
