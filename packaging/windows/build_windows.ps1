@@ -151,7 +151,7 @@ $DefVersioneWindows = "/DMyAppVersionQuad=`"$VersioneWindows`""
     $DefVersioneWindows `
     (Join-Path $PackagingDir "postiperfetti_setup.iss")
 
-$Setup = Join-Path $Root "dist-installer\PostiPerfetti_setup.exe"
+$Setup = Join-Path $Root "dist-installer\PostiPerfetti-$Versione-setup.exe"
 if (Test-Path $Setup) {
     Write-Host ""
     Write-Host "Installer creato: $Setup" -ForegroundColor Green
