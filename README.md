@@ -338,6 +338,6 @@ La Tab "📊 STATISTICHE" analizza l'intero "Storico" della classe (o di più cl
 
 «PostiPerfetti» — Sviluppato in Python dal prof. Omar Ceretta
 
-🇮🇹 Istituto Comprensivo di Tombolo e Galliera Veneta (PADOVA) 🇮🇹
+~ Istituto Comprensivo di Tombolo e Galliera Veneta (PADOVA) ~
 
 LICENZA: GNU GPLv3
