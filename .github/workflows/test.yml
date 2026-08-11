@@ -15,6 +15,42 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+
+  ruff:
+    name: Ruff
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Scarica il repository
+        uses: actions/checkout@v7
+
+      - name: Prepara Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: |
+            requirements.txt
+            documentazione/sviluppo/requirements-dev.txt
+
+      - name: Installa Ruff
+        run: >
+          python -m pip install
+          -r documentazione/sviluppo/requirements-dev.txt
+
+      # Profilo bloccante: solo difetti veri (vedi pyproject.toml).
+      - name: Ruff — profilo bloccante
+        run: ruff check .
+
+      # Profilo esteso: stile, semplificazioni, ammodernamenti.
+      # NON blocca la build: serve a tenere sott'occhio il debito residuo
+      # senza fermare una release per una preferenza estetica.
+      - name: Ruff — profilo esteso (informativo)
+        continue-on-error: true
+        run: >
+          ruff check .
+          --extend-select BLE,S,SIM,PERF,UP,I,C4,RET
+          --statistics
   pytest:
     name: Python ${{ matrix.python-version }}
     runs-on: ubuntu-24.04
