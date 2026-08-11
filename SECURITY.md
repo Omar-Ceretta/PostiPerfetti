@@ -43,4 +43,4 @@ Sono considerate rilevanti per la sicurezza anche le anomalie che riguardano:
 Per le normali indicazioni sulla gestione dei dati inseriti consulta
 anche:
 
-`documentazione/DATI_PRIVACY_E_SICUREZZA.md`
+[documentazione/DATI_PRIVACY_E_SICUREZZA.md](documentazione/DATI_PRIVACY_E_SICUREZZA.md)
