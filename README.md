@@ -22,9 +22,9 @@
 >
 > A seconda delle tue preferenze, per usare l'interfaccia puoi selezionare un **🌙 Tema scuro** o un **☀️ Tema chiaro**, che apparirà come nei seguenti screenshot (clicca per allargare le immagini):
 > 
-> [![Schermata "Editor" con 'Tema scuro'](screens/000_editor-scuro.png)](https://raw.githubusercontent.com/Omar-Ceretta/PostiPerfetti/refs/heads/main/screens/000_editor-scuro.png)
+> [![Schermata "Editor" con 'Tema scuro'](documentazione/immagini/000_editor-scuro.png)](https://raw.githubusercontent.com/Omar-Ceretta/PostiPerfetti/refs/heads/main/screens/000_editor-scuro.png)
 > 
-> [![Schermata "Editor" con 'Tema chiaro'](screens/000_editor-chiaro.png)](https://github.com/Omar-Ceretta/PostiPerfetti/blob/main/screens/000_editor-chiaro.png?raw=true)
+> [![Schermata "Editor" con 'Tema chiaro'](documentazione/immagini/000_editor-chiaro.png)]
 
 ------
 
@@ -225,9 +225,9 @@ Quando il file della classe sarà pronto e caricato, clicca su **"🚀 Assegna i
 
 ### 🍀 La Tab "🏫 AULA"
 
-[![Schermata "Aula" con 'Tema scuro'](screens/001_aula-scuro.png)](https://github.com/Omar-Ceretta/PostiPerfetti/blob/main/screens/001_aula-scuro.png?raw=true)
+[![Schermata "Aula" con 'Tema scuro'](documentazione/immagini/001_aula-scuro.png)]
 
-[![Schermata "Aula" con 'Tema chiaro'](screens/001_aula-chiaro.png)](https://github.com/Omar-Ceretta/PostiPerfetti/blob/main/screens/001_aula-chiaro.png?raw=true)
+[![Schermata "Aula" con 'Tema chiaro'](documentazione/immagini/001_aula-chiaro.png)]
 
 La Tab "🏫 AULA" mostra la disposizione grafica dell'aula. Gli arredi (LIM, cattedra, lavagna) sono in basso, le file di banchi salgono verso l'alto. Da qui potrai agire sui pulsanti:
 
@@ -253,17 +253,17 @@ Nella Tab "🏫 Aula" **puoi scambiare due studenti trascinando con il mouse un 
 
 ### 🍀 La Tab "📊 REPORT"
 
-[![Schermata "Report" con 'Tema scuro'](screens/002_report-scuro.png)](https://github.com/Omar-Ceretta/PostiPerfetti/blob/main/screens/002_report-scuro.png?raw=true)
+[![Schermata "Report" con 'Tema scuro'](documentazione/immagini/002_report-scuro.png)]
 
-[![Schermata "Report" con 'Tema chiaro'](screens/002_report-chiaro.png)](https://github.com/Omar-Ceretta/PostiPerfetti/blob/main/screens/002_report-chiaro.png?raw=true)
+[![Schermata "Report" con 'Tema chiaro'](documentazione/immagini/002_report-chiaro.png)]
 
 La Tab "📊 REPORT" mostra il report testuale dettagliato con tutte le coppie formate, i punteggi, le note sui vincoli e il layout dell'aula in formato testo. **Le coppie eventualmente riutilizzate saranno evidenziate in colore ocra**.
 
 ### 🍀 La Tab "📚 STORICO"
 
-[![Schermata "Storico" con 'Tema scuro'](screens/003_storico-scuro.png)](https://github.com/Omar-Ceretta/PostiPerfetti/blob/main/screens/003_storico-scuro.png?raw=true)
+[![Schermata "Storico" con 'Tema scuro'](documentazione/immagini/003_storico-scuro.png)]
 
-[![Schermata "Storico" con 'Tema chiaro'](screens/003_storico-chiaro.png)](https://github.com/Omar-Ceretta/PostiPerfetti/blob/main/screens/003_storico-chiaro.png?raw=true)
+[![Schermata "Storico" con 'Tema chiaro'](documentazione/immagini/003_storico-chiaro.png)]
 
 La Tab "📚 STORICO" elenca tutte le assegnazioni salvate. Volendo, puoi **modificare il 'Nome' di ogni assegnazione** facendo doppio clic su di essa. Per ciascuna inoltre potrai agire sui pulsanti:
 
@@ -273,9 +273,9 @@ La Tab "📚 STORICO" elenca tutte le assegnazioni salvate. Volendo, puoi **modi
 
 ### 🍀 La Tab "📊 STATISTICHE"
 
-[![Schermata "Statistiche" con 'Tema scuro'](screens/004_statistiche-scuro.png)](https://github.com/Omar-Ceretta/PostiPerfetti/blob/main/screens/004_statistiche-scuro.png?raw=true)
+[![Schermata "Statistiche" con 'Tema scuro'](documentazione/immagini/004_statistiche-scuro.png)]
 
-[![Schermata "Statistiche" con 'Tema chiaro'](screens/004_statistiche-chiaro.png)](https://github.com/Omar-Ceretta/PostiPerfetti/blob/main/screens/004_statistiche-chiaro.png?raw=true)
+[![Schermata "Statistiche" con 'Tema chiaro'](documentazione/immagini/004_statistiche-chiaro.png)]
 
 La Tab "📊 STATISTICHE" analizza l'intero "Storico" della classe (o di più classi) mostrando le coppie più frequenti, gli studenti più spesso in prima fila e le coppie mai formate. Utile per verificare l'equità e le caratteristiche delle rotazioni succedutesi nel tempo.
 
@@ -334,7 +334,7 @@ La Tab "📊 STATISTICHE" analizza l'intero "Storico" della classe (o di più cl
 
 ------
 
-![](risorse/icone/postiperfetti_icon.png)
+![](documentazione/immagini/postiperfetti_icon.png)
 
 «PostiPerfetti» — Sviluppato in Python dal prof. Omar Ceretta
 
