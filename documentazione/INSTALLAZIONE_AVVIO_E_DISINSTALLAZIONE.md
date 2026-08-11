@@ -78,9 +78,9 @@ Il programma viene installato normalmente in:
 ~/PostiPerfetti
 ```
 
-L'installer scarica il pacchetto della Release corrispondente, ne verifica l'integrità e prepara anche l'ambiente Python necessario. Al termine propone di avviare subito «PostiPerfetti».
+L'installer scarica il pacchetto della Release, ne verifica l'integrità e prepara l'ambiente Python necessario. Al termine propone di avviare subito «PostiPerfetti».
 
-Una volta completata l'installazione, il normale utilizzo del programma non richiede una connessione a Internet.
+Una volta completata l'installazione, l'uso del programma non richiede una connessione a Internet.
 
 ### Aggiornamento
 
@@ -96,7 +96,7 @@ Per una disinstallazione normale:
 ~/PostiPerfetti/uninstall.sh
 ```
 
-Vengono rimossi il programma, il relativo ambiente virtuale e l'integrazione desktop. Restano invece conservati:
+Vengono rimossi il programma, il relativo ambiente virtuale e l'integrazione desktop. Sono invece conservati:
 
 ```text
 ~/PostiPerfetti/classi
@@ -106,7 +106,7 @@ Vengono rimossi il programma, il relativo ambiente virtuale e l'integrazione des
 
 Questi dati permettono una successiva reinstallazione senza perdere classi, impostazioni e Storico.
 
-Per eliminare anche tutti i dati locali di «PostiPerfetti»:
+Per eliminare anche tutti i dati locali di «PostiPerfetti», eseguire:
 
 ```bash
 ~/PostiPerfetti/uninstall.sh --purge
@@ -119,7 +119,7 @@ Per eliminare anche tutti i dati locali di «PostiPerfetti»:
 
 <br>
 
-Prima di dichiarare conclusa l'installazione, lo script:
+Prima di concludere l'installazione, lo script:
 
 - controlla la versione di Python e la capacità di creare ambienti virtuali;
 - verifica gli strumenti di sistema necessari;
