@@ -97,11 +97,11 @@ def estrai_blocchi_fisici(aula: Any, studenti: Sequence[Any]) -> tuple[BloccoFis
     if not isinstance(griglia,list) or not griglia: raise ErroreAdattatore("Aula priva di griglia valida.")
     indice=indice_studenti(studenti); blocchi=[]; nomi_visti=[]; fila_logica=0
     for riga in griglia:
-        occupati=sorted((p for p in riga if getattr(p,"tipo",None)=="banco" and getattr(p,"occupato_da",None) is not None),key=lambda p:int(getattr(p,"colonna")))
+        occupati=sorted((p for p in riga if getattr(p,"tipo",None)=="banco" and getattr(p,"occupato_da",None) is not None),key=lambda p:int(p.colonna))
         if not occupati: continue
         segmenti=[]; corrente=[]; precedente=None
         for posto in occupati:
-            col=int(getattr(posto,"colonna"))
+            col=int(posto.colonna)
             if corrente and precedente is not None and col != precedente+1: segmenti.append(corrente); corrente=[]
             corrente.append(posto); precedente=col
         if corrente: segmenti.append(corrente)
@@ -110,7 +110,7 @@ def estrai_blocchi_fisici(aula: Any, studenti: Sequence[Any]) -> tuple[BloccoFis
             sconosciuti=[n for n in nomi if n not in indice]
             if sconosciuti: raise ErroreAdattatore("Studenti sconosciuti nella griglia: "+", ".join(sconosciuti))
             if len(set(nomi))!=len(nomi): raise ErroreAdattatore("Duplicati in un blocco.")
-            coordinate=tuple((int(getattr(p,"riga")),int(getattr(p,"colonna"))) for p in segmento)
+            coordinate=tuple((int(p.riga),int(p.colonna)) for p in segmento)
             blocchi.append(BloccoFisico(tuple(indice[n] for n in nomi),nomi,fila_logica,posizione,coordinate)); nomi_visti.extend(nomi)
         fila_logica += 1
     attesi=set(indice); visti=set(nomi_visti)
@@ -133,7 +133,7 @@ def livelli_relazione(a: Any,b: Any)->tuple[int,int]:
 def crea_relazione_adattata(*,group_id:str,membri:Sequence[Any],indice_a:int,indice_b:int,ruolo:RuoloAdiacenza,canale:CanaleRotazione,nome_fisso:str|None)->RelazioneAdattata:
     a,b=membri[indice_a],membri[indice_b]; na,nb=nome_studente(a),nome_studente(b); inc,aff=livelli_relazione(a,b)
     coinvolge=nome_fisso is not None and nome_fisso in {na,nb}; vicino=(nb if na==nome_fisso else na) if coinvolge else None
-    return RelazioneAdattata(group_id,na,nb,indice_a,indice_b,ruolo,canale,coinvolge,nome_fisso if coinvolge else None,vicino,inc,aff,str(getattr(a,"sesso")).upper(),str(getattr(b,"sesso")).upper())
+    return RelazioneAdattata(group_id,na,nb,indice_a,indice_b,ruolo,canale,coinvolge,nome_fisso if coinvolge else None,vicino,inc,aff,str(a.sesso).upper(),str(b.sesso).upper())
 
 def descrivi_aula(aula:Any,blocchi:Sequence[BloccoFisico])->dict[str,Any]:
     campi=("nome_config","modalita","num_righe","num_colonne","posti_disponibili","larghezza_blocco_sx","ha_fisso","ha_trio","fila_trio","tipo_blocco_finale","fila_blocco_finale","file_blocchi_finali","terzetti_per_fila","num_terzetti","coord_fisso")

@@ -20,7 +20,7 @@ from .confronto_appaiato import (
     valida_dati_confronto,
 )
 from .protocollo import ErroreProtocollo, carica_protocollo
-from .raccolta import ErroreRaccolta, pubblica_raccolta_da_output, valida_raccolta, verifica_manifesto
+from .raccolta import ErroreRaccolta, pubblica_raccolta_da_output, valida_raccolta
 from .serializzazione import firma_file_sha256, firma_json_sha256, leggi_json, scrivi_json_atomico
 from .rendering_markdown import ErroreRenderingMarkdown, scrivi_rapporto_markdown
 from .validazione import ErroreValidazioneOutput, valida_dati_annata

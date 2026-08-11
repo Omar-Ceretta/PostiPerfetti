@@ -11,7 +11,6 @@ from dataclasses import asdict, dataclass
 import json
 from pathlib import Path
 import random
-from typing import Iterable
 import sys
 import tempfile
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -267,7 +266,6 @@ def _esegui_coppie_fuzz(classe: ClasseRC, spec: SpecFuzzRC, *, num_candidati: in
     opzioni = [4, 6, 8]
     rng.shuffle(opzioni)
     aula = None
-    posti_per_fila = None
     for posti in opzioni:
         num_file = numero_minimo_file_coppie(
             classe.numero_studenti, posti,
@@ -280,7 +278,6 @@ def _esegui_coppie_fuzz(classe: ClasseRC, spec: SpecFuzzRC, *, num_candidati: in
         )
         if candidata.posti_disponibili >= classe.numero_studenti:
             aula = candidata
-            posti_per_fila = posti
             break
     if aula is None:
         return False, None, {"causa": "nessuna_geometria_capiente"}

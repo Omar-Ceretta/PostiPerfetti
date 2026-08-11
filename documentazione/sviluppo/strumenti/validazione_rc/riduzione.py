@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from typing import Callable
 
 from .invarianti import valida_classe_rc
-from .modelli import ClasseRC, RelazioneRC, StudenteRC
+from .modelli import ClasseRC, StudenteRC
 
 
 @dataclass(frozen=True, slots=True)

@@ -7,7 +7,6 @@ chiamano metodi di salvataggio e non importano Qt.
 
 from __future__ import annotations
 
-import copy
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path

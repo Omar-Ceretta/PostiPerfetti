@@ -702,7 +702,6 @@ def telemetria_storico_saturo_rc(
             contesto_casuale={"operazione": "validazione_rc_t4", "mese": 1},
             diagnostica=diag,
         )
-        risultato = migliore or ultimo
         verifica = None if migliore is None else verifica_aula_rc(
             classe, migliore.configurazione_aula, modalita="coppie", posizione_trio="centro"
         )
@@ -723,7 +722,6 @@ def telemetria_storico_saturo_rc(
             restituisci_metadati=True,
             diagnostica=diag,
         )
-        risultato = gruppi or meta
         if gruppi is None:
             verifica = None
         else:

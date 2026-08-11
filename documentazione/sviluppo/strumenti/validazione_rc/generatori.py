@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import random
-from typing import Iterable
 
 from .invarianti import valida_classe_rc
 from .modelli import ClasseRC, FamigliaSintetica, RelazioneRC, StudenteRC

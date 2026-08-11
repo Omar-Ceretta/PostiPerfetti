@@ -10,7 +10,6 @@ from __future__ import annotations
 
 import multiprocessing
 import os
-import pickle
 import time
 
 from PySide6.QtCore import QCoreApplication, QTimer, Signal

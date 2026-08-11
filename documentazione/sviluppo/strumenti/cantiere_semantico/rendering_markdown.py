@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Any, Mapping, Sequence
 
 from .serializzazione import scrivi_testo_atomico
-from .validazione import ErroreValidazioneOutput, valida_dati_annata
+from .validazione import valida_dati_annata
 
 
 class ErroreRenderingMarkdown(ValueError):

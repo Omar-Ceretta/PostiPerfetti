@@ -2,7 +2,6 @@
 """Worker isolato per una singola verifica mensile fuzz RC."""
 from __future__ import annotations
 import argparse, json
-from dataclasses import fields
 from pathlib import Path
 
 from .fuzzing import SpecFuzzRC, genera_classe_fuzz, verifica_mensile_differenziale

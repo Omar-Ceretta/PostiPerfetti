@@ -15,7 +15,7 @@ from dataclasses import replace
 from functools import lru_cache
 from itertools import combinations, permutations, product
 from time import perf_counter
-from typing import Any, Iterable, Mapping, Sequence
+from typing import Any, Mapping, Sequence
 
 from .adattatori_comuni import indice_studenti, livelli_relazione, nome_studente
 from .modelli import (

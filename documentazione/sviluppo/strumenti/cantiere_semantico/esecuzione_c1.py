@@ -13,7 +13,6 @@ from typing import Any, Callable, Mapping
 
 from .ambiente import (
     AmbienteRunIsolato,
-    ErroreAmbienteIsolato,
     verifica_sorgente_immutata,
 )
 from .modelli import CondizioneRun, Modalita, StatoRun, TracciaMese
