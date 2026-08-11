@@ -47,7 +47,7 @@ Sono state testate le seguenti distribuzioni: Debian e derivate (Linux Mint / Tu
 
 «PostiPerfetti» supporta **Python 3.10, 3.11, 3.12, 3.13 e 3.14**.
 
-L'installer verifica automaticamente i prerequisiti necessari. Se ne manca qualcuno e la distribuzione è riconosciuta, propone di installarlo chiedendo conferma prima di usare `sudo`.
+L'installer verifica automaticamente i prerequisiti necessari. Se ne manca qualcuno e la distribuzione è riconosciuta, propone di installarlo direttamente, chiedendo conferma prima di usare `sudo`.
 
 > L'installer va avviato come **utente normale**, non con `sudo`.
 
