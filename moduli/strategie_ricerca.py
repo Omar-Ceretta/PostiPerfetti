@@ -321,7 +321,10 @@ def diversifica_indice_terzetti(
                 cache = chiavi_strette or precalcola_chiavi_strette_terzetti(
                     {0: voci}, frequenze
                 )
-                chiave = lambda voce: cache[id(voce)]
+                # ``cache`` è riassegnata a ogni giro del ciclo: la si lega
+                # come argomento predefinito perché la lambda resti corretta
+                # anche se un domani venisse valutata più tardi.
+                chiave = lambda voce, _cache=cache: _cache[id(voce)]
             voci = diversifica_classi_contigue(
                 voci,
                 chiave_equivalenza=chiave,

@@ -118,7 +118,7 @@ def _dialogo_kdialog(titolo, messaggio, tipo="info", si_no=False):
             )
         return None
     except FileNotFoundError:
-        raise RuntimeError("kdialog non disponibile")
+        raise RuntimeError("kdialog non disponibile") from None
 
 
 def _dialogo_zenity(titolo, messaggio, tipo="info", si_no=False):
@@ -148,7 +148,7 @@ def _dialogo_zenity(titolo, messaggio, tipo="info", si_no=False):
             )
         return None
     except FileNotFoundError:
-        raise RuntimeError("zenity non disponibile")
+        raise RuntimeError("zenity non disponibile") from None
 
 
 def _dialogo_tkinter(titolo, messaggio, tipo="info", si_no=False):
@@ -175,8 +175,8 @@ def _dialogo_tkinter(titolo, messaggio, tipo="info", si_no=False):
 
         root.destroy()
         return None
-    except Exception:
-        raise RuntimeError("tkinter non disponibile")
+    except Exception as errore:
+        raise RuntimeError("tkinter non disponibile") from errore
 
 
 def _dialogo_terminale(titolo, messaggio, tipo="info", si_no=False):
