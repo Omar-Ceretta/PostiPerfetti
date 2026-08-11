@@ -45,7 +45,18 @@ if _intervallo_switch:
 
 # Output e gestione degli errori
 # In produzione stdout viene scartato; stderr resta disponibile per i traceback.
-MODALITA_SILENZIOSA = True
+#
+# La variabile d'ambiente POSTIPERFETTI_VERBOSE riapre stdout quando serve
+# diagnosticare un problema da terminale, senza cambiare nulla per chi avvia
+# il programma normalmente da icona o da menu.
+#
+#   Linux:   POSTIPERFETTI_VERBOSE=1 ~/PostiPerfetti/moduli/postiperfetti_launcher.py
+#   Windows: set POSTIPERFETTI_VERBOSE=1  &&  PostiPerfetti.exe
+_VERBOSE_RICHIESTO = os.environ.get(
+    "POSTIPERFETTI_VERBOSE", ""
+).strip().lower() in {"1", "true", "si", "sì", "yes", "on"}
+
+MODALITA_SILENZIOSA = not _VERBOSE_RICHIESTO
 
 class _PozzoNero:
     """Implementa un flusso di output che scarta ogni scrittura."""
