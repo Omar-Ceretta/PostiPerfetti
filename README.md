@@ -1,4 +1,4 @@
-![«PostiPerfetti»](risorse/icone/github.png)
+![«PostiPerfetti»](documentazione/immagini/github.png)
 
 # «PostiPerfetti»
 
