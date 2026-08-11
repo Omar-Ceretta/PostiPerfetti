@@ -142,8 +142,8 @@ Write-Host "Inno Setup: $ISCC" -ForegroundColor Green
 $IssPath = Join-Path $PackagingDir "postiperfetti_setup.iss"
 $IssText = Get-Content $IssPath -Raw
 
-if ($IssText -notmatch '(?m)^\s*OutputBaseFilename=PostiPerfetti_setup\s*$') {
-    throw "postiperfetti_setup.iss non contiene 'OutputBaseFilename=PostiPerfetti_setup'. Verifica il packaging prima di proseguire."
+if ($IssText -notmatch '(?m)^\s*OutputBaseFilename=PostiPerfetti-\{#MyAppVersion\}-setup\s*$') {
+    throw "postiperfetti_setup.iss non contiene 'OutputBaseFilename=PostiPerfetti-{#MyAppVersion}-setup'. Verifica il packaging prima di proseguire."
 }
 
 # ---------------------------------------------------------------------------
@@ -199,7 +199,21 @@ $Exe = Join-Path $Root "dist\PostiPerfetti\PostiPerfetti.exe"
 $Internal = Join-Path $Root "dist\PostiPerfetti\_internal"
 $ClasseBase = Join-Path $Root "dist\PostiPerfetti\classi\Classe-BASE_esempio.txt"
 $ClasseCompleta = Join-Path $Root "dist\PostiPerfetti\classi\Classe-COMPLETO_esempio.txt"
-$Setup = Join-Path $Root "dist-installer\PostiPerfetti_setup.exe"
+$Setup = Join-Path $Root "d# Il nome del Setup contiene ora la versione: non è più una stringa fissa.
+# dist-installer è stata appena ripulita: deve contenerne esattamente uno.
+$SetupTrovati = @(
+    Get-ChildItem `
+        -Path (Join-Path $Root "dist-installer") `
+        -Filter "PostiPerfetti-*-setup.exe" `
+        -File `
+        -ErrorAction SilentlyContinue
+)
+
+if ($SetupTrovati.Count -ne 1) {
+    throw "In dist-installer è atteso esattamente un file PostiPerfetti-<versione>-setup.exe, trovati $($SetupTrovati.Count)."
+}
+
+$Setup = $SetupTrovati[0].FullNameist-installer\PostiPerfetti_setup.exe"
 
 $attesi = @(
     @{ Nome = "EXE";              Percorso = $Exe;            Tipo = "Leaf" },
@@ -240,7 +254,7 @@ $hash = Get-FileHash -Path $Setup -Algorithm SHA256
 $hashMinuscolo = $hash.Hash.ToLowerInvariant()
 $ShaFile = "$Setup.sha256"
 
-"$hashMinuscolo  PostiPerfetti_setup.exe" |
+"$hashMinuscolo  $(Split-Path $Setup -Leaf)" |
     Set-Content -Path $ShaFile -Encoding Ascii
 
 $dimensioneMB = [Math]::Round((Get-Item $Setup).Length / 1MB, 2)
@@ -266,7 +280,7 @@ Write-Host "  $hashMinuscolo"
 Write-Host "  Salvato anche in: $ShaFile"
 Write-Host ""
 Write-Host "Prossimo passo MANUALE:" -ForegroundColor Yellow
-Write-Host "  doppio clic su PostiPerfetti_setup.exe e collaudo dell'installazione."
+Write-Host "  doppio clic su $(Split-Path $Setup -Leaf) e collaudo dell'installazione."
 Write-Host ""
 
 if (-not $NonAprireCartella) {
