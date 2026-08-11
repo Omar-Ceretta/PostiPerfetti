@@ -34,7 +34,9 @@ def carica(percorso: Path) -> list[dict]:
             try:
                 dato = json.loads(riga)
             except json.JSONDecodeError as errore:
-                raise SystemExit(f"{percorso}:{numero}: JSON non valido: {errore}")
+                raise SystemExit(
+                    f"{percorso}:{numero}: JSON non valido: {errore}"
+                ) from errore
             if dato.get("evento") == "stall":
                 dato["_file"] = percorso.name
                 record.append(dato)
