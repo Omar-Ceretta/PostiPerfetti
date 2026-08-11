@@ -585,9 +585,12 @@ $Exe = Join-Path `
     $Root `
     "dist\PostiPerfetti\PostiPerfetti.exe"
 
+# Il nome del Setup contiene la versione, come già il pacchetto Linux.
+$NomeSetup = "PostiPerfetti-$Versione-setup.exe"
+
 $Setup = Join-Path `
     $Root `
-    "dist-installer\PostiPerfetti_setup.exe"
+    "dist-installer\$NomeSetup"
 
 $SetupSha = "$Setup.sha256"
 
@@ -596,7 +599,7 @@ if (-not (Test-Path $Exe -PathType Leaf)) {
 }
 
 if (-not (Test-Path $Setup -PathType Leaf)) {
-    throw "PostiPerfetti_setup.exe non trovato."
+    throw "$NomeSetup non trovato."
 }
 
 Verifica-VersioneArtefatto `
@@ -607,7 +610,7 @@ Verifica-VersioneArtefatto `
 
 Verifica-VersioneArtefatto `
     -Percorso $Setup `
-    -Nome "PostiPerfetti_setup.exe" `
+    -Nome $NomeSetup `
     -Versione $Versione `
     -VersioneQuad $VersioneWindows
 
@@ -899,7 +902,7 @@ if ($Collaudo) {
         "8. Pubblica la Release."
         ""
         "9. Dopo la pubblicazione esegui i collaudi finali:"
-        "   - installazione Windows da PostiPerfetti_setup.exe;"
+        "   - installazione Windows da $NomeSetup;"
         "   - verifica Proprietà -> Dettagli dell'EXE e del Setup;"
         "   - installazione Linux usando l'install.sh pubblicato;"
         "   - avvio reale del programma;"
