@@ -16,7 +16,6 @@ from strumenti.cantiere_semantico.identita import crea_group_id
 from strumenti.cantiere_semantico.modelli import (
     CanaleRotazione,
     CondizioneRun,
-    FasciaRipetizione,
     FunzioneGruppo,
     GruppoCanonico,
     Modalita,

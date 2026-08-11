@@ -8,12 +8,10 @@ from strumenti.cantiere_semantico.genere_misto import (
     arricchisci_annata_genere_misto,
     calcola_massimo_ammissibile,
     calcola_massimo_geometrico,
-    costruisci_analisi_genere_misto,
 )
 from strumenti.cantiere_semantico.identita import crea_group_id
 from strumenti.cantiere_semantico.modelli import (
     AnalisiGenereMese,
-    CondizioneRun,
     EsitoOttimoMisto,
     FunzioneGruppo,
     GruppoCanonico,

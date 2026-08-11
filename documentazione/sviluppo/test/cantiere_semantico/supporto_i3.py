@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from types import SimpleNamespace
 
 from strumenti.cantiere_semantico.ambiente import prepara_ambiente_run
 from strumenti.cantiere_semantico.modelli import (

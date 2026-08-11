@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import csv
-from dataclasses import replace
 from pathlib import Path
 
 import pytest
