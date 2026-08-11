@@ -295,6 +295,25 @@ I.C. di Tombolo e Galliera Veneta (PD)</p>
 <p><b>Tecnologie:</b><br>
 Python 3 · PySide6 (Qt) · XlsxWriter</p>
 <hr>
+<p><b>Componenti di terze parti</b></p>
+<p>«PostiPerfetti» include componenti realizzati da altri autori, ciascuno
+distribuito con la propria licenza libera:</p>
+<p>[[ICON:circle-check:16]] <b>PySide6 (Qt for Python)</b> — © The Qt Company e
+Qt Project. Licenza LGPL v3 (in alternativa GPL v2 o GPL v3).<br>
+Codice sorgente: <a href="https://download.qt.io/">download.qt.io</a></p>
+<p>[[ICON:circle-check:16]] <b>XlsxWriter</b> — © John McNamara. Licenza BSD a
+2 clausole.<br>
+Il software è fornito «così com'è» dai suoi autori, che declinano ogni
+garanzia e ogni responsabilità per danni derivanti dal suo utilizzo.<br>
+Codice sorgente: <a href="https://github.com/jmcnamara/XlsxWriter">github.com/jmcnamara/XlsxWriter</a></p>
+<p>[[ICON:circle-check:16]] <b>Noto Color Emoji</b> — © Google Inc. Licenza SIL
+Open Font License 1.1. Testo completo nel file <code>risorse/font/LICENSE</code>
+incluso nell'installazione.</p>
+<p>[[ICON:circle-check:16]] <b>Lucide Icons</b> — © Lucide Icons and
+Contributors, derivato da Feather Icons © Cole Bemis. Licenza ISC. Testo
+completo nel file <code>risorse/icone/lucide/LICENSE</code> incluso
+nell'installazione.</p>
+<hr>
 <p><b>Licenza — GNU General Public License v3.0 (GPLv3)</b></p>
 <p>[[ICON:circle-check:16]] Questo software è libero: puoi usarlo, copiarlo,
 studiarlo e redistribuirlo liberamente.</p>
