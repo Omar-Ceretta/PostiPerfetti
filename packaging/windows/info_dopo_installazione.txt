@@ -1,32 +1,26 @@
-Installazione completata!
+✨ Installazione completata! ✨
 
 COME INIZIARE
-
 Avvia «PostiPerfetti» dal Menu Start oppure dall'eventuale
 collegamento creato sul Desktop.
+Il pulsante "Istruzioni" apre la guida alle funzionalità.
 
-All'interno del programma, il pulsante «Istruzioni» apre la guida
-completa alle funzionalità.
-
-Con «Seleziona classe» troverai già due file di esempio:
+Con "Seleziona classe" troverai già due file di esempio:
   • Classe-BASE_esempio.txt
   • Classe-COMPLETO_esempio.txt
 
 I dati creati durante l'uso restano nelle sottocartelle:
-  • classi
-  • stato
-  • log
-
-Gli aggiornamenti preservano questi dati.
-Durante la disinstallazione verrà chiesto esplicitamente se conservarli
-oppure eliminarli.
+  - classi   - stato   - log
+Gli aggiornamenti preservano questi dati. Durante la 
+disinstallazione verrà chiesto esplicitamente se
+conservarli oppure eliminarli.
 
 CODICE SORGENTE E LICENZA
-
-«PostiPerfetti» è software libero distribuito con licenza GNU GPLv3.
-Il codice sorgente e le Release ufficiali sono disponibili su:
-
+«PostiPerfetti» è software libero distribuito con licenza GNU GPLv3. Codice sorgente e Release ufficiali disponibili su:
 https://github.com/Omar-Ceretta/PostiPerfetti
+
+Sito web di «PostiPerfetti»:
+https://postiperfetti.it/
 
 Per segnalazioni o suggerimenti:
 ceretta.omar@ictombologalliera.edu.it

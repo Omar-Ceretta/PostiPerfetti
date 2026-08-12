@@ -1,16 +1,15 @@
-▸ «PostiPerfetti» ◂
+🪑 «PostiPerfetti» 🪑
 
 Programma per l'assegnazione automatica dei posti in classe,
 con gestione di vincoli, affinità, incompatibilità,
 preferenze di posizione, rotazione mensile e Storico.
 
-L'installazione è personale e non richiede privilegi di amministratore.
-Il programma e i suoi dati vengono mantenuti nell'area dell'utente Windows.
+L'installazione è personale e non richiede privilegi di
+amministratore. Il programma e i suoi dati vengono mantenuti
+nell'area dell'utente Windows.
 
 Durante gli aggiornamenti le cartelle personali:
-  • classi
-  • stato
-  • log
+  • classi   • stato   • log
 non vengono sovrascritte.
 
 Sviluppato dal Prof. Omar Ceretta
@@ -18,3 +17,4 @@ I.C. di Tombolo e Galliera Veneta (PD)
 
 Licenza: GNU General Public License v3.0 (GPLv3)
 Codice sorgente: https://github.com/Omar-Ceretta/PostiPerfetti
+Sito web: https://postiperfetti.it/
