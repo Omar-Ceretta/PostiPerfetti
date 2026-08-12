@@ -40,9 +40,9 @@ def test_versione_derivata_da_unica_fonte():
     """Le rappresentazioni secondarie devono derivare tutte da VERSIONE."""
     parti = tuple(int(parte) for parte in VERSIONE.split("."))
 
-    assert len(parti) == 3
+    assert len(parti) == 2
     assert VERSIONE_PARTI == parti
-    assert VERSIONE_WINDOWS == (*parti, 0)
+    assert VERSIONE_WINDOWS == (*parti, 0, 0)
     assert TAG_RELEASE == f"v{VERSIONE}"
 
 
