@@ -188,6 +188,17 @@ pacchetto_xcb_cursor() {
     esac
 }
 
+# Libreria ICCCM richiesta dal plugin Qt/XCB.
+pacchetto_xcb_icccm() {
+    case "$(famiglia_distro)" in
+        debian) printf 'libxcb-icccm4' ;;
+        fedora) printf 'xcb-util-wm' ;;
+        arch)   printf 'xcb-util-wm' ;;
+        suse)   printf 'libxcb-icccm4' ;;
+        *)      printf 'libxcb-icccm4' ;;
+    esac
+}
+
 # Libreria EGL richiesta dal runtime grafico Qt/PySide6.
 pacchetto_egl() {
     case "$(famiglia_distro)" in
@@ -298,6 +309,10 @@ ha_libreria_xcb_cursor() {
     ha_libreria_nativa 'libxcb-cursor.so.0'
 }
 
+ha_libreria_xcb_icccm() {
+    ha_libreria_nativa 'libxcb-icccm.so.4'
+}
+
 ha_libreria_egl() {
     ha_libreria_nativa 'libEGL.so.1'
 }
@@ -392,6 +407,11 @@ fi
 if ! ha_libreria_xcb_cursor; then
     MANCANZE+=("libreria Qt/XCB per il cursore")
     aggiungi_pacchetto "$(pacchetto_xcb_cursor)"
+fi
+
+if ! ha_libreria_xcb_icccm; then
+    MANCANZE+=("libreria Qt/XCB ICCCM")
+    aggiungi_pacchetto "$(pacchetto_xcb_icccm)"
 fi
 
 if ! ha_libreria_egl; then
@@ -516,6 +536,12 @@ if ! ha_libreria_xcb_cursor; then
      Qt potrebbe non riuscire ad avviare l'interfaccia grafica."
 fi
 msg_ok "Libreria Qt/XCB «libxcb-cursor.so.0» presente"
+
+if ! ha_libreria_xcb_icccm; then
+    errore_fatale "La libreria «libxcb-icccm.so.4» risulta ancora assente.
+     Qt potrebbe non riuscire ad avviare l'interfaccia grafica."
+fi
+msg_ok "Libreria Qt/XCB «libxcb-icccm.so.4» presente"
 
 if ! ha_libreria_egl; then
     errore_fatale "La libreria «libEGL.so.1» risulta ancora assente.
@@ -728,22 +754,25 @@ fi
 # BLOCCO 4 — Installazione, aggiornamento o reinstallazione
 # =====================================================================
 
-# Dopo una disinstallazione normale possono restare ESCLUSIVAMENTE le
-# cartelle dati classi/, stato/ e log/. Una destinazione di questo tipo
-# è una reinstallazione legittima e non deve essere scambiata per una
-# cartella estranea.
+# Dopo una disinstallazione normale restano i dati dell'utente:
+#   classi/, stato/ e log/.
+# Nella radice possono inoltre restare esportazioni create da PostiPerfetti
+# (.txt e .xlsx), che appartengono all'utente e non devono impedire una
+# reinstallazione.
 #
 # Per sicurezza:
-#   - deve esserci almeno una delle tre cartelle;
-#   - al primo livello non deve esserci nient'altro;
-#   - le tre voci ammesse devono essere directory reali, non symlink.
-destinazione_contiene_solo_dati_conservati() {
-    local voce nome trovato=0
+#   - deve esserci almeno una delle tre cartelle riconoscibili;
+#   - classi/, stato/ e log/ devono essere directory reali, non symlink;
+#   - eventuali altre voci al primo livello sono ammesse SOLO se sono
+#     normali file .txt o .xlsx, mai symlink;
+#   - qualunque altra directory o tipo di file rende la destinazione ambigua.
+destinazione_contiene_dati_conservati() {
+    local voce nome nome_minuscolo
+    local trovato_dati=0
 
     [ -d "$CARTELLA_DEST" ] || return 1
 
     while IFS= read -r -d '' voce; do
-        trovato=1
         nome="${voce##*/}"
 
         case "$nome" in
@@ -751,9 +780,18 @@ destinazione_contiene_solo_dati_conservati() {
                 if [ ! -d "$voce" ] || [ -L "$voce" ]; then
                     return 1
                 fi
+                trovato_dati=1
                 ;;
             *)
-                return 1
+                if [ ! -f "$voce" ] || [ -L "$voce" ]; then
+                    return 1
+                fi
+
+                nome_minuscolo="${nome,,}"
+                case "$nome_minuscolo" in
+                    *.txt|*.xlsx) ;;
+                    *) return 1 ;;
+                esac
                 ;;
         esac
     done < <(
@@ -763,7 +801,7 @@ destinazione_contiene_solo_dati_conservati() {
             -print0 2>/dev/null
     )
 
-    [ "$trovato" -eq 1 ]
+    [ "$trovato_dati" -eq 1 ]
 }
 
 # Proteggiamo sempre una cartella non riconosciuta: PostiPerfetti non
@@ -775,10 +813,10 @@ if [ -d "$CARTELLA_DEST" ] && [ ! -f "$CARTELLA_DEST/postiperfetti.py" ]; then
             -maxdepth 1 \
             -print -quit 2>/dev/null | grep -q .; then
 
-        if ! destinazione_contiene_solo_dati_conservati; then
+        if ! destinazione_contiene_dati_conservati; then
             errore_fatale "La cartella di destinazione esiste già e non sembra
      né un'installazione di «$NOME_APP», né una precedente
-     installazione disinstallata conservando i dati:
+     installazione disinstallata conservando dati ed esportazioni:
      $CARTELLA_DEST
 
      Per sicurezza nessun contenuto verrà sovrascritto."
@@ -789,11 +827,11 @@ fi
 # Distinguiamo tre casi:
 #   aggiornamento              → il programma è già installato;
 #   reinstallazione_con_dati   → il programma è stato rimosso ma sono
-#                                rimasti classi/, stato/ e/o log/;
+#                                rimasti dati e/o esportazioni dell'utente;
 #   prima_installazione        → destinazione nuova o vuota.
 if [ -f "$CARTELLA_DEST/postiperfetti.py" ]; then
     TIPO_INSTALLAZIONE="aggiornamento"
-elif destinazione_contiene_solo_dati_conservati; then
+elif destinazione_contiene_dati_conservati; then
     TIPO_INSTALLAZIONE="reinstallazione_con_dati"
 else
     TIPO_INSTALLAZIONE="prima_installazione"
@@ -807,7 +845,7 @@ case "$TIPO_INSTALLAZIONE" in
     reinstallazione_con_dati)
         msg_fase "Reinstallazione con recupero dei dati conservati"
         msg_nota "Sono stati trovati dati di una precedente installazione."
-        msg_nota "Classi, impostazioni e log precedenti saranno PRESERVATI."
+        msg_nota "Classi, impostazioni, log ed esportazioni precedenti saranno PRESERVATI."
         ;;
     prima_installazione)
         msg_fase "Installazione nella cartella personale"
