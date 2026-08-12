@@ -4,7 +4,7 @@
 """Motore annuale eseguibile in un processo Python separato.
 
 Il modulo è deliberatamente privo di import Qt. Riceve una fotografia già
-serializzata degli input, esegue i medesimi percorsi R0.8 dei worker annuali
+serializzata degli input, esegue i medesimi percorsi di calcolo dei worker annuali
 a coppie e a terzetti e comunica soltanto messaggi serializzabili al processo
 principale.
 """
@@ -213,7 +213,7 @@ def esegui_annuale_coppie_in_processo(
                     delattr(motore, attributo_transitorio)
 
         # Il riordino finale e la costruzione dei report restano nel processo
-        # GUI: il callback storico della R0.8 è legato alla finestra e non deve
+        # GUI: il callback storico è legato alla finestra e non deve
         # attraversare il confine di processo.
         info["_risultato_grezzo_processo"] = True
         risultato = {

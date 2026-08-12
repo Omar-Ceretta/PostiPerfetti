@@ -4,7 +4,7 @@
 """Motori mensili eseguibili in un processo Python separato.
 
 Il modulo è deliberatamente privo di import Qt. Riceve fotografie già
-serializzate degli input, esegue il medesimo percorso R0.8 del motore e
+serializzate degli input, esegue il medesimo percorso di calcolo del motore e
 comunica soltanto messaggi serializzabili al processo principale.
 """
 
