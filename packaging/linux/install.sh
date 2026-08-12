@@ -177,6 +177,26 @@ pacchetto_venv() {
     esac
 }
 
+# Libreria GLib/GThread richiesta dal runtime Qt/PySide6.
+pacchetto_gthread() {
+    case "$(famiglia_distro)" in
+        debian)
+            # Debian/Ubuntu recenti usano il suffisso t64; le versioni
+            # precedenti mantengono il nome storico.
+            if command -v apt-cache >/dev/null 2>&1 \
+                    && apt-cache show libglib2.0-0t64 >/dev/null 2>&1; then
+                printf 'libglib2.0-0t64'
+            else
+                printf 'libglib2.0-0'
+            fi
+            ;;
+        fedora) printf 'glib2' ;;
+        arch)   printf 'glib2' ;;
+        suse)   printf 'libgthread-2_0-0' ;;
+        *)      printf 'libglib2.0-0' ;;
+    esac
+}
+
 # Libreria richiesta dal plugin Qt/XCB.
 pacchetto_xcb_cursor() {
     case "$(famiglia_distro)" in
@@ -305,6 +325,10 @@ ha_libreria_nativa() {
     return 1
 }
 
+ha_libreria_gthread() {
+    ha_libreria_nativa 'libgthread-2.0.so.0'
+}
+
 ha_libreria_xcb_cursor() {
     ha_libreria_nativa 'libxcb-cursor.so.0'
 }
@@ -402,6 +426,11 @@ if [ -z "$SORGENTE_LOCALE" ] \
         && ! command -v wget >/dev/null 2>&1; then
     MANCANZE+=("strumento di download")
     aggiungi_pacchetto "curl"
+fi
+
+if ! ha_libreria_gthread; then
+    MANCANZE+=("libreria GLib/GThread richiesta da Qt")
+    aggiungi_pacchetto "$(pacchetto_gthread)"
 fi
 
 if ! ha_libreria_xcb_cursor; then
@@ -530,6 +559,12 @@ elif command -v wget >/dev/null 2>&1; then
 else
     errore_fatale "Né «curl» né «wget» risultano disponibili."
 fi
+
+if ! ha_libreria_gthread; then
+    errore_fatale "La libreria «libgthread-2.0.so.0» risulta ancora assente.
+     PySide6 potrebbe non riuscire a caricare il runtime Qt."
+fi
+msg_ok "Libreria GLib/GThread «libgthread-2.0.so.0» presente"
 
 if ! ha_libreria_xcb_cursor; then
     errore_fatale "La libreria «libxcb-cursor.so.0» risulta ancora assente.
@@ -1157,8 +1192,13 @@ msg_fase "Verifica del runtime grafico Qt"
 # Ricaviamo dalla stessa installazione PySide6 il percorso ufficiale
 # dei plugin Qt. Evitiamo così percorsi hardcoded dipendenti da Python,
 # architettura o versione della libreria.
-if ! PLUGIN_QT_DIR="$(
-    "$PYTHON_VENV" - <<'PY'
+#
+# Catturiamo anche stderr: se l'import di Qt fallisce PRIMA di poter
+# individuare i plugin (per esempio per una libreria nativa mancante),
+# salviamo comunque una diagnostica utile.
+OUTPUT_PLUGIN_QT=""
+if ! OUTPUT_PLUGIN_QT="$(
+    "$PYTHON_VENV" - <<'PY' 2>&1
 from PySide6.QtCore import QLibraryInfo
 
 print(
@@ -1168,8 +1208,23 @@ print(
 )
 PY
 )"; then
-    errore_fatale "Impossibile determinare la cartella dei plugin Qt."
+    mkdir -p "$CARTELLA_DEST/log" 2>/dev/null || true
+    LOG_QT="$CARTELLA_DEST/log/diagnostica_installazione_qt.log"
+
+    {
+        printf 'Import Qt fallito prima della ricerca dei plugin\n'
+        printf '================================================\n\n'
+        printf '%s\n' "$OUTPUT_PLUGIN_QT"
+    } > "$LOG_QT" 2>/dev/null || true
+
+    errore_fatale "Impossibile inizializzare Qt per determinare la cartella
+     dei plugin.
+
+     Diagnostica salvata in:
+     $LOG_QT"
 fi
+
+PLUGIN_QT_DIR="$OUTPUT_PLUGIN_QT"
 
 if [ -z "$PLUGIN_QT_DIR" ] || [ ! -d "$PLUGIN_QT_DIR" ]; then
     errore_fatale "Qt ha restituito una cartella dei plugin non valida:
