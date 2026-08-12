@@ -28,7 +28,7 @@ Il modo in cui queste librerie arrivano sul computer dell'utente cambia a second
 
 ### Nota sulla combinazione con Qt
 
-PySide6/Qt è offerto dai suoi autori con una scelta fra più licenze. Dal momento «PostiPerfetti» è già GPLv3, la combinazione è compatibile per entrambe le strade possibili (LGPLv3 oppure GPLv3).
+PySide6/Qt è offerto dai suoi autori con una scelta fra più licenze. Dal momento che «PostiPerfetti» è già GPLv3, la combinazione è compatibile per entrambe le strade possibili (LGPLv3 oppure GPLv3).
 
 Restano gli obblighi ordinari di chi ridistribuisce software libero: conservare le note di copyright, indicare quali componenti sono inclusi e sotto quale licenza e mettere a disposizione il codice sorgente corrispondente.
 

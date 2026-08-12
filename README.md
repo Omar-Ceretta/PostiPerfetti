@@ -6,7 +6,7 @@
 >
 > ✅ **«PostiPerfetti» è un programma gratuito e *open source* che utilizza uno speciale algoritmo per aiutare il docente Coordinatore (o qualsiasi insegnante ne abbia la necessità) ad assegnare agli studenti il proprio posto in classe.** 
 >
-> ✅ Per funzionare, esso **richiede la creazione di un file ".txt" con i dati essenziali degli alunni**: *cognome*, *nome*, *genere*. Tramite alcune funzioni intuitive sarà poi possibile aggiungere una serie di informazioni e vincoli ('affinità' e 'incompatibilità' fra allievi, loro 'posizione' rispetto alla cattedra, eventuale preferenza per 'coppie miste M+F') per ottenere **UNA DISTRIBUZIONE DEGLI ALLIEVI QUANTO PIÙ IN LINEA CON I DESIDERATA DELL'INSEGNANTE**.
+> ✅ Per funzionare, esso **richiede la creazione di un semplice file di testo con i dati essenziali degli alunni**: *cognome*, *nome*, *genere*. Tramite alcune funzioni intuitive sarà poi possibile aggiungere una serie di informazioni e vincoli ('affinità' e 'incompatibilità' fra allievi, loro 'posizione' rispetto alla cattedra, eventuale preferenza per 'coppie miste M+F') per ottenere **UNA DISTRIBUZIONE DEGLI ALLIEVI QUANTO PIÙ IN LINEA CON I DESIDERATA DELL'INSEGNANTE**.
 >
 > ✅ Gli allievi possono essere distribuiti automaticamente secondo la geometria scelta: **a coppie oppure a terzetti**, con l’eventuale blocco finale necessario a sistemare il resto della classe. Il numero di file e di posti per fila è adattabile alle esigenze dell’aula. **Una singola assegnazione richiede in genere da pochi secondi a qualche minuto.** Il tempo dipende in parte dal numero di "vincoli" impostati, ma soprattutto dalla **grandezza della classe** e da **quante assegnazioni sono già state salvate** nello Storico: più vicinanze sono già state sperimentate, più diventa impegnativo trovarne di nuove.
 >
@@ -40,9 +40,11 @@
 
 > [!TIP]
 >
-> ### **1 ~ Prepara un file .txt di base**
+> ### **1 ~ Prepara il file di testo della classe**
 
-**Dopo aver installato e avviato il programma, clicca sul pulsante "📂 Apri cartella"**. Si aprirà la cartella che contiene le classi. Con un qualsiasi editor di testo, **crea un nuovo file .txt con il nome della tua classe** (ad es. `"Classe1A.txt"` oppure `"Classe1A_2026-27.txt"`).
+**Dopo aver installato e avviato il programma, clicca sul pulsante "📂 Apri cartella"**. Si aprirà la cartella che contiene le classi. Con un normale editor di testo — ad es. "Blocco note" (Notepad) su Windows o un editor equivalente su Linux — **crea un nuovo file di testo in formato `.txt` con il nome della tua classe** (ad es. `"Classe1A.txt"` oppure `"Classe1A_2026-27.txt"`).
+
+> 💡 **Nota per Windows:** l'estensione `.txt` potrebbe essere nascosta, quindi il file potrebbe apparire semplicemente come `"Classe1A"`. È normale. NON usare programmi di videoscrittura come Microsoft Word o LibreOffice Writer: il file deve essere salvato come semplice testo.
 
 **Dentro scrivi solo `"Cognome;Nome;Genere"`** (= M/F) **di ogni studente, uno per riga, in ordine alfabetico**. Separa i tre elementi con due punti e virgola (";") e non usare spazi, come nel seguente esempio:
 
@@ -59,7 +61,7 @@
 >
 > ### 2 ~ Carica il file appena creato
 
-**Clicca sul pulsante "📝 Seleziona classe"** per scegliere e caricare nel programma il file .txt che hai appena creato, in modo da poter aggiungere - grazie al programma stesso - tutti i vincoli necessari per gli studenti.
+**Clicca sul pulsante "📝 Seleziona classe"** per scegliere e caricare nel programma il file della classe che hai appena creato, in modo da poter aggiungere - grazie al programma stesso - tutti i vincoli necessari per gli studenti.
 
 > [!TIP]
 >
@@ -143,9 +145,9 @@ Clicca il bottone **"Rimuovi"** accanto al vincolo da eliminare. Il vincolo spec
 >
 > ### 8 ~ Verifica e salva
 
-- Clicca su **"👁️ Preview file generato"** per vedere un'anteprima del file .txt che verrà creato.
+- Clicca su **"👁️ Preview file generato"** per vedere un'anteprima del file della classe che verrà creato.
 
-- Clicca su **"💾 SALVA e CARICA"** per salvare il file .txt della classe.
+- Clicca su **"💾 SALVA e CARICA"** per salvare il file della classe.
 
 - La classe verrà caricata nel programma, **pronta per avviare le assegnazioni.**
 
@@ -155,9 +157,9 @@ Clicca il bottone **"Rimuovi"** accanto al vincolo da eliminare. Il vincolo spec
 >
 > ### ⚙️ Modifica dei vincoli in corso d'anno
 >
-> Se in futuro vorrai rimuovere, aggiungere o cambiare dei vincoli, basterà ricaricare nell'Editor il file .txt della classe con il pulsante **"📝 Seleziona classe"**. Le schede verranno popolate automaticamente con tutti i dati esistenti di ciascun allievo, pronte per essere modificate. 
+> Se in futuro vorrai rimuovere, aggiungere o cambiare dei vincoli, basterà ricaricare nell'Editor il file della classe con il pulsante **"📝 Seleziona classe"**. Le schede verranno popolate automaticamente con tutti i dati esistenti di ciascun allievo, pronte per essere modificate. 
 >
-> Se invece bisognasse rimuovere o aggiungere un allievo (per trasferimento, cambio sezione, bocciatura...), dovrai aprire manualmente il file .txt della classe e cancellarne la riga, oppure aggiungerlo (con `Cognome;Nome;Genere`) nella posizione alfabeticamente corretta.
+> Se invece bisognasse rimuovere o aggiungere un allievo (per trasferimento, cambio sezione, bocciatura...), dovrai aprire manualmente il file di testo della classe e cancellarne la riga, oppure aggiungerlo (con `Cognome;Nome;Genere`) nella posizione alfabeticamente corretta.
 
 ------
 
@@ -219,7 +221,7 @@ Quando il file della classe sarà pronto e caricato, clicca su **"🚀 Assegna i
 
 > [!NOTE]
 >
-> 💡 **Se rinomini un file .txt**, il programma lo riconoscerà automaticamente tramite i nomi degli studenti.
+> 💡 **Se rinomini il file di una classe**, il programma la riconoscerà automaticamente tramite i nomi degli studenti.
 
 ------
 
@@ -236,22 +238,6 @@ La Tab "🏫 AULA" mostra la disposizione grafica dell'aula. Gli arredi (LIM, ca
 - **💾 Salva assegnazione**: salva la distribuzione degli allievi appena ottenuta nello "Storico" del programma, per consultarla in futuro e per memorizzare le coppie formate.
 - **📊 Esporta Excel**: genera **un file .xlsx liberamente modificabile a seconda delle proprie esigenze**, con un layout ottimizzato per la stampa in A4.
 - **📋 Esporta Report**: salva in formato `.txt` il report testuale completo con le caratteristiche degli abbinamenti effettuati.
-
-
-**✋ SPOSTARE I BANCHI A MANO (drag & drop) — da usare con cautela!**
-
-Nella Tab "🏫 Aula" **puoi scambiare due studenti trascinando con il mouse un banco sopra un altro**: i due si scambiano di posto. Lo studente **FISSO resta sempre al suo posto**, mentre tutti gli altri banchi (trio compreso) sono spostabili.
-
-**⚠️ Usa questa funzione solo se DAVVERO necessario.** L'assegnazione automatica bilancia *contemporaneamente* tutti i vincoli e consulta lo "Storico" per non ripetere coppie già formate. **Uno spostamento manuale rischia di vanificare questo lavoro** e può reintrodurre proprio ciò che l'algoritmo aveva evitato: **coppie già usate in passato**, accostamenti meno equilibrati, oppure un compagno del FISSO già capitato in precedenza.
-
-**🛡️ Il programma comunque ti protegge:**
-• se uno scambio creasse una **incompatibilità ASSOLUTA (livello 3)**, lo **blocca** e ti avvisa;
-• se nascessero problemi più lievi (incompatibilità di livello 1-2, coppia non mista, allontanamento dalla prima fila di chi ce l'ha come vincolo), ti **chiede conferma** prima di procedere;
-• "Report" e "Statistiche" vengono **ricalcolati** sulla nuova disposizione: una coppia riutilizzata nata da uno scambio fatto con il mouse comparirebbe comunque evidenziata in **ocra**.
-
-**💾 Per conservare le modifiche** usa "💾 Salva assegnazione": fino ad allora l'avviso "*Disposizione modificata a mano*" te lo ricorda. Le assegnazioni ritoccate vengono **contrassegnate nello "Storico" con il simbolo ✋**, così distingui sempre a colpo d'occhio quelle "automatiche" da quelle "ritoccate".
-
-💡 **Consiglio:** preferisci sempre l'assegnazione automatica e ricorri al *drag & drop* solo per **aggiustamenti puntuali e indispensabili**. Ricorda che ogni scambio salvato entra a tutti gli effetti nello "Storico" delle coppie.
 
 ### 🍀 La Tab "📊 REPORT"
 
@@ -287,7 +273,7 @@ La Tab "📊 STATISTICHE" analizza l'intero "Storico" della classe (o di più cl
 
 ### 🔷 Prima assegnazione dell'anno (settembre):
 
-1. **Prepara tramite "✏️ Editor studenti" il file .txt della classe** con tutti i dati necessari (inclusa l'eventuale posizione FISSO per studente BES).
+1. **Prepara tramite "✏️ Editor studenti" il file della classe** con tutti i dati necessari (inclusa l'eventuale posizione FISSO per studente BES).
 
 2. **Seleziona il file della classe** con "💾 SALVA e CARICA". Il programma **calcolerà il numero di file di banchi necessarie**.
 
@@ -302,7 +288,7 @@ La Tab "📊 STATISTICHE" analizza l'intero "Storico" della classe (o di più cl
 
 ### 🔷 Assegnazioni successive (ottobre → giugno):
 
-1. Mantieni lo stesso file .txt della classe (o ricaricalo se hai aperto una nuova sessione del programma).
+1. Mantieni lo stesso file della classe (o ricaricalo se hai aperto una nuova sessione del programma).
 2. La rotazione è **automatica**: «PostiPerfetti» consulta lo Storico per evitare coppie già formate.
 3. **Avvia tutte le assegnazioni necessarie, RICORDANDOTI DI SALVARLE** nello "Storico", ed esportale di volta in volta in Excel per un'eventuale modifica e la stampa.
 
@@ -314,7 +300,7 @@ La Tab "📊 STATISTICHE" analizza l'intero "Storico" della classe (o di più cl
 >
 > ### ⚙️ Modifica dei vincoli o del numero di allievi in corso d'anno
 >
-> Se le dinamiche della classe dovessero cambiare, modifica con "✏️ Editor studenti" il file .txt della classe — aggiornando 'posizione', 'incompatibilità' e 'affinità' — e poi salvalo. Se invece cambia il numero di allievi (un nuovo iscritto o un trasferimento), apri manualmente il file .txt dalla cartella delle classi, aggiungi o rimuovi la riga corrispondente e poi seleziona nuovamente il file nell'Editor.
+> Se le dinamiche della classe dovessero cambiare, modifica con "✏️ Editor studenti" il file della classe — aggiornando 'posizione', 'incompatibilità' e 'affinità' — e poi salvalo. Se invece cambia il numero di allievi (un nuovo iscritto o un trasferimento), apri manualmente il file di testo dalla cartella delle classi, aggiungi o rimuovi la riga corrispondente e poi seleziona nuovamente il file nell'Editor.
 >
 > ⚠️ **Importante:** se hai già generato e salvato nello "Storico" delle assegnazioni che **non hai ancora usato davvero in classe**, è necessario **eliminarle** (pulsante "🗑️ Elimina" nella tab "📚 STORICO") prima di rigenerare. Così il programma — sia in modalità "Mensile" sia "Annuale" — **non eviterà coppie che in realtà non si sono mai sedute insieme**, ma soltanto quelle realmente già sperimentate.
 
@@ -326,7 +312,7 @@ La Tab "📊 STATISTICHE" analizza l'intero "Storico" della classe (o di più cl
 
 | **Problema**                                            | **Soluzione**                                                |
 | ------------------------------------------------------- | ------------------------------------------------------------ |
-| 💬 Popup che segnala errore al caricamento del file .txt | Il programma controlla rigorosamente la struttura e i vincoli del file e applica automaticamente soltanto le **correzioni sicure**. Se trova dati ambigui o non validi, rifiuta il nuovo file. Leggi il dettaglio del popup, correggi il file `.txt` e selezionalo nuovamente; le contraddizioni modificabili in "✏️ Editor studenti" devono essere risolte prima del salvataggio. |
+| 💬 Popup che segnala errore al caricamento del file della classe | Il programma controlla rigorosamente la struttura e i vincoli del file e applica automaticamente soltanto le **correzioni sicure**. Se trova dati ambigui o non validi, rifiuta il nuovo file. Leggi il dettaglio del popup, correggi il file di testo e selezionalo nuovamente; le contraddizioni modificabili in "✏️ Editor studenti" devono essere risolte prima del salvataggio. |
 | 🚫 Studente "non trovato" nei vincoli                    | Il nome nei vincoli deve corrispondere **esattamente** a Cognome + Nome (es: `Pasolini Pier Paolo`, non `Pasolini Pier`). |
 | ❗ TROPPE COPPIE RIUTILIZZATE                            | Dipende soprattutto dalla **dimensione della classe**: meno alunni significa meno combinazioni possibili, perciò dopo qualche mese è matematicamente inevitabile riusare qualche coppia. Non è un errore di impostazione. Declassare qualche incompatibilità di livello 3 a livello 2 può dare un po' di respiro, ma NON elimina questo limite. |
 | ‼️ L'ASSEGNAZIONE FALLISCE IN TUTTI I TENTATIVI | La combinazione di vincoli e la geometria scelta (Coppie / Terzetti) potrebbe non ammettere una soluzione, oppure i limiti temporali della ricerca potrebbero non aver consentito di trovarla. Controlla soprattutto le **incompatibilità assolute** (livello 3) e gli studenti con posizione **PRIMA**. Se questi ultimi non entrano tutti nella prima fila, considera di ridurne il numero oppure aumenta i posti per fila (se la disposizione dell'aula lo consente). In modalità terzetti, quando l'opzione è disponibile, prova anche a cambiare la composizione del blocco restante (**1 coppia / 2 quartetti**). |
