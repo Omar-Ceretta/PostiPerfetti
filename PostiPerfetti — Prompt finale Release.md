@@ -69,42 +69,6 @@ Se Omar segnala che uno di questi punti non è ancora concluso, NON creare ancor
 
 ---
 
-# DUE CONTROLLI WINDOWS DA CONSIDERARE VERDI PRIMA DELLA RELEASE
-
-Devono essere già stati verificati, oppure vanno verificati prima di procedere:
-
-## Metadati Windows reali
-
-Controllare:
-
-```text
-dist\PostiPerfetti\PostiPerfetti.exe
-dist-installer\PostiPerfetti-1.0-setup.exe
-```
-
-Con:
-
-**tasto destro → Proprietà → Dettagli**
-
-Atteso:
-
-- ProductVersion coerente con `1.0`;
-- FileVersion coerente con `1.0.0.0`.
-
-## Conservazione dati dopo reinstallazione
-
-Verificare almeno una volta la sequenza:
-
-1. installazione;
-2. creazione/presenza di dati utente;
-3. disinstallazione scegliendo di **mantenere i dati**;
-4. reinstallazione;
-5. verifica che i dati precedenti siano ancora presenti.
-
-Se entrambi questi controlli sono già stati fatti e Omar lo conferma, considerarli CHIUSI senza ripeterli.
-
----
-
 # CONTRATTO DELLA PIPELINE — NON MODIFICARE SENZA UNA RAGIONE CONCRETA
 
 La struttura corretta è:
