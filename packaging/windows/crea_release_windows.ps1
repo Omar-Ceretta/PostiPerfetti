@@ -1,4 +1,4 @@
-[CmdletBinding()]
+﻿[CmdletBinding()]
 param(
     # Esegue l'intera pipeline, ma non richiede che il CHANGELOG
     # sia già stato chiuso con la data definitiva della Release.
@@ -87,6 +87,90 @@ function Estrai-Versione {
 }
 
 
+function Ottieni-VersioneInnoSetup {
+    param([string]$ISCC)
+
+    $tempDir = Join-Path `
+        ([System.IO.Path]::GetTempPath()) `
+        ("PostiPerfetti-Inno-" + [guid]::NewGuid().ToString("N"))
+
+    New-Item `
+        -ItemType Directory `
+        -Path $tempDir `
+        -Force |
+        Out-Null
+
+    try {
+        $probePath = Join-Path $tempDir "version_probe.iss"
+        $versionPath = Join-Path $tempDir "version.txt"
+
+        # Il percorso viene inserito in una stringa Pascal dell'ISPP.
+        $versionPathIss = $versionPath.Replace("'", "''")
+
+        $probe = @"
+#call SaveStringToFile('$versionPathIss', Str(PREPROCVER), 0, 0)
+
+[Setup]
+AppName=PostiPerfetti Inno Version Probe
+AppVersion=1
+DefaultDirName={tmp}\PostiPerfettiInnoVersionProbe
+Output=no
+"@
+
+        [System.IO.File]::WriteAllText(
+            $probePath,
+            $probe,
+            [System.Text.Encoding]::ASCII
+        )
+
+        $output = & $ISCC /Q $probePath 2>&1
+        $exitCode = $LASTEXITCODE
+
+        if ($exitCode -ne 0) {
+            throw (
+                "Impossibile interrogare la versione di Inno Setup. " +
+                ($output -join [Environment]::NewLine)
+            )
+        }
+
+        if (-not (Test-Path $versionPath -PathType Leaf)) {
+            throw (
+                "Inno Setup non ha restituito la propria versione."
+            )
+        }
+
+        $packedText = (
+            [System.IO.File]::ReadAllText(
+                $versionPath,
+                [System.Text.Encoding]::ASCII
+            )
+        ).Trim()
+
+        try {
+            $packed = [int64]$packedText
+        } catch {
+            throw (
+                "Versione Inno Setup non interpretabile: " +
+                "'$packedText'."
+            )
+        }
+
+        $major = ($packed -shr 24) -band 0xFF
+        $minor = ($packed -shr 16) -band 0xFF
+        $revision = ($packed -shr 8) -band 0xFF
+        $build = $packed -band 0xFF
+
+        return "$major.$minor.$revision.$build"
+    } finally {
+        Remove-Item `
+            $tempDir `
+            -Recurse `
+            -Force `
+            -ErrorAction SilentlyContinue
+    }
+}
+
+
 function Verifica-VersioneArtefatto {
     param(
         [string]$Percorso,
@@ -102,7 +186,7 @@ function Verifica-VersioneArtefatto {
 
     if ($fileVersion -ne $VersioneQuad) {
         throw (
-            "$Nome: FileVersion non corretta. " +
+            "${Nome}: FileVersion non corretta. " +
             "Attesa $VersioneQuad, trovata $fileVersion."
         )
     }
@@ -112,14 +196,14 @@ function Verifica-VersioneArtefatto {
         $productVersion -ne $VersioneQuad
     ) {
         throw (
-            "$Nome: ProductVersion non corretta. " +
+            "${Nome}: ProductVersion non corretta. " +
             "Attesa $Versione o $VersioneQuad, " +
             "trovata $productVersion."
         )
     }
 
     Scrivi-OK (
-        "$Nome: FileVersion=$fileVersion; " +
+        "${Nome}: FileVersion=$fileVersion; " +
         "ProductVersion=$productVersion"
     )
 }
@@ -410,19 +494,7 @@ if (-not $ISCC) {
     throw "Inno Setup 6/7 non trovato."
 }
 
-$InnoProductVersion = (
-    Get-Item $ISCC
-).VersionInfo.ProductVersion
-
-$InnoVersionText = Estrai-Versione $InnoProductVersion
-
-if (-not $InnoVersionText) {
-    throw (
-        "Impossibile determinare la versione di Inno Setup: " +
-        "$ISCC"
-    )
-}
-
+$InnoVersionText = Ottieni-VersioneInnoSetup -ISCC $ISCC
 $InnoVersion = [version]$InnoVersionText
 
 if ($InnoVersion -lt [version]"6.6.0") {
