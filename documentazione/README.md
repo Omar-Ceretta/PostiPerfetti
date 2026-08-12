@@ -2,8 +2,6 @@
 
 Questa cartella raccoglie la documentazione stabile del progetto.
 
-## Per capire il programma
-
 ## Per capire e utilizzare il programma
 
 * `COME_FUNZIONA.md` — descrive il percorso dei dati, i quattro Tentativi, i criteri di scelta e la generazione Mensile/Annuale.

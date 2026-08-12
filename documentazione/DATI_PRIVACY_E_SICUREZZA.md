@@ -97,10 +97,7 @@ non sono più necessari.
 La normale disinstallazione di «PostiPerfetti» conserva intenzionalmente i
 dati dell'utente per consentire una successiva reinstallazione.
 
-Per eliminare anche classi, impostazioni, Storico e log è disponibile la
-disinstallazione completa (`--purge` su Linux); su Windows occorre verificare
-le opzioni offerte dal programma di disinstallazione e, se necessario,
-rimuovere gli eventuali dati conservati secondo le istruzioni della release.
+Per eliminare anche classi, impostazioni, Storico e log è disponibile la disinstallazione completa (`--purge` su Linux); su Windows il programma di disinstallazione chiede esplicitamente se conservare o eliminare anche i dati dell'utente. Per i dettagli consulta la guida **[Installazione, avvio e disinstallazione](INSTALLAZIONE_AVVIO_E_DISINSTALLAZIONE.md)**.
 
 
 ---

@@ -1,6 +1,6 @@
 # Mappa dei moduli di «PostiPerfetti»
 
-> **Versione di riferimento:** 0.8.0.
+> **Versione di riferimento:** 1.0.
 > 
 > Questo documento descrive in modo sintetico l'organizzazione interna di «PostiPerfetti».  
 > Serve a capire **quali parti compongono il programma e quale responsabilità ha ciascuna**.
@@ -42,7 +42,7 @@ A questi si aggiunge `postiperfetti.py`, nella root del progetto, che rappresent
 | `moduli/__init__.py` | File vuoto che identifica `moduli/` come package Python. Non contiene logica applicativa. |
 | `postiperfetti_launcher.py` | Launcher Linux: prepara e controlla l'ambiente virtuale, verifica le dipendenze e avvia il programma. |
 | `percorsi.py` | Definisce in modo centralizzato dove si trovano `risorse/`, `classi/`, `stato/`, `log/` e i file esportati. |
-| `versione.py` | È la fonte unica della versione dell'applicazione. Espone il numero in formato `MAJOR.MINOR.PATCH`, ne verifica la forma all'avvio, e ne deriva le varianti richieste altrove: la quaterna usata dai metadati dell'eseguibile Windows e il tag della Release. Packaging, installer e interfaccia leggono da qui: la versione non va mai riscritta a mano in un secondo file. |
+| `versione.py` | È la fonte unica della versione dell'applicazione. Espone il numero in formato `MAJOR.MINOR`, ne verifica la forma all'avvio, e ne deriva le varianti richieste altrove: la quaterna usata dai metadati dell'eseguibile Windows e il tag della Release. Packaging, installer e interfaccia leggono da qui: la versione non va mai riscritta a mano in un secondo file. |
 
 ---
 

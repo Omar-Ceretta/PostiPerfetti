@@ -3,14 +3,21 @@
 ---
 
 <table border="0"><tr><td>
-<img src="https://raw.githubusercontent.com/Omar-Ceretta/PostiPerfetti/main/documentazione/immagini/windows11.png" width="64" />
+<img src="immagini/windows11.png" width="64" />
 </td><td>
 
 ## Installazione su Windows
 
 </td></tr></table>
 
-1. Scorri in fondo a questa pagina e - nella sezione  *Assets* - scarica "**`PostiPerfetti_Setup.exe`**" (se necessario, clicca prima su  ' ▶ Assets' per espandere l'elenco).
+### ✰ Requisiti
+
+- **Windows 10 versione 1809 o successiva**, oppure **Windows 11**.
+- Sistema compatibile con applicazioni **x64 (64 bit)**.
+
+### ✰ Installazione
+
+1. Vai alla **[Release più recente](https://github.com/Omar-Ceretta/PostiPerfetti/releases/latest)** e, nella sezione *Assets*, scarica il file **`PostiPerfetti-<versione>-setup.exe`** (ad es. `PostiPerfetti-1.0-setup.exe`).
 2. Fai doppio clic sul file scaricato.
 3. Segui le istruzioni del programma di installazione.
 
@@ -18,7 +25,7 @@
 
 La versione attuale di «PostiPerfetti» non è firmata digitalmente con un certificato commerciale. Per questo motivo Windows SmartScreen o un software antivirus possono mostrare un avviso prima dell'esecuzione.
 
-<img src="https://raw.githubusercontent.com/Omar-Ceretta/PostiPerfetti/main/documentazione/immagini/smartscreen.png" />
+<img src="immagini/smartscreen.png" />
 
 Scarica l'installer soltanto dalla **Release ufficiale di «PostiPerfetti»** su GitHub.
 
@@ -28,12 +35,29 @@ Scarica l'installer soltanto dalla **Release ufficiale di «PostiPerfetti»** su
 2. nella schermata blu fai clic su **«Ulteriori informazioni»**;
 3. per procedere fai clic su **«Esegui comunque»**.
 
-**Se un antivirus blocca o mette in quarantena il file**, non è consigliato disattivare la protezione del sistema. Dopo aver verificato che il file proviene dal repository di «PostiPerfetti», aggiungilo alle eccezioni.
+**Se un antivirus blocca o mette in quarantena il file**, non disattivare la protezione del sistema. Verifica di aver scaricato l'installer dalla Release ufficiale e, se vuoi controllarne l'integrità, confronta il suo SHA-256 con quello pubblicato insieme all'installer. Solo dopo questa verifica valuta se ripristinare o autorizzare il file tramite le funzioni del tuo antivirus.
+
+### ✰ Aggiornamento
+
+Per aggiornare «PostiPerfetti» a una nuova versione, scarica dalla **[Release più recente](https://github.com/Omar-Ceretta/PostiPerfetti/releases/latest)** il nuovo file `PostiPerfetti-<versione>-setup.exe` ed eseguilo normalmente.
+
+L'installazione esistente viene riconosciuta automaticamente e aggiornata. **Classi, impostazioni e log vengono preservati**.
+
+### ✰ Disinstallazione
+
+Puoi disinstallare «PostiPerfetti» dalle normali **Impostazioni di Windows** oppure tramite la voce **«Disinstalla PostiPerfetti»** creata nel menu Start.
+
+Durante la disinstallazione ti verrà chiesto se desideri eliminare anche i dati personali del programma:
+
+- scegli **No** per conservare classi, impostazioni, Storico e log in vista di una futura reinstallazione;
+- scegli **Sì** per eliminare anche questi dati.
+
+> **Attenzione:** scegliendo **Sì**, i dati contenuti nelle cartelle `classi`, `stato` e `log` vengono eliminati definitivamente.
 
 ---
 
 <table border="0"><tr><td>
-<img src="https://raw.githubusercontent.com/Omar-Ceretta/PostiPerfetti/main/documentazione/immagini/linux.png" width="64" />
+<img src="immagini/linux.png" width="64" />
 </td><td>
 
 ## Installazione su Linux
@@ -41,7 +65,8 @@ Scarica l'installer soltanto dalla **Release ufficiale di «PostiPerfetti»** su
 </td></tr></table>
 
 L'installazione su Linux è gestita da uno script Bash distribuito insieme alla Release ufficiale.
-Sono state testate le seguenti distribuzioni: Debian e derivate (Linux Mint / Tuxedo OS / Ubuntu / Zorin OS / Pop_OS!), Fedora, Arch Linux e derivate (Endeavour OS / Manjaro), Open Suse.
+
+«PostiPerfetti» supporta le principali distribuzioni delle famiglie **Debian/Ubuntu, Fedora, Arch Linux e openSUSE**. Il codice dell'installer viene verificato automaticamente su **Ubuntu 24.04, Fedora 44, Arch Linux e openSUSE Tumbleweed**.
 
 ### ✰ Requisiti
 
@@ -73,19 +98,19 @@ curl -fL -o install.sh \
 bash install.sh
 ```
 
-Il programma viene installato normalmente in:
+Il programma viene installato normalmente nella Home dell'utente, in:
 
 ```text
 ~/PostiPerfetti
 ```
 
-L'installer scarica il pacchetto della Release, ne verifica l'integrità e prepara l'ambiente Python necessario. Al termine propone di avviare subito «PostiPerfetti».
+L'installer scarica automaticamente il pacchetto corrispondente alla propria Release (ad es. `PostiPerfetti-1.0-linux.tar.gz`), ne verifica l'integrità e la versione e prepara l'ambiente Python necessario. Al termine propone di avviare subito «PostiPerfetti».
 
 Una volta completata l'installazione, l'uso del programma non richiede una connessione a Internet.
 
 ### ✰ Aggiornamento
 
-Per aggiornare «PostiPerfetti» è sufficiente scaricare ed eseguire nuovamente l'installer con uno dei comandi precedenti.
+Per aggiornare «PostiPerfetti» è sufficiente scaricare ed eseguire nuovamente l'`install.sh` della Release più recente con uno dei comandi precedenti.
 
 L'installazione esistente viene riconosciuta automaticamente e **classi, impostazioni e log vengono preservati**.
 
@@ -107,7 +132,7 @@ Vengono rimossi il programma, il relativo ambiente virtuale e l'integrazione des
 
 Questi dati permettono una successiva reinstallazione senza perdere classi, impostazioni e Storico.
 
-Per eliminare anche tutti i dati locali di «PostiPerfetti», eseguire:
+Per eliminare anche tutti i dati locali di «PostiPerfetti», esegui:
 
 ```bash
 ~/PostiPerfetti/uninstall.sh --purge
@@ -153,7 +178,11 @@ wget -O postiperfetti-main.tar.gz \
 tar xzf postiperfetti-main.tar.gz
 cd PostiPerfetti-main
 
-python3 moduli/postiperfetti_launcher.py
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+
+python moduli/postiperfetti_launcher.py
 ```
 
 Questa modalità è pensata per sviluppo e collaudo e **non equivale all'installazione Linux ufficiale**: non esegue la gestione dei prerequisiti di sistema, la verifica preventiva del runtime Qt o l'integrazione con il Menu applicazioni.
@@ -185,7 +214,7 @@ Su Debian, Ubuntu e derivate può essere necessario:
 sudo apt install python3-venv
 ```
 
-Sulle distribuzioni riconosciute è lo stesso installer a proporre il download dei prerequisiti mancanti.
+Sulle distribuzioni riconosciute è lo stesso installer a proporre l'installazione dei prerequisiti mancanti.
 
 ➁ **Errore durante l'installazione delle dipendenze Python**
 

@@ -1,6 +1,6 @@
 # Come funziona «PostiPerfetti»
 
-> **Versione di riferimento:** 0.8.0.
+> **Versione di riferimento:** 1.0.
 > 
 > Questo documento spiega che cosa succede **dietro le quinte** quando «PostiPerfetti» calcola una disposizione.  
 > L'obiettivo è mostrare, con un linguaggio accessibile, **quale percorso seguono i dati, quali regole vengono applicate e come il programma sceglie fra più soluzioni possibili**.
@@ -650,7 +650,7 @@ L'interfaccia grafica e il motore di calcolo sono separati intenzionalmente.
 
 Le elaborazioni più pesanti non devono incidere nella reponsività di pulsanti, pannelli o altri elementi grafici della finestra mentre stanno calcolando.
 
-Nella R0.8:
+Nella versione attuale:
 
 - il Mensile a coppie usa un componente di calcolo dedicato e una copia degli input;
 - il Mensile a terzetti usa un processo Python separato;
