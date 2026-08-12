@@ -199,7 +199,8 @@ $Exe = Join-Path $Root "dist\PostiPerfetti\PostiPerfetti.exe"
 $Internal = Join-Path $Root "dist\PostiPerfetti\_internal"
 $ClasseBase = Join-Path $Root "dist\PostiPerfetti\classi\Classe-BASE_esempio.txt"
 $ClasseCompleta = Join-Path $Root "dist\PostiPerfetti\classi\Classe-COMPLETO_esempio.txt"
-$Setup = Join-Path $Root "d# Il nome del Setup contiene ora la versione: non è più una stringa fissa.
+
+# Il nome del Setup contiene ora la versione: non è più una stringa fissa.
 # dist-installer è stata appena ripulita: deve contenerne esattamente uno.
 $SetupTrovati = @(
     Get-ChildItem `
@@ -213,7 +214,7 @@ if ($SetupTrovati.Count -ne 1) {
     throw "In dist-installer è atteso esattamente un file PostiPerfetti-<versione>-setup.exe, trovati $($SetupTrovati.Count)."
 }
 
-$Setup = $SetupTrovati[0].FullNameist-installer\PostiPerfetti_setup.exe"
+$Setup = $SetupTrovati[0].FullName
 
 $attesi = @(
     @{ Nome = "EXE";              Percorso = $Exe;            Tipo = "Leaf" },

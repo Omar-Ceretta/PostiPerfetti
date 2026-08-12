@@ -11,6 +11,7 @@ ROOT = PACKAGING_DIR.parents[1]
 _dati_versione = runpy.run_path(
     str(ROOT / "moduli" / "versione.py")
 )
+VERSIONE = _dati_versione["VERSIONE"]
 VERSIONE_WINDOWS = tuple(_dati_versione["VERSIONE_WINDOWS"])
 VERSIONE_WINDOWS_TESTO = ".".join(
     str(parte) for parte in VERSIONE_WINDOWS
@@ -49,7 +50,7 @@ VERSION_INFO.write_text(
             StringStruct(u'LegalCopyright', u'© 2026 Omar Ceretta — GNU GPLv3'),
             StringStruct(u'OriginalFilename', u'PostiPerfetti.exe'),
             StringStruct(u'ProductName', u'PostiPerfetti'),
-            StringStruct(u'ProductVersion', u'{VERSIONE_WINDOWS_TESTO}'),
+            StringStruct(u'ProductVersion', u'{VERSIONE}'),
             StringStruct(u'Comments', u'Software libero per docenti — GNU GPLv3'),
           ]
         )

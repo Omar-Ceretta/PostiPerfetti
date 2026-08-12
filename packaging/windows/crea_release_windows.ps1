@@ -76,7 +76,7 @@ function Estrai-Versione {
 
     $match = [regex]::Match(
         $Testo,
-        '\d+\.\d+\.\d+(?:\.\d+)?'
+        '\d+\.\d+(?:\.\d+){0,2}'
     )
 
     if (-not $match.Success) {

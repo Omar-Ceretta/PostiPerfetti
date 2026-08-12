@@ -54,6 +54,7 @@ SolidCompression=yes
 ; Versione del Setup.exe stesso, ricevuta dalla fonte unica tramite lo script di build.
 VersionInfoVersion={#MyAppVersionQuad}
 VersionInfoProductVersion={#MyAppVersionQuad}
+VersionInfoProductTextVersion={#MyAppVersion}
 VersionInfoDescription=Installer di PostiPerfetti
 VersionInfoProductName=PostiPerfetti
 
