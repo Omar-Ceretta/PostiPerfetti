@@ -219,6 +219,39 @@ pacchetto_xcb_icccm() {
     esac
 }
 
+# Libreria KeySyms richiesta dal plugin Qt/XCB.
+pacchetto_xcb_keysyms() {
+    case "$(famiglia_distro)" in
+        debian) printf 'libxcb-keysyms1' ;;
+        fedora) printf 'xcb-util-keysyms' ;;
+        arch)   printf 'xcb-util-keysyms' ;;
+        suse)   printf 'libxcb-keysyms1' ;;
+        *)      printf 'libxcb-keysyms1' ;;
+    esac
+}
+
+# Libreria XKB di XCB richiesta dal plugin Qt/XCB.
+pacchetto_xcb_xkb() {
+    case "$(famiglia_distro)" in
+        debian) printf 'libxcb-xkb1' ;;
+        fedora) printf 'libxcb' ;;
+        arch)   printf 'libxcb' ;;
+        suse)   printf 'libxcb-xkb1' ;;
+        *)      printf 'libxcb-xkb1' ;;
+    esac
+}
+
+# Integrazione X11 di xkbcommon richiesta dal plugin Qt/XCB.
+pacchetto_xkbcommon_x11() {
+    case "$(famiglia_distro)" in
+        debian) printf 'libxkbcommon-x11-0' ;;
+        fedora) printf 'libxkbcommon-x11' ;;
+        arch)   printf 'libxkbcommon-x11' ;;
+        suse)   printf 'libxkbcommon-x11-0' ;;
+        *)      printf 'libxkbcommon-x11-0' ;;
+    esac
+}
+
 # Libreria EGL richiesta dal runtime grafico Qt/PySide6.
 pacchetto_egl() {
     case "$(famiglia_distro)" in
@@ -337,6 +370,18 @@ ha_libreria_xcb_icccm() {
     ha_libreria_nativa 'libxcb-icccm.so.4'
 }
 
+ha_libreria_xcb_keysyms() {
+    ha_libreria_nativa 'libxcb-keysyms.so.1'
+}
+
+ha_libreria_xcb_xkb() {
+    ha_libreria_nativa 'libxcb-xkb.so.1'
+}
+
+ha_libreria_xkbcommon_x11() {
+    ha_libreria_nativa 'libxkbcommon-x11.so.0'
+}
+
 ha_libreria_egl() {
     ha_libreria_nativa 'libEGL.so.1'
 }
@@ -441,6 +486,21 @@ fi
 if ! ha_libreria_xcb_icccm; then
     MANCANZE+=("libreria Qt/XCB ICCCM")
     aggiungi_pacchetto "$(pacchetto_xcb_icccm)"
+fi
+
+if ! ha_libreria_xcb_keysyms; then
+    MANCANZE+=("libreria Qt/XCB KeySyms")
+    aggiungi_pacchetto "$(pacchetto_xcb_keysyms)"
+fi
+
+if ! ha_libreria_xcb_xkb; then
+    MANCANZE+=("libreria Qt/XCB XKB")
+    aggiungi_pacchetto "$(pacchetto_xcb_xkb)"
+fi
+
+if ! ha_libreria_xkbcommon_x11; then
+    MANCANZE+=("libreria XKB/X11 richiesta da Qt")
+    aggiungi_pacchetto "$(pacchetto_xkbcommon_x11)"
 fi
 
 if ! ha_libreria_egl; then
@@ -577,6 +637,24 @@ if ! ha_libreria_xcb_icccm; then
      Qt potrebbe non riuscire ad avviare l'interfaccia grafica."
 fi
 msg_ok "Libreria Qt/XCB «libxcb-icccm.so.4» presente"
+
+if ! ha_libreria_xcb_keysyms; then
+    errore_fatale "La libreria «libxcb-keysyms.so.1» risulta ancora assente.
+     Qt potrebbe non riuscire ad avviare l'interfaccia grafica XCB."
+fi
+msg_ok "Libreria Qt/XCB «libxcb-keysyms.so.1» presente"
+
+if ! ha_libreria_xcb_xkb; then
+    errore_fatale "La libreria «libxcb-xkb.so.1» risulta ancora assente.
+     Qt potrebbe non riuscire a inizializzare il supporto tastiera XCB."
+fi
+msg_ok "Libreria Qt/XCB «libxcb-xkb.so.1» presente"
+
+if ! ha_libreria_xkbcommon_x11; then
+    errore_fatale "La libreria «libxkbcommon-x11.so.0» risulta ancora assente.
+     Qt potrebbe non riuscire a inizializzare il supporto XKB/X11."
+fi
+msg_ok "Libreria XKB/X11 «libxkbcommon-x11.so.0» presente"
 
 if ! ha_libreria_egl; then
     errore_fatale "La libreria «libEGL.so.1» risulta ancora assente.
