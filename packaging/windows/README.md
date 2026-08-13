@@ -1,4 +1,4 @@
-# Packaging Windows — PostiPerfetti 1.0
+# Packaging Windows di «PostiPerfetti»
 
 Questa cartella contiene la configurazione riproducibile per produrre la
 distribuzione Windows di «PostiPerfetti».
