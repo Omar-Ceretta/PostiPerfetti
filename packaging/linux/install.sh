@@ -828,6 +828,32 @@ msg_nota "Sorgente pronto in: $CARTELLA_SORGENTE"
 fi  # fine: sorgente locale / download remoto
 
 
+# --- Verifica degli asset grafici runtime -----------------------------
+# Icona e logo migliorano l'interfaccia ma non sono prerequisiti funzionali:
+# se mancano, segnaliamo il pacchetto incompleto senza impedire l'installazione.
+ASSET_GRAFICI_MANCANTI=()
+for asset_grafico in \
+    "risorse/icone/postiperfetti_icon.png" \
+    "risorse/icone/postiperfetti_logo.png"
+do
+    if [ ! -f "$CARTELLA_SORGENTE/$asset_grafico" ]; then
+        ASSET_GRAFICI_MANCANTI+=("$asset_grafico")
+    fi
+done
+
+if [ "${#ASSET_GRAFICI_MANCANTI[@]}" -gt 0 ]; then
+    printf '\n  %s⚠ Il pacchetto non contiene alcuni asset grafici:%s\n' \
+        "$C_DET" "$C_END"
+    for asset_grafico in "${ASSET_GRAFICI_MANCANTI[@]}"; do
+        msg_nota " - $asset_grafico"
+    done
+    msg_nota "L'installazione prosegue: il programma resta utilizzabile,"
+    msg_nota "ma alcune immagini o icone potrebbero non essere visualizzate."
+else
+    msg_ok "Asset grafici principali presenti"
+fi
+
+
 # In una release verifichiamo due identità indipendenti:
 #   1. i byte del pacchetto devono avere lo SHA-256 previsto;
 #   2. il codice al suo interno deve dichiarare la versione prevista.
@@ -1233,7 +1259,8 @@ else
             --disable-pip-version-check \
             -r "$REQUISITI_DEST"; then
         errore_fatale "Installazione delle dipendenze Python non riuscita.
-     Controlla la connessione a internet e i messaggi di pip qui sopra."
+     Controlla i messaggi di pip qui sopra, lo spazio disponibile su disco
+     e la connessione a internet."
     fi
 
     if ! "$PYTHON_VENV" -m pip check; then
