@@ -1,7 +1,7 @@
 # Packaging Linux di «PostiPerfetti»
 
 Questa directory contiene gli strumenti specifici per l'installazione, la
-disinstallazione e la preparazione degli asset Linux di **PostiPerfetti**.
+disinstallazione e la preparazione degli asset Linux di «**PostiPerfetti**».
 
 I file presenti qui non costituiscono una pipeline di release separata da
 quella Windows. La release ufficiale di «PostiPerfetti» è unica e comprende
