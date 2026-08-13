@@ -875,7 +875,7 @@ class FlussoMensileUIMixin:
             if ha_precedenti_altro_modo:
                 nota = QLabel(
                     f'<span style="color: {C("testo_info")};">'
-                    f'<b>Nota informativa</b> — '
+                    f'<br><b>Nota informativa</b> — '
                     f'{quantita(self._precedenti_altro_modo, "vicinanza", "vicinanze")} '
                     f'con precedenti nella modalità terzetti. Le rotazioni delle due modalità '
                     f'restano indipendenti.</span>'
@@ -913,7 +913,7 @@ class FlussoMensileUIMixin:
             if ha_precedenti_altro_modo:
                 note.append(
                     f'<span style="color: {C("testo_info")};">'
-                    f'<b>Nota informativa</b> — '
+                    f'<br><b>Nota informativa</b> — '
                     f'{quantita(self._precedenti_altro_modo, "vicinanza", "vicinanze")} '
                     f'con precedenti nella modalità coppie. Le rotazioni delle due modalità '
                     f'restano indipendenti.</span>'

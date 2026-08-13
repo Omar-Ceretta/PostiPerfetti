@@ -1591,10 +1591,10 @@ class EditorStudentiWidget(QWidget):
         )
 
         self._banner_formato_base_testo = QLabel(
-            "FORMATO BASE — Prima di salvare, verifica il genere e la "
-            "posizione di ogni studente. Incompatibilità e affinità sono "
-            "facoltative e possono essere aggiunte quando servono. "
-            "Poi clicca «SALVA e CARICA»."
+            "FORMATO BASE — Verifica il genere e la posizione di ogni "
+            "studente. Imposta quindi le necessarie incompatibilità "
+            "e affinità (di livello 1, 2 o 3) tra gli allievi. "
+            "Clicca infine su «SALVA e CARICA»."
         )
         self._banner_formato_base_testo.setWordWrap(True)
         layout_banner_base.addWidget(self._banner_formato_base_testo, 1)
@@ -1606,8 +1606,8 @@ class EditorStudentiWidget(QWidget):
         """)
         self._banner_formato_base_testo.setStyleSheet(f"""
             color: {C("banner_formato_txt")};
-            font-weight: bold;
-            font-size: 13px;
+            font-weight: normal;
+            font-size: 14px;
         """)
         self._banner_formato_base.setVisible(False)
         layout_principale.addWidget(self._banner_formato_base)
@@ -1976,18 +1976,18 @@ class EditorStudentiWidget(QWidget):
             _popup_info(
                 self,
                 "File in formato base",
-                f"Il file «{self._nome_file_caricato}.txt» contiene soltanto "
-                "cognome e nome, con il genere solo se era già indicato.",
+                f"Il file «{self._nome_file_caricato}.txt» contiene solo\n"
+                "cognome, nome e genere degli allievi.",
                 dettagli=(
-                    "Prima di usare «SALVA e CARICA», verifica il genere e la "
-                    "posizione di ciascuno studente. Incompatibilità e affinità "
-                    "sono facoltative:\n\n"
+                    "Prima di usare «SALVA e CARICA», verifica il genere\n"
+                    "e la posizione di ciascuno studente. Imposta quindi\n"
+                    "le necessarie incompatibilità e affinità:\n\n"
                     "  • posizione (PRIMA, NORMALE, ULTIMA o FISSO)\n"
-                    "  • eventuali incompatibilità\n"
-                    "  • eventuali affinità\n\n"
-                    "Senza vincoli, l'assegnazione sarà basata soltanto sulle regole "
-                    "generali e sulla rotazione. Potrai aggiungerli o modificarli "
-                    "in seguito riselezionando il file."
+                    "  • incompatibilità (di livello 1, 2 o 3)\n"
+                    "  • affinità (di livello 1, 2 o 3)\n\n"
+                    "Senza vincoli, l'assegnazione sarà basata soltanto\n"
+                    "sulle regole generali. Potrai comunque aggiungerli\n"
+                    "o modificarli in seguito, riselezionando il file."
                 ),
             )
         else:
