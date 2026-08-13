@@ -575,10 +575,12 @@ if [ "${#PACCHETTI_MANCANTI[@]}" -gt 0 ]; then
     done
 
     if [ "$(famiglia_distro)" = "ignota" ]; then
-        errore_fatale "La distribuzione Linux non è stata riconosciuta.
-     Non installerò pacchetti di sistema tentando di indovinare i nomi.
-     Installa manualmente i prerequisiti elencati qui sopra e riesegui
-     questo installer."
+        errore_fatale "La distribuzione Linux in uso non è tra quelle
+     gestite automaticamente da questo installer.
+
+     I prerequisiti di sistema non verranno installati automaticamente.
+     Installa manualmente quelli elencati qui sopra e avvia nuovamente
+     l'installer."
     fi
 
     msg_nota "Pacchetti proposti: ${PACCHETTI_MANCANTI[*]}"
