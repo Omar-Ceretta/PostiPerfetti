@@ -16,6 +16,30 @@ permissions:
   contents: read
 
 jobs:
+  shellcheck:
+    name: ShellCheck
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Scarica il repository
+        uses: actions/checkout@v7
+
+      - name: Installa ShellCheck
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y shellcheck
+          shellcheck --version
+
+      - name: Analizza gli script Linux
+        shell: bash
+        run: |
+          set -euo pipefail
+          shellcheck --severity=warning \
+            packaging/linux/install.sh \
+            packaging/linux/uninstall.sh
+
   distro:
     name: ${{ matrix.nome }}
 
@@ -49,7 +73,6 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-
           case "${{ matrix.famiglia }}" in
             debian)
               apt-get update
@@ -83,7 +106,6 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-
           awk '/BLOCCO 1/{exit} {print}' \
             packaging/linux/install.sh \
             > /tmp/postiperfetti-installer-defs.sh
@@ -96,7 +118,6 @@ jobs:
           echo "Famiglia attesa:   ${{ matrix.famiglia }}"
 
           test "$famiglia" = "${{ matrix.famiglia }}"
-
           echo "Python:     $(pacchetto_python)"
           echo "venv:       $(pacchetto_venv)"
           echo "XCB cursor: $(pacchetto_xcb_cursor)"
@@ -110,7 +131,6 @@ jobs:
           source /tmp/postiperfetti-installer-defs.sh
 
           famiglia="$(famiglia_distro)"
-
           python_pkg="$(pacchetto_python)"
           venv_pkg="$(pacchetto_venv)"
           xcb_pkg="$(pacchetto_xcb_cursor)"
@@ -127,7 +147,6 @@ jobs:
                   "$egl_pkg" \
                   tar rsync curl
               ;;
-
             fedora)
               dnf install -y \
                 "$python_pkg" \
@@ -136,7 +155,6 @@ jobs:
                 "$egl_pkg" \
                 tar rsync curl
               ;;
-
             arch)
               pacman -S --needed --noconfirm \
                 "$python_pkg" \
@@ -145,7 +163,6 @@ jobs:
                 "$egl_pkg" \
                 tar rsync curl
               ;;
-
             suse)
               zypper --non-interactive install \
                 "$python_pkg" \
