@@ -6,10 +6,13 @@
 # dell'utente e crea icona e voce di menu secondo gli standard
 # freedesktop.org (validi su KDE, GNOME, XFCE, COSMIC, ecc.).
 #
-# Lo script deve essere eseguito come utente normale, MAI con sudo.
+# Lo script deve essere eseguito come utente normale, MAI con sudo/root.
 # Se mancano prerequisiti di sistema, può chiedere esplicitamente
 # l'autorizzazione a usare sudo soltanto per il gestore dei pacchetti.
-# I file di PostiPerfetti restano sempre nella cartella dell'utente.
+# Se sudo non è disponibile o l'utente non è autorizzato a usarlo,
+# può ricorrere a su e alla password di root, sempre e soltanto per
+# il gestore dei pacchetti. I file di PostiPerfetti restano sempre
+# nella cartella dell'utente normale.
 #
 # L'installer prepara e verifica anche l'ambiente virtuale (.venv)
 # e le dipendenze Python. Il launcher conserva il ruolo di controllo
@@ -264,34 +267,89 @@ pacchetto_egl() {
 }
 
 # Produce un comando leggibile da mostrare all'utente.
-# I nomi ricevuti sono già quelli corretti per la famiglia corrente.
+# Non impone sudo: su Debian vanilla, per esempio, l'amministrazione può
+# essere affidata direttamente all'account root tramite su.
 comando_installazione() {
     case "$(famiglia_distro)" in
-        debian) printf 'sudo apt-get install %s' "$*" ;;
-        fedora) printf 'sudo dnf install %s' "$*" ;;
-        arch)   printf 'sudo pacman -S --needed %s' "$*" ;;
-        suse)   printf 'sudo zypper install %s' "$*" ;;
+        debian) printf 'apt-get update && apt-get install %s' "$*" ;;
+        fedora) printf 'dnf install %s' "$*" ;;
+        arch)   printf 'pacman -S --needed %s' "$*" ;;
+        suse)   printf 'zypper install %s' "$*" ;;
         *)      printf 'installa manualmente i prerequisiti mancanti' ;;
     esac
 }
 
+# Metodo effettivo scelto soltanto se servono pacchetti di sistema.
+# Valori ammessi: "" | "sudo" | "su".
+METODO_PRIVILEGI=""
+
+# Con su dobbiamo passare al login shell di root un'unica stringa.
+# Gli argomenti arrivano esclusivamente dai nomi/flag interni dell'installer;
+# printf %q evita comunque che vengano reinterpretati dalla shell.
+quota_argomenti_shell() {
+    local arg
+    local risultato=""
+    local quotato=""
+    for arg in "$@"; do
+        printf -v quotato '%q' "$arg"
+        if [ -n "$risultato" ]; then
+            risultato+=" "
+        fi
+        risultato+="$quotato"
+    done
+    printf '%s' "$risultato"
+}
+
 # Installa in una sola operazione i pacchetti di sistema mancanti.
+# sudo resta il percorso normale. Il fallback su viene usato solo quando
+# sudo non è disponibile per l'utente. Su Debian update+install restano
+# nella stessa sessione su, così la password di root viene chiesta una volta.
+#
 # Su Arch NON eseguiamo mai «pacman -Sy»: evitiamo di aggiornare soltanto
 # il database dei pacchetti e lasciare il sistema in stato incoerente.
 installa_pacchetti_sistema() {
-    case "$(famiglia_distro)" in
-        debian)
-            sudo apt-get update &&
-            sudo apt-get install -y "$@"
+    local pacchetti_shell
+
+    case "$METODO_PRIVILEGI" in
+        sudo)
+            case "$(famiglia_distro)" in
+                debian)
+                    sudo apt-get update &&
+                    sudo apt-get install -y "$@"
+                    ;;
+                fedora)
+                    sudo dnf install -y "$@"
+                    ;;
+                arch)
+                    sudo pacman -S --needed --noconfirm "$@"
+                    ;;
+                suse)
+                    sudo zypper --non-interactive install "$@"
+                    ;;
+                *)
+                    return 1
+                    ;;
+            esac
             ;;
-        fedora)
-            sudo dnf install -y "$@"
-            ;;
-        arch)
-            sudo pacman -S --needed --noconfirm "$@"
-            ;;
-        suse)
-            sudo zypper --non-interactive install "$@"
+        su)
+            pacchetti_shell="$(quota_argomenti_shell "$@")"
+            case "$(famiglia_distro)" in
+                debian)
+                    su -c "apt-get update && apt-get install -y $pacchetti_shell"
+                    ;;
+                fedora)
+                    su -c "dnf install -y $pacchetti_shell"
+                    ;;
+                arch)
+                    su -c "pacman -S --needed --noconfirm $pacchetti_shell"
+                    ;;
+                suse)
+                    su -c "zypper --non-interactive install $pacchetti_shell"
+                    ;;
+                *)
+                    return 1
+                    ;;
+            esac
             ;;
         *)
             return 1
@@ -525,9 +583,10 @@ if [ "${#PACCHETTI_MANCANTI[@]}" -gt 0 ]; then
 
     msg_nota "Pacchetti proposti: ${PACCHETTI_MANCANTI[*]}"
 
-    if ! command -v sudo >/dev/null 2>&1; then
-        errore_fatale "Per installare automaticamente i prerequisiti serve «sudo».
-     Puoi installarli manualmente con privilegi amministrativi:
+    if ! command -v sudo >/dev/null 2>&1 \
+            && ! command -v su >/dev/null 2>&1; then
+        errore_fatale "Non è disponibile né «sudo» né «su».
+     Installa manualmente i prerequisiti con privilegi amministrativi:
        $(comando_installazione "${PACCHETTI_MANCANTI[@]}")"
     fi
 
@@ -540,8 +599,10 @@ if [ "${#PACCHETTI_MANCANTI[@]}" -gt 0 ]; then
     printf '\n'
     printf '  %sPosso installare automaticamente questi prerequisiti.%s\n' \
         "$C_TIT" "$C_END"
-    printf '  Verrà richiesta la password di amministrazione da sudo.\n'
-    printf '  Nessun altro file di sistema verrà modificato da PostiPerfetti.\n'
+    printf '  Userò sudo se il tuo account è autorizzato.\n'
+    printf '  Se sudo non è disponibile, proverò con su e la password di root.\n'
+    printf '  I privilegi amministrativi verranno usati soltanto per il gestore dei pacchetti.\n'
+    printf '  I file di PostiPerfetti resteranno nella cartella del tuo utente.\n'
     printf '\n'
     printf '  %sProcedere? [S/n] %s' "$C_TIT" "$C_END"
 
@@ -554,19 +615,44 @@ if [ "${#PACCHETTI_MANCANTI[@]}" -gt 0 ]; then
             ;;
         *)
             errore_fatale "Installazione dei prerequisiti annullata.
-     Puoi installarli manualmente con:
+     Puoi installarli manualmente con privilegi amministrativi:
        $(comando_installazione "${PACCHETTI_MANCANTI[@]}")"
             ;;
     esac
 
-    if ! sudo -v; then
-        errore_fatale "Autorizzazione amministrativa non concessa.
-     Nessuna modifica è stata eseguita da PostiPerfetti."
+    # sudo resta la prima scelta perché è il modello amministrativo comune
+    # sulle distribuzioni già collaudate. Se non autorizza l'utente, non
+    # abortiamo subito: Debian può essere configurata con account root
+    # separato e utente normale fuori dal gruppo sudo.
+    if command -v sudo >/dev/null 2>&1 && sudo -v; then
+        METODO_PRIVILEGI="sudo"
+        msg_ok "Autorizzazione amministrativa ottenuta tramite sudo"
+    elif command -v su >/dev/null 2>&1; then
+        METODO_PRIVILEGI="su"
+        printf '\n'
+        msg_nota "sudo non è disponibile per questo account."
+        msg_nota "Proseguo tramite su: verrà richiesta la password dell'account root."
+    else
+        errore_fatale "sudo non ha concesso l'autorizzazione e «su» non è disponibile.
+     Nessuna installazione automatica dei prerequisiti è possibile.
+
+     Puoi installarli manualmente con privilegi amministrativi:
+       $(comando_installazione "${PACCHETTI_MANCANTI[@]}")"
     fi
 
     msg_fase "Installazione dei prerequisiti di sistema"
 
     if ! installa_pacchetti_sistema "${PACCHETTI_MANCANTI[@]}"; then
+        if [ "$METODO_PRIVILEGI" = "su" ]; then
+            errore_fatale "Non è stato possibile completare l'installazione
+     tramite «su».
+
+     La password di root potrebbe non essere stata accettata, oppure il
+     gestore dei pacchetti ha restituito un errore.
+
+     Controlla i messaggi qui sopra e riprova."
+        fi
+
         errore_fatale "Il gestore dei pacchetti non è riuscito a completare
      l'installazione dei prerequisiti.
 
