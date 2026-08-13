@@ -1,10 +1,10 @@
-# Packaging Linux di PostiPerfetti
+# Packaging Linux di «PostiPerfetti»
 
 Questa directory contiene gli strumenti specifici per l'installazione, la
 disinstallazione e la preparazione degli asset Linux di **PostiPerfetti**.
 
 I file presenti qui non costituiscono una pipeline di release separata da
-quella Windows. La release ufficiale di PostiPerfetti è unica e comprende
+quella Windows. La release ufficiale di «PostiPerfetti» è unica e comprende
 contemporaneamente gli artefatti Windows e Linux.
 
 La procedura generale di build/release viene avviata dagli strumenti in
@@ -12,11 +12,14 @@ La procedura generale di build/release viene avviata dagli strumenti in
 anche `crea_release_linux.py`, che prepara gli asset Linux destinati alla
 medesima GitHub Release.
 
+In questo modo esiste una sola versione pubblicata di «PostiPerfetti» e i pacchetti
+delle due piattaforme restano allineati allo stesso tag di release.
+
 ## File presenti
 
 ### `install.sh`
 
-Installer Linux di PostiPerfetti.
+Installer Linux di «PostiPerfetti».
 
 La copia conservata nel repository è deliberatamente in modalità
 **sviluppo/collaudo**. Scarica il sorgente corrente dal repository e permette
@@ -36,7 +39,7 @@ In sintesi, lo script:
 - controlla le dipendenze native del plugin Qt/XCB tramite `ldd`, quando
   disponibile;
 - esegue un vero smoke test di `QApplication`;
-- installa PostiPerfetti nella directory personale dell'utente;
+- installa «PostiPerfetti» nella directory personale dell'utente;
 - crea l'integrazione con il menu applicazioni secondo gli standard XDG /
   freedesktop.org.
 
@@ -91,7 +94,7 @@ dell'archivio ufficiale.
 
 ### `uninstall.sh`
 
-Disinstaller Linux di PostiPerfetti.
+Disinstaller Linux di «PostiPerfetti».
 
 Non richiede `sudo` e rimuove soltanto file appartenenti all'installazione
 dell'utente.
@@ -188,16 +191,3 @@ python packaging/linux/crea_release_linux.py
 
 resta utile per sviluppo o diagnostica della sola fase Linux, ma non rappresenta
 la normale procedura di pubblicazione.
-
-## Regola pratica
-
-Per il lavoro ordinario:
-
-- si modifica e collauda `install.sh` / `uninstall.sh`;
-- non si modifica a mano l'installer generato dentro `dist-linux/`;
-- non si prepara separatamente una “release Linux”;
-- quando si crea la release ufficiale, la pipeline generale produce e verifica
-  nello stesso processo gli artefatti Windows e Linux.
-
-In questo modo esiste una sola versione pubblicata di PostiPerfetti e i pacchetti
-delle due piattaforme restano allineati allo stesso tag di release.
