@@ -1,0 +1,46 @@
+name: Linux installer checks
+
+on:
+  push:
+    paths:
+      - "packaging/linux/install.sh"
+      - "packaging/linux/uninstall.sh"
+      - ".github/workflows/linux-installer-checks.yml"
+  pull_request:
+    paths:
+      - "packaging/linux/install.sh"
+      - "packaging/linux/uninstall.sh"
+      - ".github/workflows/linux-installer-checks.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  shell-checks:
+    name: Bash syntax + ShellCheck
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Check Bash syntax
+        shell: bash
+        run: |
+          bash -n packaging/linux/install.sh
+          bash -n packaging/linux/uninstall.sh
+
+      - name: Install ShellCheck
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck
+          shellcheck --version
+
+      - name: Run ShellCheck
+        shell: bash
+        run: |
+          shellcheck --severity=warning \
+            packaging/linux/install.sh \
+            packaging/linux/uninstall.sh
