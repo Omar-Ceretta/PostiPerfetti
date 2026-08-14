@@ -168,7 +168,7 @@ I privilegi amministrativi, quando necessari, vengono richiesti soltanto per ins
 </details>
 
 <details>
-<summary><b>🔧 Per utenti esperti: esecuzione manuale dal sorgente</b></summary>
+<summary><b>⚒️ Per utenti esperti: esecuzione manuale dal sorgente</b></summary>
 
 <br>
 
@@ -195,7 +195,7 @@ Per installare o aggiornare normalmente il programma è preferibile usare l'`ins
 </details>
 
 <details>
-<summary><b>🆘 Risoluzione dei problemi</b></summary>
+<summary><b>❓ Risoluzione dei problemi</b></summary>
 
 <br>
 
