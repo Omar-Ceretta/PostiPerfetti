@@ -195,7 +195,7 @@ Per installare o aggiornare normalmente il programma è preferibile usare l'`ins
 </details>
 
 <details>
-<summary><b>❓ Risoluzione dei problemi</b></summary>
+<summary><b>🆘 Risoluzione dei problemi</b></summary>
 
 <br>
 
