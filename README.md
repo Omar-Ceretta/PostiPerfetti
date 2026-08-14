@@ -234,17 +234,17 @@ La Tab "🏫 AULA" mostra la disposizione grafica dell'aula. Gli arredi (LIM, ca
 
 ### 🍀 La Tab "📊 REPORT"
 
-[![Schermata "Report" con 'Tema scuro'](documentazione/immagini/report_scuro.png)]
+[![Schermata "Report" con 'Tema scuro'](documentazione/immagini/report_scuro.png)](documentazione/immagini/report_scuro.png)
 
-[![Schermata "Report" con 'Tema chiaro'](documentazione/immagini/report_chiaro.png)]
+[![Schermata "Report" con 'Tema chiaro'](documentazione/immagini/report_chiaro.png)](documentazione/immagini/report_chiaro.png)
 
 La Tab "📊 REPORT" mostra il report testuale dettagliato con tutte le coppie formate, i punteggi, le note sui vincoli e il layout dell'aula in formato testo. **Le coppie eventualmente riutilizzate saranno evidenziate in colore ocra**.
 
 ### 🍀 La Tab "📚 STORICO"
 
-[![Schermata "Storico" con 'Tema scuro'](documentazione/immagini/storico_scuro.png)]
+[![Schermata "Storico" con 'Tema scuro'](documentazione/immagini/storico_scuro.png)](documentazione/immagini/storico_scuro.png)
 
-[![Schermata "Storico" con 'Tema chiaro'](documentazione/immagini/storico_chiaro.png)]
+[![Schermata "Storico" con 'Tema chiaro'](documentazione/immagini/storico_chiaro.png)](documentazione/immagini/storico_chiaro.png)
 
 La Tab "📚 STORICO" elenca tutte le assegnazioni salvate. Volendo, puoi **modificare il 'Nome' di ogni assegnazione** facendo doppio clic su di essa. Per ciascuna inoltre potrai agire sui pulsanti:
 
@@ -254,9 +254,9 @@ La Tab "📚 STORICO" elenca tutte le assegnazioni salvate. Volendo, puoi **modi
 
 ### 🍀 La Tab "📊 STATISTICHE"
 
-[![Schermata "Statistiche" con 'Tema scuro'](documentazione/immagini/statistiche_scuro.png)]
+[![Schermata "Statistiche" con 'Tema scuro'](documentazione/immagini/statistiche_scuro.png)](documentazione/immagini/statistiche_scuro.png)
 
-[![Schermata "Statistiche" con 'Tema chiaro'](documentazione/immagini/statistiche_chiaro.png)]
+[![Schermata "Statistiche" con 'Tema chiaro'](documentazione/immagini/statistiche_chiaro.png)](documentazione/immagini/statistiche_chiaro.png)
 
 La Tab "📊 STATISTICHE" analizza l'intero "Storico" della classe (o di più classi) mostrando le coppie più frequenti, gli studenti più spesso in prima fila e le coppie mai formate. Utile per verificare l'equità e le caratteristiche delle rotazioni succedutesi nel tempo.
 
@@ -264,13 +264,11 @@ La Tab "📊 STATISTICHE" analizza l'intero "Storico" della classe (o di più cl
 
 ## [5] - FLUSSO DI LAVORO CONSIGLIATO
 
-### 🔷 Prima assegnazione dell'anno (settembre):
-
-1. **Prepara tramite "Editor studenti" il file della tua classe** con tutti i dati necessari.
+1. **Prepara tramite "Editor studenti" il file della tua classe** con tutti i dati e i vincoli necessari.
 
 2. **Seleziona il file** e clicca su "SALVA e CARICA" per abilitare le configurazioni.
 
-3. Se necessario, modifica i 'Posti per fila' della tua aula.
+3. Se è il caso, modifica i 'Posti per fila' della tua aula.
 
 4. Assegna se necessario la posizione del 'trio' e l'**eventuale preferenza per le 'coppie miste'**.
 
@@ -313,12 +311,14 @@ La Tab "📊 STATISTICHE" analizza l'intero "Storico" della classe (o di più cl
 | Documento | Cosa contiene |
 |---|---|
 | **[Installazione e avvio](documentazione/INSTALLAZIONE_AVVIO_E_DISINSTALLAZIONE.md)** | Installazione, aggiornamento e disinstallazione su Windows e Linux, passo per passo. |
-| **[CHANGELOG.md](CHANGELOG.md)** | Le novità e le correzioni di ogni versione pubblicata. |
-| **[SECURITY.md](SECURITY.md)** | Come segnalare un problema di sicurezza — e, soprattutto, **quali dati non allegare mai** a una segnalazione. |
-| **[TERZE_PARTI.md](TERZE_PARTI.md)** | Le librerie, il carattere e le icone di altri autori usati dal programma, con le rispettive licenze. |
+| **[CHANGELOG](CHANGELOG.md)** | Le novità e le correzioni di ogni versione pubblicata. |
+| **[SECURITY](SECURITY.md)** | Come segnalare un problema di sicurezza — e, soprattutto, **quali dati non allegare mai** a una segnalazione. |
+| **[TERZE_PARTI](TERZE_PARTI.md)** | Le librerie, il carattere e le icone di altri autori usati dal programma, con le rispettive licenze. |
 | **[LICENSE](LICENSE)** | Il testo completo della GNU GPL versione 3. |
 
-La documentazione tecnica più estesa (funzionamento dell'algoritmo, mappa dei moduli, trattamento dei dati) si trova nella cartella **[`documentazione/`](documentazione/)**.
+~ ~ ~ ~ ~ ~ ~ ~ ~
+
+😎 La documentazione tecnica più estesa (funzionamento dell'algoritmo, mappa dei moduli, trattamento dei dati) si trova nella cartella **[`documentazione/`](documentazione/)**.
 
 ------
 
