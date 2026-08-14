@@ -1,4 +1,4 @@
-# Come funziona «PostiPerfetti»
+# ⚙️ Come funziona «PostiPerfetti»
 
 > **Versione di riferimento:** 1.0.
 > 
@@ -9,7 +9,7 @@
 
 ## 1. L'idea generale
 
-««PostiPerfetti»» non prende semplicemente gli studenti in un elenco classe e li mescola.
+«PostiPerfetti» non prende semplicemente gli studenti da un elenco classe e li mescola.
 
 Quando viene richiesta un'assegnazione, il programma tiene insieme informazioni di natura diversa:
 
@@ -86,7 +86,7 @@ Da queste ricava una **memoria delle vicinanze precedenti**, utilizzata per favo
 
 Le modalità **coppie** e **terzetti** possiedono memorie separate, perché una vicinanza nata in una modalità non deve modificare il comportamento dell'altra.
 
-> Nel codice questa memoria delle vicinanze già usate viene indicata con il termine tecnico *blacklist*. Qui se ne parlerà con l'espressione **memoria dei riusi**.
+> Nel codice questa memoria delle vicinanze già usate viene indicata con il termine tecnico *blacklist*, interpretabile come una **memoria dei riusi**.
 
 ### L'aula
 
@@ -110,7 +110,7 @@ Il programma può quindi:
 4. confrontarle;
 5. scegliere quella preferibile.
 
-Non esiste perciò un unico “lancio casuale” che decide tutto.
+Non esiste perciò un unico “lancio casuale” che decide tutto in modo randomico.
 
 ---
 
@@ -152,7 +152,7 @@ Sono **quattro configurazioni progressive dello stesso sistema di ricerca**.
 |---|---|---|
 | **T1 — Tentativo 1** | Tiene conto di tutte le preferenze disponibili. | Escluse. |
 | **T2 — Tentativo 2** | Rinuncia alle preferenze più deboli di livello 1. | Escluse. |
-| **T3 — Tentativo 3** | Rinuncia anche alle preferenze intermedie; conserva ancora le più forti. | Escluse. |
+| **T3 — Tentativo 3** | Rinuncia anche alle preferenze intermedie (di livello 2); conserva ancora le più forti. | Escluse. |
 | **T4 — Tentativo 4** | Mantiene soltanto i vincoli assoluti e fisici. | Ammesse solo se necessarie, ma fortemente penalizzate. |
 
 In forma intuitiva:
@@ -171,7 +171,7 @@ T4  cerca una soluzione possibile senza violare i vincoli assoluti
 ```
 
 T4 **non significa “vale tutto”**.  
-Incompatibilità di livello 3, PRIMA, FISSO e geometria dell'aula continuano a valere.
+Incompatibilità di livello 3, posizione PRIMA, FISSO e geometria dell'aula sono rigorosamente mantenuti.
 
 ---
 
@@ -184,11 +184,11 @@ Nei primi tre tentativi le vicinanze vietate in senso assoluto sono, di fatto, l
 
 T1, T2 e T3 cambiano soprattutto **quanto una possibilità è considerata desiderabile e in quale ordine viene provata**, non l'insieme fondamentale delle vicinanze ammissibili.
 
-Perciò, se T1 ha esplorato **completamente** tutte le combinazioni consentite e ha dimostrato che nessuna disposizione completa esiste, ripetere la stessa esplorazione con T2 e T3 non potrebbe creare una soluzione nuova.
+Perciò, se T1 ha esplorato **completamente** tutte le combinazioni consentite e ha dimostrato che nessuna disposizione completa esiste, ripetere la stessa esplorazione con T2 e T3 non creerebbe alcuna soluzione nuova.
 
-In quel caso il programma può passare direttamente a T4, dove cambia davvero la regola sui riusi.
+In quel caso il programma passa direttamente a T4, dove cambia davvero la regola sui riusi.
 
-Se invece T1 si è fermato perché ha raggiunto un limite protettivo della ricerca, non esiste una dimostrazione di impossibilità: T2 e T3 vengono ancora provati.
+Se, invece, T1 si è fermato perché ha raggiunto un limite protettivo della ricerca (ad esempio perché è scaduto il budget temporale a disposizione), non esiste una dimostrazione di impossibilità: T2 e T3 vengono pertanto ancora provati.
 
 ---
 
@@ -196,7 +196,7 @@ Se invece T1 si è fermato perché ha raggiunto un limite protettivo della ricer
 
 Ogni possibile vicinanza riceve una valutazione costruita **per strati successivi**.
 
-In termini semplici:
+In termini semplici, le considerazioni che fa l'algoritmo sono le seguenti:
 
 ```text
 relazioni fra i due studenti
@@ -226,7 +226,7 @@ L'incompatibilità di livello 3 viene esclusa **prima** di qualunque confronto n
 
 ---
 
-## 8. Per chi vuole andare più a fondo: il punteggio in forma matematica
+## 8. Per approfondire: il punteggio in forma matematica
 
 Questa sezione ha lo scopo di mostrare in forma compatta come diverse informazioni vengono trasformate in un punteggio.
 
@@ -245,7 +245,7 @@ dove:
 - $`P_T`$ rappresenta le preferenze di posizione;
 - $`r(a,b)`$ è il numero di utilizzi precedenti di quella vicinanza.
 
-Le incompatibilità e le affinità usano una scala crescente:
+Le incompatibilità e le affinità usano una *scala crescente*:
 
 ```math
 m_1=1,\qquad m_2=4,\qquad m_3=20
@@ -287,13 +287,13 @@ Nei primi tre Tentativi, inoltre, una vicinanza già usata viene esclusa. Nel qu
 
 ---
 
-## 9. Dalle singole vicinanze alla disposizione completa: la ricerca con ritorno indietro
+## 9. Dalle singole vicinanze alla disposizione completa: la ricerca con "ritorno indietro"
 
 Avere molte coppie o terzetti “buoni” non basta. Gli stessi studenti non possono essere usati due volte e tutti devono trovare posto.
 
 Il programma usa quindi una **ricerca con ritorno indietro**, chiamata in informatica *backtracking*.
 
-In termini semplici:
+In termini semplici, l'algoritmo:
 
 1. sceglie un gruppo promettente;
 2. considera occupati i suoi membri;
@@ -340,9 +340,9 @@ Questa ottimizzazione:
 
 T4 introduce il vero cambio di regime.
 
-Le vicinanze già utilizzate non vengono più escluse: diventano opzioni costose, da usare soltanto quando servono.
+Le vicinanze già utilizzate non vengono più escluse: diventano opzioni "costose", da usare solo quando servono.
 
-Inoltre T4 non si affida a un solo ordine di esplorazione. Per ogni soluzione candidata esegue **15 ripartenze** con ordini differenti.
+Inoltre T4 non si affida a un unico ordine di esplorazione. Per ogni soluzione candidata esegue **15 ripartenze** con ordini differenti.
 
 Questi ordini sono ottenuti attraverso un **seme numerico di casualità** (*seed*), in modo che la variazione sia controllata e riproducibile.
 
@@ -357,11 +357,11 @@ stessa situazione iniziale
 scegli la migliore soluzione trovata
 ```
 
-La casualità serve quindi a esplorare strade diverse, non a rendere il programma imprevedibile: a parità di dati e seme numerico, il percorso può essere riprodotto.
+La casualità serve quindi a esplorare strade diverse, non a rendere il programma imprevedibile: a parità di dati e seme numerico, il percorso può essere sempre riprodotto.
 
 ---
 
-## 12. Coppie: che cosa succede concretamente
+## 12. Abbinamenti "a coppie": che cosa succede concretamente
 
 Nella modalità a coppie il percorso, semplificato, è questo:
 
@@ -377,7 +377,7 @@ Quindi la modalità “a coppie” può contenere **un trio di compensazione** q
 
 ---
 
-## 13. Terzetti: gruppi ordinati, non semplici insiemi
+## 13. Abbinamenti "a terzetti": gruppi ordinati, non semplici insiemi
 
 Nella modalità a terzetti gli studenti di un gruppo sono disposti in fila.
 
@@ -390,11 +390,11 @@ Per esempio:
 le adiacenze reali sono:
 
 ```text
-A—B
-B—C
+A — B
+B — C
 ```
 
-ma **A e C non sono considerati vicini**.
+poiché **A e C non sono considerati vicini**.
 
 Per questo anche l'ordine interno di un terzetto o di un quartetto fa parte della soluzione.
 
