@@ -180,9 +180,9 @@ Dopo che avrai caricato la classe con "SALVA e CARICA", diventeranno attivi - ne
 
 ## [3] - AVVIO DELL'ASSEGNAZIONE
 
-Quando il file della classe sarà pronto e caricato, clicca su **"🚀 Assegna i posti!"**. 
+Quando il file della classe sarà pronto e caricato, clicca su **"Assegna i posti!"**. 
 
-💥 **L'algoritmo lavorerà in 4 tentativi progressivi, rispettando SEMPRE i vincoli "ASSOLUTI" (= 'posizione PRIMA', 'posizione FISSO' e 'incompatibilità 3') e facendo il possibile per NON RIPETERE COPPIE GIÀ FORMATE**.
+🪄 **L'algoritmo lavorerà in 4 tentativi progressivi, rispettando SEMPRE i vincoli "ASSOLUTI" (= 'posizione PRIMA', 'posizione FISSO' e 'incompatibilità 3') e facendo il possibile per NON RIPETERE COPPIE GIÀ FORMATE**.
 
 | **Tentativo** | **Strategia**                                                |
 | ------------- | ------------------------------------------------------------ |
@@ -203,8 +203,8 @@ Quando il file della classe sarà pronto e caricato, clicca su **"🚀 Assegna i
 > 💡 **L'opzione *Mensile* è consigliata per fare le prime prove e prendere confidenza con il programma**.
 > È l'ideale per capire come i vincoli impostati si traducano concretamente in assegnazioni, e ti consentirà di capire in maniera pragmatica come l'algoritmo, con la progressiva crescita delle assegnazioni salvate, metta in pratica la sua logica "flessibile". In questi primi approcci a «PostiPerfetti» imparerai il modo migliore per modificare i vincoli (diminuendone o aumentandone l'intensità) affinché il risultato rispecchi al meglio i tuoi desiderata.
 >
-> **L'opzione *Annuale* è invece consigliata quando sarai più consapevole di come lavora il programma** e di quali sono i risultati che esso è in grado di fornirti.
-> Tieni presente che, al termine di un'elaborazione di questo tipo, si aprirà un'**anteprima** che ti mostrerà l'intera annata **mese per mese**, con le coppie formate e un Report con tutte le informazioni necessarie sul tipo di abbinamenti creati. Se ti convincerà, potrai cliccare su **"Accetta e salva nello Storico"** e tutti i mesi verranno salvati in ordine; altrimenti cliccando su **"Scarta tutto"** **non verrà salvato nulla** (= lo "Storico" resterà esattamente com'era). Mentre il programma lavora puoi sempre fermarlo con il pulsante **"⛔ Annulla"**.
+> 🪄 **L'opzione *Annuale* è invece consigliata quando sarai più consapevole di come lavora il programma** e di quali sono i risultati che esso è in grado di fornirti.
+> Tieni presente che, al termine di un'elaborazione di questo tipo, si aprirà un'**anteprima** che ti mostrerà l'intera annata **mese per mese**, con le coppie formate e un Report con tutte le informazioni necessarie sul tipo di abbinamenti creati. Se ti convincerà, potrai cliccare su **"Accetta e salva nello Storico"** e tutti i mesi verranno salvati in ordine; altrimenti cliccando su **"Scarta tutto"** **non verrà salvato nulla** (= lo "Storico" resterà esattamente com'era). Mentre il programma lavora puoi sempre fermarlo con il pulsante **"Annulla"**.
 >
 > ⏳ **Quanto tempo richiede e perché conviene** — Preparare un'intera annata richiede **da pochi minuti fino a un MASSIMO di 10 MINUTI** per le classi più difficili. Si tratta, tuttavia, di tempo ben speso: non solo ottieni in un colpo solo (nella maggior parte dei casi) **tutti i mesi dell'anno** — e, quando proprio non è possibile, comunque **diversi mesi** — ma soprattutto **l'algoritmo può vagliare molte più combinazioni** rispetto all'assegnazione mese per mese: prova infatti tante "annate" diverse e ti propone quella con **meno ripetizioni di coppie**, meno incompatibilità tollerate e un maggior numero di affinità soddisfatte.
 
