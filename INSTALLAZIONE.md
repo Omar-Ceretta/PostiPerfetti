@@ -7,6 +7,6 @@ Le istruzioni complete di installazione — per **Windows** e **Linux** — si t
 
 ### 👉 [Vai alla guida di installazione](documentazione/INSTALLAZIONE_AVVIO_E_DISINSTALLAZIONE.md)
 
-📦 Per scaricare l'ultima versione disponibile, vai invece alla pagina delle **[Release](https://github.com/Omar-Ceretta/PostiPerfetti/releases/latest)**.
+### 📥 Per scaricare l'ultima versione, vai alla pagina delle **[Release](https://github.com/Omar-Ceretta/PostiPerfetti/releases/latest)**.
 
 ---
