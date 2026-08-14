@@ -32,7 +32,7 @@
 
 📦 **[Scarica «PostiPerfetti» per Windows e Linux](https://github.com/Omar-Ceretta/PostiPerfetti/releases/latest)**
 
-💬 **[Come si installa, si avvia e si disinstalla](documentazione/INSTALLAZIONE_AVVIO_E_DISINSTALLAZIONE.md)** — Windows e Linux, passo per passo.
+💬 **[Come si installa, si avvia e si disinstalla](documentazione/INSTALLAZIONE_AVVIO_E_DISINSTALLAZIONE.md)** — per Windows e Linux, tutorial passo per passo.
 
 ------
 
