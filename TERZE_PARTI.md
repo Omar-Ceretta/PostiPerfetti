@@ -6,7 +6,7 @@ Il programma tuttavia non è costituito solo di codice proprio: usa alcune libre
 Questo documento elenca quei componenti e dice dove trovarne il testo di licenza completo.
 
 > **A chi serve questo documento.**
-> A chi ridistribuisce «PostiPerfetti», a chi lo modifica, a chi voglia verificare la correttezza delle attribuzioni.
+> A chi ridistribuisce «PostiPerfetti», a chi lo modifica, a chi voglia verificare le attribuzioni.
 
 ---
 
