@@ -1,8 +1,4 @@
-<p align="center">
-  <img src="documentazione/immagini/github.png"
-       alt="PostiPerfetti"
-       width="800">
-</p>
+[![PostiPerfetti](documentazione/immagini/github.png)](#)
 
 # «PostiPerfetti»
 
