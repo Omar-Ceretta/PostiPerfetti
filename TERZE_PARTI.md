@@ -61,7 +61,7 @@ Lucide deriva da Feather Icons (Copyright (c) 2013-2022 Cole Bemis), a sua volta
 
 ## 4. Strumenti usati solo per lo sviluppo
 
-Questi **non** vengono distribuiti con il programma. Sono elencati per completezza.
+Questi **non** vengono distribuiti con il programma, ma vengono elencati per completezza:
 
 | Componente | Versione | Licenza | Ruolo |
 |---|---|---|---|
