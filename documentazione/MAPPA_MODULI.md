@@ -1,4 +1,4 @@
-# Mappa dei moduli di «PostiPerfetti»
+# ⭄ Mappa dei moduli di «PostiPerfetti»
 
 > **Versione di riferimento:** 1.0.
 > 
