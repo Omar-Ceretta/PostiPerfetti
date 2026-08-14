@@ -1449,10 +1449,10 @@ class EditorStudentiWidget(QWidget):
 
         self._label_placeholder = QLabel(
             "NESSUN FILE SELEZIONATO.\n\n"
-            "• Clicca su 'Apri cartella' per creare un nuovo file .txt in formato BASE con\n"
+            "• Clicca su 'Apri cartella' per creare un nuovo file classe in formato BASE con\n"
             "'Cognome;Nome;M/F' degli allievi (uno per riga, in ordine alfabetico).\n\n"
             "• Clicca su 'Seleziona classe' per modificare posizione e vincoli degli studenti\n"
-            "di una classe presente in un file .txt già creato in precedenza.\n\n"
+            "di una classe presente in un file testuale già creato in precedenza.\n\n"
         )
         self._label_placeholder.setAlignment(Qt.AlignCenter)
         self._label_placeholder.setStyleSheet(
@@ -1484,7 +1484,7 @@ class EditorStudentiWidget(QWidget):
         self.btn_apri_cartella.setMinimumHeight(40)
         self.btn_apri_cartella.setToolTip(
             "Apre la cartella delle classi nel file manager del sistema.\n"
-            "Qui puoi creare un nuovo file .txt con la lista degli studenti."
+            "Qui puoi creare un nuovo file di testo con la lista degli studenti."
         )
         self.btn_apri_cartella.clicked.connect(self._apri_cartella_classi)
         header.addWidget(self.btn_apri_cartella)
@@ -1503,7 +1503,7 @@ class EditorStudentiWidget(QWidget):
         applica_icona(self.btn_carica, "file-search-corner", 18)
         self.btn_carica.setMinimumHeight(40)
         self.btn_carica.setToolTip(
-            "Seleziona un file .txt dalla cartella classi\n"
+            "Seleziona un file di tesot dalla cartella classi\n"
             "per modificare posizione e vincoli degli studenti"
         )
         self.btn_carica.clicked.connect(self._carica_file)
@@ -1591,9 +1591,9 @@ class EditorStudentiWidget(QWidget):
         )
 
         self._banner_formato_base_testo = QLabel(
-            "FORMATO BASE — Verifica il genere e la posizione di ogni "
-            "studente. Imposta quindi le necessarie incompatibilità "
-            "e affinità (di livello 1, 2 o 3) tra gli allievi. "
+            "FORMATO BASE — Verifica genere e posizione di ogni "
+            "studente, e imposta le necessarie incompatibilità "
+            "e affinità (di livello 1, 2 o 3). "
             "Clicca infine su «SALVA e CARICA»."
         )
         self._banner_formato_base_testo.setWordWrap(True)
