@@ -61,7 +61,7 @@
 >
 > ### 2 ~ Carica il file appena creato
 
-**Clicca sul pulsante "📝 Seleziona classe"** per scegliere e caricare nel programma il file della classe che hai appena creato, in modo da poter aggiungere - grazie al programma stesso - tutti i vincoli necessari per gli studenti.
+**Clicca sul pulsante "Seleziona classe"** per scegliere il file che hai appena creato, in modo da poter aggiungere - grazie al programma stesso - tutti i vincoli necessari per gli studenti.
 
 > [!TIP]
 >
@@ -84,19 +84,17 @@ Per ogni studente, **usa il menu a tendina per selezionarne la *posizione***:
 >
 > **Come funziona:**
 > - Lo studente FISSO viene **sempre assegnato al primo banco a sinistra della prima fila**, vicino alla cattedra. La sua posizione non cambia da una rotazione all'altra.
-> - **L'algoritmo sceglie automaticamente il vicino diretto del FISSO**, bilanciando affinità, incompatibilità, vincoli di posizione, composizione dei gruppi e rotazioni già registrate nello Storico. Favorisce un allievo mai utilizzato prima in quel ruolo, tuttavia, quando tutti i candidati leciti sono già stati impiegati oppure altri vincoli lo rendono necessario, può riutilizzarne uno, segnalandolo esplicitamente nel Report. Anche nelle disposizioni "a coppie" il vicino diretto del FISSO avrà a sua volta un altro compagno al banco adiacente: in questo modo, se l'allievo BES dovesse temporaneamente uscire dall'aula, il compagno non resta isolato.
+> - **L'algoritmo sceglie automaticamente il vicino diretto del FISSO**, bilanciando affinità, incompatibilità, vincoli di posizione e rotazioni già registrate nello Storico. Favorisce un allievo mai utilizzato prima in quel ruolo; tuttavia, quando tutti i candidati leciti sono già stati impiegati oppure altri vincoli lo rendono necessario, può riutilizzarne uno, segnalandolo esplicitamente nel Report. Anche nelle disposizioni "a coppie" il vicino diretto del FISSO avrà a sua volta un altro compagno al banco adiacente: in questo modo, se l'allievo BES dovesse temporaneamente uscire dall'aula, il compagno non resta isolato.
 
 > - **NOTA 1: è possibile designare al massimo 1 studente FISSO** per classe.
 >
-> - **NOTA 2: la gestione del resto del gruppo classe dipende dalla geometria scelta.** In modalità **A coppie**, senza FISSO il trio si forma quando la classe è in numero dispari; con un FISSO, i rimanenti N−1 studenti sono distribuiti a coppie, perciò il trio si forma quando la classe è in numero pari. In modalità **A terzetti**, invece, il FISSO è membro del primo terzetto: il "blocco finale" dipende dal resto della divisione del numero degli studenti per 3 — nessun blocco se il resto è 0, un quartetto se è 1, una coppia (oppure due quartetti, se selezionati) se è 2.
->
-> - **NOTA 3:** quando uno studente è impostato come FISSO, le sezioni "Incompatibilità" e "Affinità" nella sua scheda vengono **disabilitate**. Per influenzare chi gli siederà accanto, è sufficiente impostare i vincoli **sugli altri studenti** (ad es. impostando una "*Affinità di livello 3*" nelle schede dei compagni desiderati).
+> - **NOTA 2:** quando uno studente è impostato come FISSO, le sezioni "Incompatibilità" e "Affinità" nella sua scheda vengono **disabilitate**. Per influenzare chi gli siederà accanto, è sufficiente impostare i vincoli **sugli altri studenti** (ad es. impostando una "*Affinità di livello 3*" nelle schede dei compagni desiderati).
 
 > [!TIP]
 >
 > ### 4 ~ Aggiungi le INCOMPATIBILITÀ
 
-**Se è il caso di tenere SEPARATI alcuni allievi** (che in banco assieme rischierebbero di distrarsi o disturbare), **è consigliabile stabilire tra loro una "incompatibilità"**. 
+**Se è opportuno tenere SEPARATI alcuni allievi** (che in banco assieme rischierebbero di distrarsi o disturbare), **è consigliabile stabilire tra loro una "incompatibilità"**. 
 
 Clicca su **"➕ Aggiungi INCOMPATIBILITÀ"** nella scheda dello studente. Apparirà una riga con:
 
@@ -115,7 +113,7 @@ Clicca su **"➕ Aggiungi INCOMPATIBILITÀ"** nella scheda dello studente. Appar
 >
 > ### 5 ~ Aggiungi le AFFINITÀ
 
-**Se è il caso di tenere UNITI certi allievi** (per "bilanciarne" i livelli e promuovere la collaborazione, per facilitare l'integrazione o altre ragioni), **è utile stabilire tra loro una "affinità"**. 
+**Se è opportuno tenere UNITI certi allievi** (per "bilanciarne" i livelli e promuovere la collaborazione, per facilitare l'integrazione o altre ragioni), **è utile stabilire tra loro una "affinità"**. 
 
 Segui la stessa procedura delle incompatibilità, usando **"➕ Aggiungi AFFINITÀ"**. 
 
@@ -145,11 +143,13 @@ Clicca il bottone **"Rimuovi"** accanto al vincolo da eliminare. Il vincolo spec
 >
 > ### 8 ~ Verifica e salva
 
-- Clicca su **"👁️ Preview file generato"** per vedere un'anteprima del file della classe che verrà creato.
+- (OPZIONALE) Clicca su "**Preview file generato**" per vedere un'anteprima del file della classe che verrà creato.
 
-- Clicca su **"💾 SALVA e CARICA"** per salvare il file della classe.
+- (OPZIONALE) Clicca su "**Dettaglio vincoli**" per avere una panoramica completa di tutti i vincoli inseriti.
 
-- La classe verrà caricata nel programma, **pronta per avviare le assegnazioni.**
+- Clicca infine su **"SALVA e CARICA"** per salvare il file della classe.
+
+A questo punto la classe verrà caricata nel programma e sarà **pronta per avviare le assegnazioni.**
 
 ------
 
@@ -157,31 +157,25 @@ Clicca il bottone **"Rimuovi"** accanto al vincolo da eliminare. Il vincolo spec
 >
 > ### ⚙️ Modifica dei vincoli in corso d'anno
 >
-> Se in futuro vorrai rimuovere, aggiungere o cambiare dei vincoli, basterà ricaricare nell'Editor il file della classe con il pulsante **"📝 Seleziona classe"**. Le schede verranno popolate automaticamente con tutti i dati esistenti di ciascun allievo, pronte per essere modificate. 
+> Se in futuro vorrai rimuovere, aggiungere o cambiare dei vincoli, basterà ricaricare nell'Editor il file della classe con il pulsante **"Seleziona classe"**. Le schede verranno popolate automaticamente con tutti i dati esistenti di ciascun allievo, pronte per essere modificate. 
 >
-> Se invece bisognasse rimuovere o aggiungere un allievo (per trasferimento, cambio sezione, bocciatura...), dovrai aprire manualmente il file di testo della classe e cancellarne la riga, oppure aggiungerlo (con `Cognome;Nome;Genere`) nella posizione alfabeticamente corretta.
+> Se invece bisognasse rimuovere o aggiungere un allievo (per trasferimento, cambio sezione, bocciatura...), dovrai aprire manualmente il file di testo della classe e cancellarne la riga, oppure aggiungerlo (con `Cognome;Nome;Genere`).
 
 ------
 
 ## [2] - CARICAMENTO E CONFIGURAZIONE
 
-### 🔷 **Passo 1 — Carica il file:** 
+### **Configura le opzioni**:
 
-- Una volta preparato il tuo file con tutti i vincoli, sei già pronto al "Passo 2". 
+Dopo che avrai caricato la classe con "SALVA e CARICA", diventeranno attivi - nel pannello a sinistra - i riquadri "**Configurazione aula**", "**Genere misto**" e "**Modalità assegnazione**". Nel caso sia necessario, comparirà anche la voce "**Gestione numero dispari**".
 
-  Se invece vuoi effettuare le assegnazioni per un'altra classe, clicca sul pulsante **"📝 Seleziona classe"** presente nella tab "✏️ Editor studenti". Il programma mostrerà il numero di studenti caricati e **configurerà automaticamente il numero di file di banchi** necessarie.
+- **"Configurazione aula"**: puoi fare in modo che gli allievi siano adiacenti "**a coppie**" oppure "**a terzetti**". Il programma calcolerà automaticamente il numero minimo di file necessarie per la tua classe. Puoi comunque modificare manualmente (con i pulsanti + e −) il **numero di banchi per fila**.
 
-### 🔷 **Passo 2 — Configura le opzioni:** 
+- **"Preferisci coppie miste (M+F)**": se attivi questo flag, **l'algoritmo preferirà coppie maschio-femmina** (non è un obbligo assoluto, ma un BONUS forte).
 
-I box **"Configurazione aula"**, **"Opzioni vincoli"** e **"Rotazione automatica"** diventano attivi solo dopo aver caricato una classe con "💾 SALVA e CARICA".
+- **"Modalità assegnazione"**: puoi generare un solo mese alla volta ("modalità **Mensile**"), oppure decidere di generare più mesi in un colpo solo ("modalità **Annuale**), fino a un massimo di 10. **Questa seconda opzione è quella consigliata**, non solo perché copre, idealmente, tutti i mesi dell'anno scolastico, da settembre a giugno, ma soprattutto perché è gestita dall'algoritmo in un modo più sofisticato rispetto alla modalità "Mensile", e può fornire assegnazioni più equilibrate e in linea con i vincoli da te impostati.
 
-- **"Configurazione aula"**: il programma calcola automaticamente il numero minimo di file necessarie per la tua classe. Puoi comunque modificarlo manualmente con i pulsanti + e −. Verrai avvertito in caso di 'posti insufficienti'.
-
-- **"Gestione numero dispari"**: se è necessario un banco da 3 (trio), potrai **scegliere in quale fila posizionarlo**: 'prima', 'ultima' o 'centrale'. **Nota:** con uno studente FISSO, il trio si attiva quando la classe è in numero pari. Se decidi di disporlo in posizione 'prima', troverai in prima fila 4 allievi raggruppati (= l'allievo FISSO + il 'trio'); se invece lo disporrai in posizione 'centrale' o 'ultima', troverai in prima fila 3 allievi raggruppati (= l'allievo FISSO + una coppia) e il trio in posizione 'centrale' o 'ultima'.
-
-- **"Preferisci coppie miste (M+F)**": se attivi questo flag, **l'algoritmo preferirà coppie maschio-femmina** (non è un obbligo assoluto, ma un bonus forte).
-
-- **"Rotazione automatica"**: l'algoritmo consulta **sempre** lo Storico delle assegnazioni salvate per evitare di ripetere coppie già formate. Alla prima assegnazione dell'anno, lo Storico è vuoto e quindi non ha effetto; dalle assegnazioni successive in poi, le coppie precedenti vengono automaticamente evitate.
+- **"Gestione numero dispari"**: se è necessario un banco da 3 (trio), potrai **scegliere in quale posizione inserirlo**: 'davanti', 'al centro' o 'in fondo'.
 
 ------
 
