@@ -1,4 +1,4 @@
-# Changelog di «PostiPerfetti»
+# ↻ Changelog di «PostiPerfetti»
 
 Questo documento raccoglie le modifiche rilevanti delle versioni pubbliche di «PostiPerfetti».
 Il progetto entra nella propria storia di Release a partire dalla versione 1.0.
