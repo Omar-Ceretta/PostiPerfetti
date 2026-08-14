@@ -55,6 +55,4 @@ Il progetto entra nella propria storia di Release a partire dalla versione 1.0.
 - aggiunte indicazioni per la gestione prudente di file-classe, Storico,
   Report, esportazioni e log;
 - aggiornata la documentazione Linux alla nuova procedura di installazione;
-- rimossa l'indicazione di disattivare temporaneamente l'antivirus su
-  Windows;
 - aggiunta una policy per le segnalazioni di sicurezza.
