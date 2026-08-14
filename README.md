@@ -42,20 +42,20 @@
 >
 > ### **1 ~ Prepara il file di testo della classe**
 
-**Dopo aver installato e avviato il programma, clicca sul pulsante "📂 Apri cartella"**. Si aprirà la cartella che contiene le classi. Con un normale editor di testo — ad es. "Blocco note" (Notepad) su Windows o un editor equivalente su Linux — **crea un nuovo file di testo in formato `.txt` con il nome della tua classe** (ad es. `"Classe1A.txt"` oppure `"Classe1A_2026-27.txt"`).
+**Dopo aver installato e avviato il programma, clicca sul pulsante "Apri cartella"**. Il tuo file manager ti mostrerà la cartella che contiene le classi. Con un normale editor di testo — ad es. "Blocco note" (Notepad) su Windows o un editor equivalente su Linux — **crea un nuovo file di testo in formato `.txt` con il nome della tua classe** (ad es. `"Classe 1A.txt"`).
 
-> 💡 **Nota per Windows:** l'estensione `.txt` potrebbe essere nascosta, quindi il file potrebbe apparire semplicemente come `"Classe1A"`. È normale. NON usare programmi di videoscrittura come Microsoft Word o LibreOffice Writer: il file deve essere salvato come semplice testo.
+> 💡 **Nota per Windows:** l'estensione `.txt` potrebbe essere nascosta, quindi è possibile che il file ti appaia semplicemente come `"Classe 1A"`. È normale. NON usare invece programmi di videoscrittura come Microsoft Word o LibreOffice Writer: il file deve essere salvato come semplice testo.
 
-**Dentro scrivi solo `"Cognome;Nome;Genere"`** (= M/F) **di ogni studente, uno per riga, in ordine alfabetico**. Separa i tre elementi con due punti e virgola (";") e non usare spazi, come nel seguente esempio:
+**Dentro scrivi solo `"Cognome;Nome;Genere"`** **di ogni studente, uno per riga, in ordine alfabetico**. Separa i tre elementi con due punti e virgola (";") e non usare spazi, come nel seguente esempio:
 
 | **Esempio di file base** |
 | ------------------------ |
 | `Alighieri;Dante;M`      |
-| `Austen;Jane;F`          |
-| `Boccaccio;Giovanni;M`   |
-| `Brontë;Charlotte;F`     |
-| `Calvino;Italo;M`        |
-| *eccetera...*            |
+| `Brontë;Charlotte;F`          |
+| `D'Annunzio;Gabriele;M`   |
+| `García Márquez;Gabriel;M`     |
+| `Ortese;Anna Maria;F`        |
+| *ecc.*            |
 
 > [!TIP]
 >
