@@ -173,9 +173,9 @@ Dopo che avrai caricato la classe con "SALVA e CARICA", diventeranno attivi - ne
 
 - **"Preferisci coppie miste (M+F)**": se attivi questo flag, **l'algoritmo preferirà coppie maschio-femmina** (non è un obbligo assoluto, ma un BONUS forte).
 
-- **"Modalità assegnazione"**: puoi generare un solo mese alla volta ("modalità **Mensile**"), oppure decidere di generare più mesi in un colpo solo ("modalità **Annuale**), fino a un massimo di 10. **Questa seconda opzione è quella consigliata**, non solo perché copre, idealmente, tutti i mesi dell'anno scolastico, da settembre a giugno, ma soprattutto perché è gestita dall'algoritmo in un modo più sofisticato rispetto alla modalità "Mensile", e può fornire assegnazioni più equilibrate e in linea con i vincoli da te impostati.
+- **"Modalità assegnazione"**: puoi generare un solo mese alla volta (con la "modalità **Mensile**"), oppure decidere di generare più mesi in un colpo solo (con la "modalità **Annuale**"), fino a un massimo di 10. **Questa seconda opzione è quella consigliata**, non solo perché copre idealmente tutti i mesi dell'anno scolastico, da settembre a giugno, ma soprattutto perché è gestita dall'algoritmo in un modo più sofisticato rispetto alla modalità "Mensile", e può fornire assegnazioni più equilibrate e maggiormente in linea con i vincoli da te impostati.
 
-- **"Gestione numero dispari"**: se è necessario un banco da 3 (trio), potrai **scegliere in quale posizione inserirlo**: 'davanti', 'al centro' o 'in fondo'.
+- **"Gestione numero dispari"**: se è necessario un banco da 3 (trio), potrai **scegliere in quale posizione inserirlo**: 'davanti', 'al centro' o 'in fondo' all'aula.
 
 ------
 
