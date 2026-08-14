@@ -234,17 +234,17 @@ La Tab "🏫 AULA" mostra la disposizione grafica dell'aula. Gli arredi (LIM, ca
 
 ### 🍀 La Tab "📊 REPORT"
 
-[![Schermata "Report" con 'Tema scuro'](documentazione/immagini/002_report-scuro.png)]
+[![Schermata "Report" con 'Tema scuro'](documentazione/immagini/report_scuro.png)]
 
-[![Schermata "Report" con 'Tema chiaro'](documentazione/immagini/002_report-chiaro.png)]
+[![Schermata "Report" con 'Tema chiaro'](documentazione/immagini/report_chiaro.png)]
 
 La Tab "📊 REPORT" mostra il report testuale dettagliato con tutte le coppie formate, i punteggi, le note sui vincoli e il layout dell'aula in formato testo. **Le coppie eventualmente riutilizzate saranno evidenziate in colore ocra**.
 
 ### 🍀 La Tab "📚 STORICO"
 
-[![Schermata "Storico" con 'Tema scuro'](documentazione/immagini/003_storico-scuro.png)]
+[![Schermata "Storico" con 'Tema scuro'](documentazione/immagini/storico_scuro.png)]
 
-[![Schermata "Storico" con 'Tema chiaro'](documentazione/immagini/003_storico-chiaro.png)]
+[![Schermata "Storico" con 'Tema chiaro'](documentazione/immagini/storico_chiaro.png)]
 
 La Tab "📚 STORICO" elenca tutte le assegnazioni salvate. Volendo, puoi **modificare il 'Nome' di ogni assegnazione** facendo doppio clic su di essa. Per ciascuna inoltre potrai agire sui pulsanti:
 
@@ -254,9 +254,9 @@ La Tab "📚 STORICO" elenca tutte le assegnazioni salvate. Volendo, puoi **modi
 
 ### 🍀 La Tab "📊 STATISTICHE"
 
-[![Schermata "Statistiche" con 'Tema scuro'](documentazione/immagini/004_statistiche-scuro.png)]
+[![Schermata "Statistiche" con 'Tema scuro'](documentazione/immagini/statistiche_scuro.png)]
 
-[![Schermata "Statistiche" con 'Tema chiaro'](documentazione/immagini/004_statistiche-chiaro.png)]
+[![Schermata "Statistiche" con 'Tema chiaro'](documentazione/immagini/statistiche_chiaro.png)]
 
 La Tab "📊 STATISTICHE" analizza l'intero "Storico" della classe (o di più classi) mostrando le coppie più frequenti, gli studenti più spesso in prima fila e le coppie mai formate. Utile per verificare l'equità e le caratteristiche delle rotazioni succedutesi nel tempo.
 
@@ -266,11 +266,11 @@ La Tab "📊 STATISTICHE" analizza l'intero "Storico" della classe (o di più cl
 
 ### 🔷 Prima assegnazione dell'anno (settembre):
 
-1. **Prepara tramite "✏️ Editor studenti" il file della classe** con tutti i dati necessari (inclusa l'eventuale posizione FISSO per studente BES).
+1. **Prepara tramite "Editor studenti" il file della tua classe** con tutti i dati necessari.
 
-2. **Seleziona il file della classe** con "💾 SALVA e CARICA". Il programma **calcolerà il numero di file di banchi necessarie**.
+2. **Seleziona il file** e clicca su "SALVA e CARICA" per abilitare le configurazioni.
 
-3. Verifica la configurazione aula e, se necessario, modifica 'File di banchi' e/o 'Posti per fila'.
+3. Se necessario, modifica i 'Posti per fila' della tua aula.
 
 4. Assegna se necessario la posizione del 'trio' e l'**eventuale preferenza per le 'coppie miste'**.
 
@@ -279,33 +279,26 @@ La Tab "📊 STATISTICHE" analizza l'intero "Storico" della classe (o di più cl
 6. **Apri e modifica se necessario il foglio Excel, stampalo e posizionalo in classe.**
 
 
-### 🔷 Assegnazioni successive (ottobre → giugno):
+🔷 **RICORDA**: nel caso tu non abbia salvato in tempo i file Excel delle varie assegnazioni, potrai sempre farlo in un secondo momento, accedendo alla tab "📚 STORICO" e cliccando sul pulsante "🔍 Layout".
 
-1. Mantieni lo stesso file della classe (o ricaricalo se hai aperto una nuova sessione del programma).
-2. La rotazione è **automatica**: «PostiPerfetti» consulta lo Storico per evitare coppie già formate.
-3. **Avvia tutte le assegnazioni necessarie, RICORDANDOTI DI SALVARLE** nello "Storico", ed esportale di volta in volta in Excel per un'eventuale modifica e la stampa.
-
-**NOTA**: nel caso tu non abbia salvato in tempo i file Excel delle varie assegnazioni, potrai sempre farlo in un secondo momento, accedendo alla tab "📚 STORICO" e cliccando sul pulsante "🔍 Layout".
-
-💡 **In alternativa al mese-per-mese**, con la modalità **"Annuale"** (vedi sezione [3]) puoi generare **l'intero anno in un'unica volta** e rivederlo prima di salvarlo: comodo a settembre per impostare da subito tutte le rotazioni.
 
 > [!NOTE]
 >
 > ### ⚙️ Modifica dei vincoli o del numero di allievi in corso d'anno
 >
-> Se le dinamiche della classe dovessero cambiare, modifica con "✏️ Editor studenti" il file della classe — aggiornando 'posizione', 'incompatibilità' e 'affinità' — e poi salvalo. Se invece cambia il numero di allievi (un nuovo iscritto o un trasferimento), apri manualmente il file di testo dalla cartella delle classi, aggiungi o rimuovi la riga corrispondente e poi seleziona nuovamente il file nell'Editor.
+> Se le dinamiche della classe dovessero cambiare, modifica con "Editor studenti" il file della classe - aggiornando 'posizione', 'incompatibilità' e 'affinità' — e poi salvalo. Se invece cambia il numero di allievi (un nuovo iscritto o un trasferimento), apri manualmente il file di testo dalla cartella delle classi, aggiungi o rimuovi la riga corrispondente e poi seleziona nuovamente il file nell'Editor.
 >
-> ⚠️ **Importante:** se hai già generato e salvato nello "Storico" delle assegnazioni che **non hai ancora usato davvero in classe**, è necessario **eliminarle** (pulsante "🗑️ Elimina" nella tab "📚 STORICO") prima di rigenerare. Così il programma — sia in modalità "Mensile" sia "Annuale" — **non eviterà coppie che in realtà non si sono mai sedute insieme**, ma soltanto quelle realmente già sperimentate.
+> ⚠️ **Importante:** se hai generato e salvato nello "Storico" delle assegnazioni che **non hai ancora usato davvero in classe**, è necessario **eliminarle** (pulsante "Elimina" nella schermata "STORICO") prima di rigenerare. In questo modo il programma **eviterà solamente le coppie già sperimentate***, e non quelle che in realtà non si sono mai sedute insieme.
 
 ------
 
 ------
 
-## ⚠️ RISOLUZIONE DEI PROBLEMI
+## ⁉️ RISOLUZIONE DEI PROBLEMI
 
 | **Problema**                                            | **Soluzione**                                                |
 | ------------------------------------------------------- | ------------------------------------------------------------ |
-| 💬 Popup che segnala errore al caricamento del file della classe | Il programma controlla rigorosamente la struttura e i vincoli del file e applica automaticamente soltanto le **correzioni sicure**. Se trova dati ambigui o non validi, rifiuta il nuovo file. Leggi il dettaglio del popup, correggi il file di testo e selezionalo nuovamente; le contraddizioni modificabili in "✏️ Editor studenti" devono essere risolte prima del salvataggio. |
+| 💬 Popup che segnala errore al caricamento del file della classe | Il programma controlla rigorosamente la struttura e i vincoli del file e applica automaticamente soltanto le **correzioni sicure**. Se trova dati ambigui o non validi, rifiuta il nuovo file. Leggi il dettaglio del popup, correggi il file di testo e selezionalo nuovamente; le contraddizioni modificabili in "Editor studenti" devono essere risolte prima del salvataggio. |
 | 🚫 Studente "non trovato" nei vincoli                    | Il nome nei vincoli deve corrispondere **esattamente** a Cognome + Nome (es: `Pasolini Pier Paolo`, non `Pasolini Pier`). |
 | ❗ TROPPE COPPIE RIUTILIZZATE                            | Dipende soprattutto dalla **dimensione della classe**: meno alunni significa meno combinazioni possibili, perciò dopo qualche mese è matematicamente inevitabile riusare qualche coppia. Non è un errore di impostazione. Declassare qualche incompatibilità di livello 3 a livello 2 può dare un po' di respiro, ma NON elimina questo limite. |
 | ‼️ L'ASSEGNAZIONE FALLISCE IN TUTTI I TENTATIVI | La combinazione di vincoli e la geometria scelta (Coppie / Terzetti) potrebbe non ammettere una soluzione, oppure i limiti temporali della ricerca potrebbero non aver consentito di trovarla. Controlla soprattutto le **incompatibilità assolute** (livello 3) e gli studenti con posizione **PRIMA**. Se questi ultimi non entrano tutti nella prima fila, considera di ridurne il numero oppure aumenta i posti per fila (se la disposizione dell'aula lo consente). In modalità terzetti, quando l'opzione è disponibile, prova anche a cambiare la composizione del blocco restante (**1 coppia / 2 quartetti**). |
