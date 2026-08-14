@@ -14,7 +14,7 @@
 >
 > 🔐 I file delle classi, lo Storico e gli altri dati dell'utente restano memorizzati localmente sul computer e **non vengono cifrati** da «PostiPerfetti». Devono quindi essere protetti come qualunque altro documento contenente dati personali, secondo le regole previste dall'Istituto.
 >
-> 📄 Per maggiori dettagli consulta "**[Dati locali, privacy e sicurezza](documentazione/DATI_PRIVACY_E_SICUREZZA.md)**".
+> 📄 Per maggiori dettagli consulta "**[Dati, privacy e sicurezza](documentazione/DATI_PRIVACY_E_SICUREZZA.md)**".
 
 
 
