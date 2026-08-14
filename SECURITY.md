@@ -41,6 +41,4 @@ Sono considerate rilevanti per la sicurezza anche le anomalie che riguardano:
 - esposizione involontaria di informazioni attraverso diagnostica o log.
 
 Per le normali indicazioni sulla gestione dei dati inseriti consulta
-anche:
-
-[documentazione/DATI_PRIVACY_E_SICUREZZA.md](documentazione/DATI_PRIVACY_E_SICUREZZA.md)
+anche: [documentazione/DATI_PRIVACY_E_SICUREZZA.md](documentazione/DATI_PRIVACY_E_SICUREZZA.md)
