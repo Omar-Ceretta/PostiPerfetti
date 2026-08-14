@@ -14,6 +14,8 @@
 > I file delle classi, lo Storico e gli altri dati dell'utente restano memorizzati localmente sul computer e **non vengono cifrati**. Devono quindi essere protetti come qualunque altro documento contenente dati personali.
 >
 > 📄 Per maggiori dettagli consulta "**[Dati, privacy e sicurezza](documentazione/DATI_PRIVACY_E_SICUREZZA.md)**".
+>
+> ### Sito web del progetto: [www.postiperfetti.it]([https://doc.qt.io/qtforpython/](https://postiperfetti.it/))
 
 
 
