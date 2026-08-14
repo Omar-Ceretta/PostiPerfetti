@@ -2,7 +2,7 @@
 
 «PostiPerfetti» è distribuito sotto licenza **GNU GPL versione 3**.
 
-Il programma usa alcune librerie, un carattere tipografico e una raccolta di icone realizzati da terzi, ciascuno con la propria licenza. Questo documento elenca tali componenti e indica dove trovarne il testo di licenza completo.
+Il programma usa alcune librerie, un carattere tipografico e una raccolta di icone realizzati da terzi. Questo documento elenca tali componenti e indica dove trovarne il testo di licenza completo.
 
 > **A chi serve questo documento.**
 > A chi ridistribuisce «PostiPerfetti», a chi lo modifica, a chi voglia verificare le attribuzioni.
