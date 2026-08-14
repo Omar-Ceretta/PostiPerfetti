@@ -1434,8 +1434,8 @@ class EditorStudentiWidget(QWidget):
         if os.path.exists(percorso_logo):
             pixmap = QPixmap(percorso_logo)
             pixmap = pixmap.scaled(
-                320,
-                150,
+                600,
+                400,
                 Qt.KeepAspectRatio,
                 Qt.SmoothTransformation
             )
