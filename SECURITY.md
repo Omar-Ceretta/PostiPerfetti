@@ -1,4 +1,4 @@
-# Sicurezza di «PostiPerfetti»
+# 🛟 Sicurezza di «PostiPerfetti»
 
 ## Versioni supportate
 
