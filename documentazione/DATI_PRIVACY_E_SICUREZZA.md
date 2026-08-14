@@ -80,6 +80,6 @@ Per eliminare anche classi, impostazioni, Storico e log è disponibile la disins
 
 «PostiPerfetti» è uno strumento software: non determina da solo se un trattamento di dati sia appropriato per uno specifico Istituto o contesto.
 
-L'utente deve attenersi alle procedure della propria Scuola e alle indicazioni del Titolare del trattamento e del Responsabile della protezione dei dati (RPD/DPO).
+L'utente è invitato a fare un uso del programma con il buon senso e l'attenzione normalmente richiesti dalla propria deontologia professionale, nel rispetto delle procedure della propria Scuola e delle indicazioni del Titolare del trattamento e del Responsabile della protezione dei dati.
 
 In caso di dubbio sull'utilizzo di particolari informazioni degli studenti, sulla loro conservazione o sugli strumenti sui quali è consentito salvarle, è opportuno rivolgersi ai referenti privacy del proprio Istituto.
