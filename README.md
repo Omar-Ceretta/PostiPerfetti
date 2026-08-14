@@ -15,7 +15,7 @@
 >
 > 📄 Per maggiori dettagli consulta "**[Dati, privacy e sicurezza](documentazione/DATI_PRIVACY_E_SICUREZZA.md)**".
 >
-> ### 🌐 Sito web del progetto: [www.postiperfetti.it]([https://postiperfetti.it/])
+> ### 🌐 Sito web del progetto: [www.postiperfetti.it](https://postiperfetti.it/)
 
 
 
