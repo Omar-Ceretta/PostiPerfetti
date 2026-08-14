@@ -76,7 +76,7 @@ Per eliminare anche classi, impostazioni, Storico e log è disponibile la disins
 
 ---
 
-## 6. 💡 Responsabilità dell'utilizzo
+## 6. 🔑 Responsabilità dell'utilizzo
 
 «PostiPerfetti» è uno strumento software: non determina da solo se un trattamento di dati sia appropriato per uno specifico Istituto o contesto.
 
