@@ -1,6 +1,6 @@
 [![PostiPerfetti](documentazione/immagini/github.png)](#)
 
-# 🪑 «PostiPerfetti»
+# «PostiPerfetti»
 
 > [!IMPORTANT]
 >
