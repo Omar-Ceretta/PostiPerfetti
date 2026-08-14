@@ -1,4 +1,4 @@
-# Documentazione di PostiPerfetti
+# 📑 Documentazione di PostiPerfetti
 
 Questa cartella raccoglie la documentazione stabile del progetto.
 
