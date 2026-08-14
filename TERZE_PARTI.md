@@ -74,4 +74,4 @@ L'eccezione alla licenza di PyInstaller è ciò che consente di distribuire l'es
 
 ---
 
-*«PostiPerfetti» — prof. Omar Ceretta — GNU GPLv3*
+*© «PostiPerfetti» — prof. Omar Ceretta — GNU GPLv3*
