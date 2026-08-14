@@ -403,7 +403,7 @@ A seconda del numero totale di studenti e delle opzioni scelte, il programma pu�
 - terzetti;
 - un'eventuale coppia finale;
 - un quartetto;
-- in alcuni casi, due quartetti.
+- in alcuni casi, due quartetti (solo quando rendono la distribuzione delle file più equilibrata).
 
 Gli stessi quattro Tentativi vengono applicati alle adiacenze che compongono questi gruppi.
 
@@ -508,7 +508,7 @@ T1–T4 + confronto fra più candidati
 risultato trasferito all'interfaccia
 ```
 
-Il calcolo pesante viene quindi tenuto separato dalla finestra che l'utente sta utilizzando.
+Il calcolo delle combinazioni viene quindi tenuto separato dalla finestra che l'utente sta utilizzando.
 
 ---
 
@@ -628,11 +628,11 @@ soluzione di riferimento
 
 Una volta scelta l'annata, «PostiPerfetti» può migliorare **l'ordine temporale** dei mesi già generati.
 
-Quando alcuni riusi o alcune incompatibilità non assolute sono inevitabili, il programma prova — entro precise guardie di sicurezza — a **collocare più avanti nel calendario i mesi che contengono questi compromessi**, mantenendo il più possibile favorevole la parte iniziale dell'anno scolastico.
+Quando alcuni riusi o alcune incompatibilità non assolute sono inevitabili, il programma prova (entro precise guardie di sicurezza) a **collocare più avanti nel calendario i mesi che contengono questi compromessi**, mantenendo il più possibile favorevole la parte iniziale dell'anno scolastico.
 
 Un secondo passaggio cerca inoltre di aumentare la distanza fra riusi troppo ravvicinati.
 
-Questa operazione è prudente:
+Questa operazione è prudente, in quanto:
 
 - non crea nuovi gruppi;
 - non modifica i posti all'interno di un mese;
@@ -646,18 +646,16 @@ Cambia quindi **quando** compare un mese già generato, non **come** quel mese �
 
 ## 21. Perché il calcolo non deve bloccare la finestra
 
-L'interfaccia grafica e il motore di calcolo sono separati intenzionalmente.
+L'interfaccia grafica e il motore di calcolo sono stati intenzionalmente tenuti separati.
 
-Le elaborazioni più pesanti non devono incidere nella reponsività di pulsanti, pannelli o altri elementi grafici della finestra mentre stanno calcolando.
-
-Nella versione attuale:
+Le elaborazioni più pesanti, in questo modo, non incidono nella reponsività di pulsanti, pannelli o altri elementi grafici della finestra mentre stanno calcolando:
 
 - il Mensile a coppie usa un componente di calcolo dedicato e una copia degli input;
 - il Mensile a terzetti usa un processo Python separato;
 - entrambi gli Annuali usano processi Python separati;
 - un'infrastruttura specifica gestisce lo scambio dei risultati e la chiusura corretta dei processi.
 
-Il motore riceve quindi una **fotografia** dei dati, lavora su quella e restituisce un risultato.
+Il motore riceve quindi una **fotografia** dei dati, lavora su quella e restituisce alla fine un risultato.
 
 ---
 
@@ -671,7 +669,7 @@ L'utente vede la disposizione e può salvarla. Solo in quel momento l'assegnazio
 
 ### Annuale
 
-L'intera annata viene prima preparata e mostrata in anteprima.
+L'intera annata viene prima preparata e poi mostrata "in anteprima".
 
 Se viene accettata, tutti i mesi vengono preparati e salvati come un unico blocco.
 
@@ -695,11 +693,11 @@ calcolo successivo
 
 ---
 
-## 23. Riassunto in dieci passaggi
+## 23. Riassunto del funzionamento in dieci passaggi
 
-Per descrivere il funzionamento in modo essenziale:
+Questo "decalogo" descrive, in modo essenziale ma completo, come funziona «PostiPerfetti»:
 
-1. «PostiPerfetti» legge e valida la classe.
+1. Il programma legge e valida la classe.
 2. Recupera geometria, opzioni e Storico.
 3. Crea una fotografia indipendente dei dati di partenza.
 4. Valuta la qualità delle possibili vicinanze.
@@ -710,4 +708,4 @@ Per descrivere il funzionamento in modo essenziale:
 9. Nell'Annuale ripete il processo mese dopo mese e applica ulteriori guardie di qualità.
 10. Solo dopo l'accettazione dell'utente aggiorna lo Storico reale.
 
-Il principio di fondo è che «PostiPerfetti» non cerca semplicemente una disposizione **possibile**: prova prima a trovare quella che conserva meglio rotazione, compatibilità e preferenze, allentando le richieste non assolute soltanto quando è necessario.
+Il principio di fondo è che «PostiPerfetti» non cerca semplicemente una disposizione **possibile**: prova a trovare quelle che conservano meglio rotazione, compatibilità e preferenze, allentando le richieste non assolute solo quando è necessario.
