@@ -28,7 +28,7 @@
 
 ------
 
-## 📥 Download
+## 📥 DOWNLOAD
 
 📦 **[Scarica «PostiPerfetti» per Windows e Linux](https://github.com/Omar-Ceretta/PostiPerfetti/releases/latest)**
 
