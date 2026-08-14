@@ -147,7 +147,7 @@ Clicca il bottone **"Rimuovi"** accanto al vincolo da eliminare. Il vincolo spec
 
 - (OPZIONALE) Clicca su "**Dettaglio vincoli**" per avere una panoramica completa di tutti i vincoli inseriti.
 
-- Clicca infine su **"SALVA e CARICA"** per salvare il file della classe.
+- 👉 Clicca infine su **"SALVA e CARICA"** per salvare il file della classe.
 
 A questo punto la classe verrà caricata nel programma e sarà **pronta per avviare le assegnazioni.**
 
