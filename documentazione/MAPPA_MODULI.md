@@ -202,7 +202,7 @@ Non tutti i moduli vengono attraversati in ogni operazione: il programma sceglie
 
 ## 14. Una chiave di lettura della struttura
 
-La suddivisione in molti file non indica che il programma esegua decine di passaggi indipendenti. Al contrario, serve a separare responsabilità diverse:
+La suddivisione in molti file serve a separare, all'interno di un unico flusso di lavoro, responsabilità diverse:
 
 - i moduli dei **dati** non devono conoscere la GUI;
 - i moduli del **motore** devono poter essere collaudati senza aprire finestre;
@@ -210,4 +210,4 @@ La suddivisione in molti file non indica che il programma esegua decine di passa
 - i moduli di **persistenza** controllano salvataggi, Storico e recupero;
 - i moduli di **diagnostica** osservano il comportamento senza modificarlo.
 
-Questa separazione rende più semplice capire, verificare e mantenere «PostiPerfetti» senza concentrare tutto il programma in un unico file.
+Questa suddivisione rende più semplice capire, verificare e mantenere «PostiPerfetti» senza concentrare tutto il programma in un unico file.
