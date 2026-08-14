@@ -10,7 +10,7 @@
 >
 > ✅ Gli alunni vengono distribuiti automaticamente secondo la geometria scelta: **a coppie** oppure **a terzetti**. Il numero di posti per fila è adattabile alle esigenze dell’aula. **Una singola assegnazione richiede in genere da pochi secondi a qualche minuto.** Il tempo dipende in parte dal numero di "vincoli" impostati, ma soprattutto dalla **numerosità dei ragazzi** e da **quante assegnazioni sono già state salvate** nello Storico: più vicinanze sono già state sperimentate, infatti, più diventa impegnativo trovarne di inedite.
 >
-> ✅ Durante il suo utilizzo, **«PostiPerfetti» lavora in locale e non invia dati studenti a servizi remoti**. Le operazioni di installazione e aggiornamento utilizzano la rete solo per scaricare il programma e le sue dipendenze.
+> ✅ **«PostiPerfetti» lavora in locale e non invia dati studenti a servizi remoti**. Le operazioni di installazione e aggiornamento utilizzano la rete solo per scaricare il programma e le sue dipendenze.
 >
 > 🔐 I file delle classi, lo Storico e gli altri dati dell'utente restano memorizzati localmente sul computer e **non vengono cifrati** da «PostiPerfetti». Devono quindi essere protetti come qualunque altro documento contenente dati personali, secondo le regole previste dall'Istituto.
 >
