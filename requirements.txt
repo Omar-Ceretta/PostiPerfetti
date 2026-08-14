@@ -1,7 +1,7 @@
 # Dipendenze runtime di «PostiPerfetti»
 #
-# Le versioni sono congelate per rendere riproducibile la release:
-# la stessa versione di PostiPerfetti deve installare lo stesso ambiente
-# Python anche in momenti diversi.
+# Le versioni sono "congelate" per rendere riproducibile la release:
+# la stessa versione di «PostiPerfetti» deve installare lo stesso ambiente
+# Python anche in momenti e su device diversi.
 PySide6==6.11.1
 XlsxWriter==3.2.9
