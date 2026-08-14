@@ -199,7 +199,7 @@ Per installare o aggiornare normalmente il programma è preferibile usare l'`ins
 
 <br>
 
-➀ **Versione di Python non compatibile**
+🔹 **Versione di Python non compatibile**
 
 Questa release richiede Python da **3.10 a 3.14**:
 
@@ -219,11 +219,11 @@ sudo apt install python3-venv
 
 Sulle distribuzioni riconosciute è lo stesso installer a proporre l'installazione dei prerequisiti mancanti.
 
-➁ **Errore durante l'installazione delle dipendenze Python**
+🔹 **Errore durante l'installazione delle dipendenze Python**
 
 Controlla la connessione a Internet e i messaggi prodotti da `pip`, quindi riesegui l'installer della Release ufficiale.
 
-③ **Errore Qt/XCB o mancato avvio dell'interfaccia**
+🔹 **Errore Qt/XCB o mancato avvio dell'interfaccia**
 
 Quando disponibile, la diagnostica dell'installazione viene salvata in:
 
@@ -237,10 +237,10 @@ Se invece l'applicazione si chiude subito dopo l'avvio, il launcher può salvare
 ~/PostiPerfetti/log/diagnostica_avvio.log
 ```
 
-Un avvio riuscito non lascia quest'ultimo log permanente.
+Controlla questi log per capire la natura del problema e, nel caso, installare eventuali dipendenze mancanti.
 
-➃ **Ambiente Python danneggiato dopo l'installazione**
+🔹 **Ambiente Python danneggiato dopo l'installazione**
 
-Il launcher controlla l'ambiente e può proporre una riparazione delle dipendenze. Se il problema riguarda Python di sistema o librerie native Qt, riesegui l'installer Linux ufficiale.
+Il launcher controlla l'ambiente e può proporre una riparazione delle dipendenze. Se il problema riguarda Python di sistema o librerie native Qt, riesegui l'installer Linux ufficiale della tua distribuzione.
 
 </details>
