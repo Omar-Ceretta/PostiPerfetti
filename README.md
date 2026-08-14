@@ -197,13 +197,17 @@ Quando il file della classe sarà pronto e caricato, clicca su **"🚀 Assegna i
 
 > [!TIP]
 >
-> ### 🗓️ Modalità "Annuale" (opzionale)
+> ### 🗓️ Modalità "Mensile" vs "Annuale"
 >
-> Di norma il programma assegna i posti per **un mese alla volta** (impostazione predefinita: *"Mensile (un mese)"*). Se preferisci, puoi scegliere **"Annuale (più mesi)"**: comparirà una casella in cui indicare **quanti mesi generare** (fino a 10, cioè un intero anno scolastico). I mesi verranno aggiunti in coda a quelli eventualmente già salvati nello Storico. Con un solo clic su **"🚀 Assegna i posti!"** il programma prepara tutti quei mesi in fila, uno dopo l'altro, sempre cercando di non ripetere le coppie da un mese all'altro.
+> Come anticipato, il programma può assegnare i posti **un mese alla volta** (modalità "*Mensile*"), oppure **fino a 10 mesi contemporaneamente** (modalità "*Annuale*"). In ogni caso, i mesi generati verranno aggiunti in coda a quelli eventualmente già salvati nello Storico.
 >
-> Al termine si apre un'**anteprima** che ti mostra l'intera annata **mese per mese**, con le coppie formate. Solo se ti convince, clicchi su **"✅ Accetta e salva nello Storico"** e tutti i mesi vengono salvati in ordine; altrimenti clicchi su **"🗑 Scarta"** e **non viene salvato nulla** (lo "Storico" resta esattamente com'era). Mentre il programma lavora puoi sempre fermarlo con il pulsante **"⛔ Annulla"**.
+> 💡 **L'opzione *Mensile* è consigliata per fare le prime prove e prendere confidenza con il programma**.
+> È l'ideale per capire come i vincoli impostati si traducano concretamente in assegnazioni, e ti consentirà di capire in maniera pragmatica come l'algoritmo, con la progressiva crescita delle assegnazioni salvate, metta in pratica la sua logica "flessibile". In questi primi approcci a «PostiPerfetti» imparerai il modo migliore per modificare i vincoli (diminuendone o aumentandone l'intensità) affinché il risultato rispecchi al meglio i tuoi desiderata.
 >
-> ⏳ **Quanto tempo richiede e perché conviene** — Preparare un'intera annata richiede **da pochi minuti fino a un massimo di una decina** per le classi più difficili. È tempo ben speso: non solo ottieni in un colpo solo (nella maggior parte dei casi) **tutti i mesi dell'anno** — e, quando proprio non è possibile, comunque **diversi mesi** — ma soprattutto **l'algoritmo può vagliare molte più combinazioni** rispetto all'assegnazione mese per mese: prova tante "annate" diverse e ti propone quella con **meno ripetizioni di coppie**.
+> **L'opzione *Annuale* è invece consigliata quando sarai più consapevole di come lavora il programma** e di quali sono i risultati che esso è in grado di fornirti.
+> Tieni presente che, al termine di un'elaborazione di questo tipo, si aprirà un'**anteprima** che ti mostrerà l'intera annata **mese per mese**, con le coppie formate e un Report con tutte le informazioni necessarie sul tipo di abbinamenti creati. Se ti convincerà, potrai cliccare su **"Accetta e salva nello Storico"** e tutti i mesi verranno salvati in ordine; altrimenti cliccando su **"Scarta tutto"** **non verrà salvato nulla** (= lo "Storico" resterà esattamente com'era). Mentre il programma lavora puoi sempre fermarlo con il pulsante **"⛔ Annulla"**.
+>
+> ⏳ **Quanto tempo richiede e perché conviene** — Preparare un'intera annata richiede **da pochi minuti fino a un MASSIMO di 10 MINUTI** per le classi più difficili. Si tratta, tuttavia, di tempo ben speso: non solo ottieni in un colpo solo (nella maggior parte dei casi) **tutti i mesi dell'anno** — e, quando proprio non è possibile, comunque **diversi mesi** — ma soprattutto **l'algoritmo può vagliare molte più combinazioni** rispetto all'assegnazione mese per mese: prova infatti tante "annate" diverse e ti propone quella con **meno ripetizioni di coppie**, meno incompatibilità tollerate e un maggior numero di affinità soddisfatte.
 
 ------
 
@@ -212,10 +216,6 @@ Quando il file della classe sarà pronto e caricato, clicca su **"🚀 Assegna i
 > ### ⚙️ File di configurazione
 >
 > Tutte le modifiche ai file e ogni assegnazione salvata vengono memorizzate all'interno del file "postiperfetti_configurazione.json". Questo file NON deve essere aperto o modificato direttamente. Solo nel caso in cui si desideri cancellare l'intero "Storico" delle assegnazioni può essere eliminato, e verrà ricreato *da zero* dal programma in occasione della prima nuova assegnazione.
-
-> [!NOTE]
->
-> 💡 **Se rinomini il file di una classe**, il programma la riconoscerà automaticamente tramite i nomi degli studenti.
 
 ------
 
