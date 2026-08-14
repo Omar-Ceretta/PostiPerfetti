@@ -1,4 +1,4 @@
-# PostiPerfetti — file locali e generati da non versionare
+# «PostiPerfetti» — file locali e generati da non versionare
 
 # Ambiente Python e cache
 .venv/
@@ -28,12 +28,7 @@ htmlcov/
 
 # Esportazioni e report generati dall'utente nella radice del programma.
 # La regola /*.txt evita che report e statistiche locali finiscano per errore
-# in un commit. È una rete di sicurezza voluta, ma ha un rovescio: nasconde
-# anche i .txt di PROGETTO che stanno in radice.
-#
-# Per questo ogni file .txt di progetto va elencato qui sotto come eccezione
-# esplicita. Senza la riga corrispondente, «git add» lo ignorerebbe in
-# silenzio, senza errori e senza avvisi.
+# in un commit.
 /*.xlsx
 /*.txt
 !/requirements.txt
