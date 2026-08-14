@@ -1,4 +1,4 @@
-# Componenti di terze parti in «PostiPerfetti»
+# 🧾️ Componenti di terze parti in «PostiPerfetti»
 
 «PostiPerfetti» è distribuito sotto licenza **GNU GPL versione 3**.
 
