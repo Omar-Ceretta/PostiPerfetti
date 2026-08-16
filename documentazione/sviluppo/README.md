@@ -17,4 +17,4 @@ strumenti/validazione_rc/       = infrastruttura di validazione della Release Ca
 test/validazione_rc/            = test dell'infrastruttura e dei contratti Release Candidate
 ```
 
-Non sono strumenti duplicati: la separazione fra codice di collaudo e test del codice di collaudo evita che le due responsabilità vengano confuse.
+La separazione fra codice di collaudo e test del codice di collaudo evita che le due responsabilità vengano confuse.
