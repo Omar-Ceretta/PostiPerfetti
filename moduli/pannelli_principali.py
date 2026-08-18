@@ -712,7 +712,7 @@ class PannelliPrincipaliMixin:
         self.tabella_storico.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)
         self.tabella_storico.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
         self.tabella_storico.setColumnCount(4)
-        self.tabella_storico.setHorizontalHeaderLabels(["Data creazione", "Nome", "Abbinamenti", "Azioni"])
+        self.tabella_storico.setHorizontalHeaderLabels(["Data creazione", "Nome (modificabile)", "Abbinamenti", "Azioni"])
 
         self.tabella_storico.cellChanged.connect(self._on_storico_nome_modificato)
         layout_storico.addWidget(self.tabella_storico)

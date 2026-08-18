@@ -799,7 +799,7 @@ class StoricoUIMixin:
                     "triangle-alert",
                     testo_informativo=(
                         f"Data creazione: {data_assegnazione}\n"
-                        f"Nome (modificabile): {nome_assegnazione}\n"
+                        f"Nome: {nome_assegnazione}\n"
                         f"{messaggio_abbinamenti}\n\n"
                         "Questa azione non può essere annullata."
                     ),
