@@ -8,7 +8,7 @@ Tiene conto della disposizione dei banchi, delle esigenze dei singoli studenti, 
 
 Le assegnazioni possono essere conservate nello **Storico**, analizzate tramite Report e Statistiche ed esportate in **Excel** o in formato testuale.
 
-🌐 **Sito web e guida illustrata:** [www.postiperfetti.it](https://postiperfetti.it/)
+### 🌐 **Sito web e guida illustrata:** [www.postiperfetti.it](https://postiperfetti.it/)
 
 
 
