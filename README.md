@@ -33,24 +33,23 @@ Le assegnazioni possono essere conservate nello **Storico**, analizzate tramite 
 
 «PostiPerfetti» permette di:
 
-- disporre gli studenti **a coppie oppure a terzetti**, adattando la configurazione alla propria aula;
-- indicare esigenze di **posizione** rispetto alla cattedra: PRIMA, ULTIMA e FISSO;
-- definire **affinità e incompatibilità** fra studenti, con tre diversi livelli di importanza;
-- favorire, se lo si desidera, **vicinanze miste Maschio + Femmina**;
-- generare una singola disposizione con la modalità **Mensile**, oppure programmare fino a **10 mesi** con un'unica elaborazione in modalità **Annuale**;
-- tenere conto delle vicinanze già sperimentate grazie allo **Storico** delle assegnazioni;
-- controllare i risultati ottenuti tramite le schede **Aula, Report e Statistiche**;
-- apportare, quando necessario, aggiustamenti manuali alla disposizione;
-- esportare le disposizioni dei banchi in **Excel** e i Report in formato testuale.
+- disporre gli studenti "**a coppie**" oppure "**a terzetti**", adattando la configurazione alla propria aula;
+- indicare esigenze di "**posizione**" rispetto alla cattedra: PRIMA, ULTIMA e FISSO;
+- definire "**affinità**" e "**incompatibilità**" fra studenti, con tre diversi livelli di importanza;
+- favorire, se lo si desidera, **vicinanze miste maschio + femmina**;
+- generare una singola disposizione con la modalità "**Mensile**", oppure programmare **fino a 10 mesi** con un'unica elaborazione in modalità "**Annuale**";
+- tener conto delle vicinanze già sperimentate grazie allo **Storico** delle assegnazioni;
+- controllare i risultati ottenuti tramite le schede "**Aula**", "**Report**" e "**Statistiche**";
+- esportare le disposizioni dei banchi in formato **Excel** e i Report in formato testuale.
 
 ------
 ## 🚀 Come funziona
 
 1. **Crea il file della classe** con cognome, nome e genere degli studenti.
-2. Nell'**Editor studenti**, aggiungi soltanto le indicazioni che ti servono: posizione, affinità e incompatibilità.
-3. Clicca su **"SALVA e CARICA"** e configura l'aula scegliendo coppie o terzetti, il numero di posti per fila ed eventuale preferenza per vicinanze di genere misto.
+2. Nella scheda "**Editor studenti**", aggiungi tutte le indicazioni che ti servono: "posizione, affinità" e "incompatibilità".
+3. Clicca su **"SALVA e CARICA"** e configura l'aula scegliendo "coppie" o "terzetti", il numero di posti per fila e l'eventuale preferenza per vicinanze di genere misto.
 4. Scegli **Mensile** per una singola disposizione oppure **Annuale** per generarne più di una.
-5. Controlla il risultato e salva nello **Storico** soltanto le disposizioni che userai realmente in classe. Potrai poi esportarle e stamparle e, tramite le Statistiche, analizzare nel tempo le caratteristiche delle diverse rotazioni.
+5. Controlla il risultato e salva nello **Storico** solo le disposizioni che userai realmente in classe. Potrai poi esportarle e stamparle. Tramite le "Statistiche" sarai in grado di analizzare nel tempo le caratteristiche delle diverse rotazioni.
 
 📖 Per tutti i passaggi, gli esempi e i video dimostrativi consulta la **[guida completa sul sito](https://postiperfetti.it/guida.html)**. La stessa applicazione contiene inoltre una guida offline accessibile dal pulsante **"Istruzioni"**.
 
@@ -59,19 +58,19 @@ Le assegnazioni possono essere conservate nello **Storico**, analizzate tramite 
 
 ### 1. Vincoli assoluti e preferenze
 
-Le **incompatibilità di livello 3** e le posizioni **PRIMA** e **FISSO** sono vincoli assoluti e non vengono mai violati dall'algoritmo del programma.
+Le "**incompatibilità di livello 3**" e le posizioni "**PRIMA**" e "**FISSO**" sono vincoli assoluti e non vengono mai violati dall'algoritmo del programma.
 
-Gli altri criteri — incompatibilità di livello 1 e 2, affinità, posizione ULTIMA e preferenza per il genere misto — sono invece preferenze. Se non è possibile soddisfarle tutte contemporaneamente, «PostiPerfetti» le gestisce in modo progressivamente più flessibile per cercare una disposizione valida.
+Gli altri criteri - incompatibilità di livello 1 e 2, affinità, posizione ULTIMA e preferenza per il genere misto - sono invece *preferenze*. Se non è possibile soddisfarle tutte contemporaneamente, «PostiPerfetti» le gestisce in modo progressivamente più flessibile per cercare una disposizione valida.
 
 ### 2. Lo Storico è la memoria delle rotazioni
 
 Soltanto le assegnazioni **salvate nello Storico** vengono considerate nelle generazioni successive.
 
-Per questo è importante conservare le disposizioni realmente utilizzate in classe, ed eliminare, invece, quelle eventualmente salvate ma poi non applicate.
+Per questo è importante conservare solo le disposizioni realmente utilizzate in classe, ed eliminare, invece, quelle salvate ma poi non effettivamente applicate.
 
 ### 3. Coppie e terzetti hanno memorie indipendenti
 
-Le rotazioni **a coppie** e **a terzetti** vengono gestite separatamente. Una vicinanza già sperimentata nell'altra modalità può essere segnalata nel Report a titolo informativo, ma non influenza la generazione corrente.
+Le rotazioni "**a coppie**" e "**a terzetti**" vengono gestite separatamente. Una vicinanza già sperimentata nell'altra modalità può essere segnalata nel Report a titolo informativo, ma non influenza la generazione corrente.
 
 ------
 ## 🔐 Privacy e dati
@@ -88,14 +87,16 @@ Per maggiori informazioni consulta **[Dati locali, privacy e sicurezza](document
 
 | Documento | Cosa contiene |
 |---|---|
-| **[Installazione e avvio](documentazione/INSTALLAZIONE_AVVIO_E_DISINSTALLAZIONE.md)** | Installazione, aggiornamento e disinstallazione su Windows e Linux, passo per passo. |
+| **[INSTALLAZIONE E AVVIO](documentazione/INSTALLAZIONE_AVVIO_E_DISINSTALLAZIONE.md)** | Installazione, aggiornamento e disinstallazione su Windows e GNU/Linux, passo per passo. |
 | **[CHANGELOG](CHANGELOG.md)** | Le novità e le correzioni di ogni versione pubblicata. |
 | **[SECURITY](SECURITY.md)** | Come segnalare un problema di sicurezza — e, soprattutto, **quali dati non allegare mai** a una segnalazione. |
-| **[TERZE_PARTI](TERZE_PARTI.md)** | Le librerie, il carattere e le icone di altri autori usati dal programma, con le rispettive licenze. |
+| **[TERZE PARTI](TERZE_PARTI.md)** | Le librerie, il carattere e le icone di altri autori usati dal programma, con le rispettive licenze. |
 | **[LICENSE](LICENSE)** | Il testo completo della GNU GPL versione 3. |
 
 
-😎 La documentazione tecnica più estesa (funzionamento dell'algoritmo, mappa dei moduli, trattamento dei dati) si trova nella cartella **[`documentazione/`](documentazione/)**.
+### 😎 PER CHI DESIDERA APPROFONDIRE
+
+La documentazione tecnica più estesa (funzionamento dell'algoritmo, mappa dei moduli, trattamento dei dati) si trova nella cartella **[`documentazione/`](documentazione/)**.
 
 ------
 
