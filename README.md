@@ -14,7 +14,7 @@ Le assegnazioni possono essere conservate nello **Storico**, analizzate tramite 
 
 > [!NOTE]
 >
-> A seconda delle tue preferenze, puoi usare un'interfaccia con un **🌙 Tema scuro** o un **☀️ Tema chiaro** (clicca per allargare le immagini):
+> A seconda delle tue preferenze, puoi usare un'interfaccia con un **🌙 Tema scuro** o un **☀️ Tema chiaro** (clicca per ingrandire le immagini):
 > 
 > [![Tema scuro](documentazione/immagini/tema_scuro.png)](documentazione/immagini/tema_scuro.png)
 > 
