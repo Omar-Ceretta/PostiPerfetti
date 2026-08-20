@@ -40,7 +40,7 @@ ISTRUZIONI_HTML_TEMPLATE = r"""
 
         <p class="riquadro riquadro-info">
         [[ICON:circle-check:17]] <b>«PostiPerfetti» aiuta l'insegnante ad assegnare i posti in classe tenendo conto di come sono disposti i banchi, delle esigenze dei singoli studenti e delle vicinanze già usate nelle assegnazioni precedenti.</b><br><br>
-        [[ICON:circle-check:17]] Il lavoro parte da un file <code>.txt</code> con <b>cognome, nome e genere</b> degli allievi. Nella scheda "Editor Studenti" puoi inserire quattro tipi di indicazioni: <b>posizione</b>, eventuale <b>FISSO</b>, <b>incompatibilità</b> e <b>affinità</b>.<br><br>
+        [[ICON:circle-check:17]] Il lavoro parte da un file <code>.txt</code> con <b>cognome, nome e genere</b> degli allievi. Nella scheda "Editor studenti" puoi inserire quattro tipi di indicazioni: <b>posizione</b>, eventuale <b>FISSO</b>, <b>incompatibilità</b> e <b>affinità</b>.<br><br>
         [[ICON:circle-check:17]] Puoi disporre gli studenti <b>a coppie</b> oppure <b>a terzetti</b>. Quando il numero della classe non consente gruppi tutti uguali, il programma costruisce automaticamente il blocco finale necessario: un trio nella modalità a coppie; una coppia, un quartetto o, quando disponibile, due quartetti nella modalità a terzetti.<br><br>
         [[ICON:history:17]] Lo <b>Storico</b> è la memoria delle rotazioni: soltanto le assegnazioni salvate vengono considerate nelle generazioni successive. Le modalità a coppie e a terzetti mantengono memorie separate.<br><br>
         [[ICON:circle-check:17]] <b>Durante l'uso, il programma lavora in locale e non invia in rete i dati delle classi.</b>
@@ -60,7 +60,7 @@ ISTRUZIONI_HTML_TEMPLATE = r"""
 
         <table cellpadding="6" cellspacing="0" class="tabella tabella-compatta">
         <tr class="intestazione-tabella"><td><b>Esempio di file base</b></td></tr>
-        <tr><td><code>Alighieri;Dante;M<br>Brontë;Charlotte;F<br>D'Annunzio;Gabriele;M<br>Brontë;Charlotte;F<br>García Márquez;Gabriel;M<br>Ortese;Anna Maria;F</code></td></tr>
+        <tr><td><code>Alighieri;Dante;M<br>Brontë;Charlotte;F<br>D'Annunzio;Gabriele;M<br>García Márquez;Gabriel;M<br>Ortese;Anna Maria;F</code></td></tr>
         </table>
 
         <p>Usa "<code>M</code>" oppure "<code>F</code>" per il genere e separa i tre dati con un punto e virgola, come nell'esempio. Sono ammessi gli spazi all'interno di nomi o cognomi composti. <b>Non usare il carattere underscore (<code>_</code>)</b> per unire le parti di un nome o di un cognome: usa uno spazio o un trattino. Non è necessario ordinare gli studenti: l'Editor provvederà da solo a mostrarli in ordine alfabetico.</p>
@@ -236,10 +236,10 @@ ISTRUZIONI_HTML_TEMPLATE = r"""
         <hr>
         <h3 class="sezione">[6] - DURANTE L'ANNO</h3>
 
-        <p><b>[[ICON:user-pen:18]] Modifica posizione o vincoli</b></p>
+        <p><b>[[ICON:square-pen:18]] Modifica posizione o vincoli</b></p>
         <p>Se durante l'anno vuoi cambiare "posizione", "affinità" o "incompatibilità" per qualche allievo, seleziona di nuovo il file della classe nell'Editor, modifica le schede interessate e clicca su <b>"SALVA e CARICA"</b>. Le nuove impostazioni verranno usate a partire dalle assegnazioni successive.</p>
 
-        <p><b>[[ICON:users:18]] Aggiungi o rimuovi uno studente</b></p>
+        <p><b>[[ICON:user-cog:18]] Aggiungi o rimuovi uno studente</b></p>
         <p>Apri manualmente il file di testo della classe, aggiungi o elimina la riga dello studente e seleziona di nuovo il file nell'Editor. Se aggiungi uno studente, completa poi nell'Editor eventuali posizione e vincoli e clicca su <b>"SALVA e CARICA"</b>.</p>
 
         <p class="riquadro riquadro-info">
