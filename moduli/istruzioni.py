@@ -40,34 +40,36 @@ ISTRUZIONI_HTML_TEMPLATE = r"""
 
         <p class="riquadro riquadro-info">
         [[ICON:circle-check:17]] <b>«PostiPerfetti» aiuta l'insegnante ad assegnare i posti in classe tenendo conto di come sono disposti i banchi, delle esigenze dei singoli studenti e delle vicinanze già usate nelle assegnazioni precedenti.</b><br><br>
-        [[ICON:circle-check:17]] Il lavoro parte da un file <code>.txt</code> con <b>cognome, nome e genere</b>. Nell'Editor puoi aggiungere quattro tipi di indicazioni: <b>posizione</b>, eventuale <b>FISSO</b>, <b>incompatibilità</b> e <b>affinità</b>.<br><br>
+        [[ICON:circle-check:17]] Il lavoro parte da un file <code>.txt</code> con <b>cognome, nome e genere</b> degli allievi. Nella scheda "Editor Studenti" puoi inserire quattro tipi di indicazioni: <b>posizione</b>, eventuale <b>FISSO</b>, <b>incompatibilità</b> e <b>affinità</b>.<br><br>
         [[ICON:circle-check:17]] Puoi disporre gli studenti <b>a coppie</b> oppure <b>a terzetti</b>. Quando il numero della classe non consente gruppi tutti uguali, il programma costruisce automaticamente il blocco finale necessario: un trio nella modalità a coppie; una coppia, un quartetto o, quando disponibile, due quartetti nella modalità a terzetti.<br><br>
         [[ICON:history:17]] Lo <b>Storico</b> è la memoria delle rotazioni: soltanto le assegnazioni salvate vengono considerate nelle generazioni successive. Le modalità a coppie e a terzetti mantengono memorie separate.<br><br>
         [[ICON:circle-check:17]] <b>Durante l'uso, il programma lavora in locale e non invia in rete i dati delle classi.</b>
         </p>
 
         <hr>
-        <h3 class="sezione">[1] - PREPARA E CARICA LA CLASSE</h3>
+        <h3 class="sezione">[1] - PREPARA E SELEZIONA LA CLASSE</h3>
 
         <p><b>1 ~ Crea un file .txt di base</b></p>
-        <p>Nella scheda "<b>Editor studenti</b>", clicca su "<b>Apri cartella</b>". Si aprirà la cartella classi, nella quale trovi anche due file di esempio:<br>
+        <p>Nella scheda "<b>Editor studenti</b>", clicca su "<b>Apri cartella</b>". Il tuo file manager ti mostrerà la cartella che contiene le classi, dove troverai due file di esempio:<br>
         • <code>Classe-BASE_esempio.txt</code>, che mostra il semplice formato da usare per creare una nuova classe;<br>
         • <code>Classe-COMPLETO_esempio.txt</code>, che mostra come apparirà il file dopo aver aggiunto posizione e vincoli tramite l'Editor.<br><br>
-        Per creare la tua classe, usa come modello il file <b>BASE</b> oppure crea un nuovo file di testo con il nome che preferisci, ad esempio <code>Classe 1A.txt</code> o <code>Classe 1A - 2026-27.txt</code>.</p>
-        <p>Inserisci uno studente per riga nel formato:</p>
+        Per creare la tua classe, usa come modello il file <b>BASE</b>, oppure crea un nuovo file di testo con il nome che preferisci (ad es. "<code>Classe 1A.txt</code>" o "<code>Classe 1A - 2026-27.txt</code>").</p>
+        <p class="riquadro riquadro-info">[[ICON:info:17]] Nota per Windows: l'estensione ".txt" potrebbe essere nascosta, quindi è possibile che il file ti appaia semplicemente come "Classe 1A". È normale.<br>
+        Usa un normale editor di testo, non un programma di videoscrittura come Microsoft Word o LibreOffice Writer.</p>
+        <p>Inserisci uno studente per riga, nel formato:</p>
 
         <table cellpadding="6" cellspacing="0" class="tabella tabella-compatta">
         <tr class="intestazione-tabella"><td><b>Esempio di file base</b></td></tr>
-        <tr><td><code>Alighieri;Dante;M<br>Austen;Jane;F<br>Boccaccio;Giovanni;M<br>Brontë;Charlotte;F<br>Pasolini;Pier Paolo;M</code></td></tr>
+        <tr><td><code>Alighieri;Dante;M<br>Brontë;Charlotte;F<br>D'Annunzio;Gabriele;M<br>Brontë;Charlotte;F<br>García Márquez;Gabriel;M<br>Ortese;Anna Maria;F</code></td></tr>
         </table>
 
-        <p>Usa <code>M</code> oppure <code>F</code> per il genere e separa i tre dati con un punto e virgola, come nell'esempio. Sono ammessi gli spazi all'interno di nomi o cognomi composti. <b>Non usare il carattere underscore (<code>_</code>) per unire le parti di un nome o di un cognome</b>: usa uno spazio o un trattino. Non è necessario ordinare gli studenti: l'Editor provvede automaticamente a mostrarli in ordine alfabetico.</p>
+        <p>Usa "<code>M</code>" oppure "<code>F</code>" per il genere e separa i tre dati con un punto e virgola, come nell'esempio. Sono ammessi gli spazi all'interno di nomi o cognomi composti. <b>Non usare il carattere underscore (<code>_</code>)</b> per unire le parti di un nome o di un cognome: usa uno spazio o un trattino. Non è necessario ordinare gli studenti: l'Editor provvederà da solo a mostrarli in ordine alfabetico.</p>
 
-        <p class="riquadro riquadro-info">[[ICON:info:17]] L'Editor accetta anche un file base con due soli campi, <code>Cognome;Nome</code>, ma prima dell’anteprima o del salvataggio richiederà di selezionare M o F per ogni studente. Per il primo utilizzo conviene quindi compilare subito tutti e tre i campi.</p>
+        <p class="riquadro riquadro-info">[[ICON:info:17]] L'Editor accetta anche un file base con due soli campi, "<code>Cognome;Nome</code>", ma prima del salvataggio richiederà di selezionare "M" o "F" per ogni studente. Per il primo utilizzo conviene quindi compilare subito tutti e tre i campi.</p>
 
         <p><b>2 ~ Seleziona la classe</b></p>
-        <p>Clicca su <b>"Seleziona classe"</b> e scegli il file <code>.txt</code>.</p>
-        <p>Se carichi un file <b>BASE</b>, l'Editor crea una scheda per ogni studente e puoi quindi impostare posizione ed eventuali vincoli. Se invece riapri un file <b>COMPLETO</b> già salvato da «PostiPerfetti», ritroverai anche le impostazioni inserite in precedenza.</p>
+        <p>Clicca su "<b>Seleziona classe</b>" e scegli il file <code>.txt</code>.</p>
+        <p>Se carichi un file <b>BASE</b>, un messaggio ti ricorderà che, per ogni allievo, puoi modificare la "posizione" e impostare eventuali "affinità" e "incompatibilità" con altri compagni. Se invece riapri un file <b>COMPLETO</b> già salvato da «PostiPerfetti», ritroverai anche le impostazioni inserite in precedenza.</p>
         <p>Non devi compilare manualmente il formato COMPLETO: viene creato e aggiornato dal programma quando premerai su <b>"SALVA e CARICA"</b>.</p>
 
         <p><b>3 ~ Controlli automatici</b></p>
@@ -79,8 +81,8 @@ ISTRUZIONI_HTML_TEMPLATE = r"""
         <p><b>1 ~ Posizione</b></p>
         <p>Per ogni studente puoi scegliere una delle seguenti voci:</p>
         <p>• <code>NORMALE</code> = nessuna preferenza rispetto alla fila;<br>
-        • <code><span class="testo-errore"><b>PRIMA</b></span></code> = <span class="testo-errore"><b>deve stare nella prima fila</b></span>;<br>
-        • <code>ULTIMA</code> = preferenza per stare verso il fondo dell'aula;<br>
+        • <code><span class="testo-errore"><b>PRIMA</b></span></code> = <span class="testo-errore"><b>deve stare nella prima fila</b></span> (utile ad es. per allievi più propensi a distrarsi, con difficoltà di vista o altri bisogni particolari);<br>
+        • <code>ULTIMA</code> = preferenza per stare verso il fondo dell'aula (utile ad es. per allievi di alta statura o per altre esigenze);<br>
         • <code><span class="testo-errore"><b>FISSO</b></span></code> = <span class="testo-errore"><b>posto stabile nel primo banco a sinistra della prima fila</b></span>.</p>
 
         <p><b>PRIMA e FISSO sono vincoli assoluti: non vengono mai ignorati.</b> ULTIMA è invece una preferenza: il programma cerca di rispettarla, ma può rinunciarvi quando è necessario per trovare una disposizione valida.</p>
@@ -90,9 +92,8 @@ ISTRUZIONI_HTML_TEMPLATE = r"""
         La posizione <b>FISSO</b> è pensata soprattutto per un allievo che abbia bisogno di mantenere un posto stabile nel tempo.<br><br>
         • Può esserci <b>al massimo un FISSO</b> per classe.<br>
         • Occupa sempre il <b>primo posto a sinistra della prima fila</b>.<br>
-        • Il compagno vicino può cambiare nelle diverse assegnazioni: il programma lo sceglie tenendo conto dei vincoli e delle vicinanze già sperimentate.<br>
-        • Nella scheda del FISSO, incompatibilità e affinità sono disabilitate. Se, ad esempio, vuoi favorire la vicinanza con un determinato allievo, imposta <b>nella scheda di quell'allievo</b> un'affinità di livello 3 con il FISSO.<br><br>
-        Il programma adatta automaticamente il gruppo intorno al FISSO alla modalità scelta, a coppie o a terzetti.
+        • Il compagno vicino può cambiare nelle diverse assegnazioni: il programma lo sceglie tenendo conto dei vincoli e delle vicinanze già sperimentate. In tutte le disposizioni il vicino diretto del FISSO avrà a sua volta un altro compagno al banco adiacente, in modo da non restare isolato se l'allievo FISSO dovesse temporaneamente uscire dall'aula.<br>
+        • Nella scheda del FISSO, incompatibilità e affinità sono disabilitate. Se, ad esempio, vuoi favorire la vicinanza con un determinato allievo, imposta <b>nella scheda di quell'allievo</b> un'affinità di livello 3 con il FISSO.
         </p>
 
         <p><b>2 ~ Incompatibilità</b></p>
@@ -101,8 +102,8 @@ ISTRUZIONI_HTML_TEMPLATE = r"""
         <table cellpadding="6" cellspacing="0" class="tabella">
         <tr class="intestazione-tabella"><td><b>Livello</b></td><td><b>Come viene considerato</b></td></tr>
         <tr><td class="cella-centro"><b>1</b></td><td>Meglio non vicini, ma accettabile se necessario</td></tr>
-        <tr><td class="cella-centro"><b>2</b></td><td>Da evitare con maggiore priorità</td></tr>
-        <tr><td class="cella-centro testo-errore"><b>3</b></td><td class="testo-errore"><b>Mai vicini — vincolo assoluto</b></td></tr>
+        <tr><td class="cella-centro"><b>2</b></td><td>Da evitare con maggior forza</td></tr>
+        <tr><td class="cella-centro testo-errore"><b>3</b></td><td class="testo-errore"><b>Mai vicini: vincolo assoluto</b></td></tr>
         </table>
 
         <p><b>3 ~ Affinità</b></p>
@@ -115,27 +116,27 @@ ISTRUZIONI_HTML_TEMPLATE = r"""
         <tr><td class="cella-centro"><b>3</b></td><td><b>Forte preferenza, ma non obbligo assoluto</b></td></tr>
         </table>
 
-        <p>Dopo aver scelto il compagno, <b>seleziona sempre anche il livello</b>. Se una relazione resta incompleta, il programma ti chiederà di completarla prima di salvare.</p>
+        <p>Puoi aggiungere più "incompatibilità" e/o "affinità" per lo stesso studente. Dopo aver scelto il compagno, <b>seleziona sempre anche il livello</b>. Se una relazione resta incompleta, il programma ti chiederà di completarla prima di salvare.</p>
 
         <p><b>4 ~ Modifica e rimozione dei vincoli</b></p>
-        <p>Ogni relazione è <b>bidirezionale</b>: quando aggiungi o modifichi un vincolo, l'Editor aggiorna automaticamente anche la scheda dell'altro studente. Non devi quindi inserirlo due volte. Per eliminarlo, clicca su <b>"Rimuovi"</b> in una delle due schede: verrà rimosso automaticamente anche dall'altra.</p>
+        <p>Ogni relazione è <b>bidirezionale</b>: quando aggiungi o modifichi un vincolo, l'Editor aggiorna automaticamente anche la scheda dell'altro studente. Non devi quindi inserirlo due volte. Per eliminarlo, clicca su "<b>Rimuovi</b>" in una delle due schede: verrà rimosso automaticamente anche dall'altra.</p>
 
-        <p class="riquadro riquadro-info">[[ICON:info:17]] <b>Nei terzetti e nei quartetti il programma considera vicini soltanto gli studenti seduti uno accanto all'altro.</b> Ad esempio, in <code>Anna — Luca — Marco</code>, Anna è vicina a Luca e Luca è vicino a Marco; Anna e Marco, invece, non sono considerati vicini.</p>
+        <p class="riquadro riquadro-info">[[ICON:info:17]] <b>Nei terzetti e nei quartetti il programma considera vicini soltanto gli studenti seduti uno accanto all'altro.</b> Ad esempio, in "<code>Anna — Luca — Marco</code>", Anna è vicina a Luca e Luca è vicino a Marco; Anna e Marco, invece, non sono considerati vicini.</p>
 
         <p><b>5 ~ Strumenti dell'Editor</b></p>
         <p>Puoi usare alcuni strumenti facoltativi per controllare più facilmente il lavoro svolto:<br>
         • <b>"Espandi schede"</b>: mostra o comprime tutte le schede degli studenti;<br>
-        • <b>"Dettaglio vincoli"</b>: raccoglie in un'unica vista tutte le affinità e incompatibilità inserite;<br>
+        • <b>"Dettaglio vincoli"</b>: raccoglie in un'unica vista tutte le incompatibilità, affinità e posizioni inserite;<br>
         • <b>"Anteprima file classe (.txt)"</b>: mostra come apparirà il file completo dopo il salvataggio.</p>
 
-        <p><b>"CHIUDI FILE"</b> chiude invece la classe aperta, avvisandoti se ci sono modifiche che non hai ancora salvato.</p>
+        <p>Il pulsante <b>"CHIUDI FILE"</b> chiude invece la classe aperta, avvisandoti se ci sono modifiche che non hai ancora salvato.</p>
 
         <p class="riquadro riquadro-info">[[ICON:save:17]] <b>Quando hai terminato le modifiche, usa "SALVA e CARICA".</b> Il programma aggiorna il file della classe e rende operative le nuove impostazioni. <b>Finché non lo fai, le modifiche dell'Editor non vengono usate nelle assegnazioni.</b></p>
 
         <hr>
-        <h3 class="sezione">[3] - CONFIGURA L'AULA</h3>
+        <h3 class="sezione">[3] - SALVA E CONFIGURA LE ASSEGNAZIONI</h3>
 
-        <p>Dopo aver cliccato su <b>"SALVA e CARICA"</b>, compariranno nel pannello di sinistra i seguenti box.</p>
+        <p>Dopo aver cliccato su <b>"SALVA e CARICA"</b>, compariranno nel pannello di sinistra i seguenti box:</p>
 
         <p><b>1 ~ STATO CLASSE</b></p>
         <p>Mostra nome del file, numero degli studenti e stato del caricamento. È un riepilogo di sola lettura.</p>
@@ -149,14 +150,14 @@ ISTRUZIONI_HTML_TEMPLATE = r"""
         • a coppie: da 4 a 10 posti, con variazioni di 2;<br>
         • a terzetti: 6 oppure 9 posti.</p>
 
-        <p>Il numero delle <b>"File"</b> viene invece calcolato automaticamente in base alla classe e alla configurazione scelta. Anche <b>"Posti totali"</b> si aggiorna da solo e mostra la capienza effettiva della disposizione; gli eventuali posti non necessari verranno rimossi automaticamente.</p>
+        <p>Il numero delle <b>"File"</b> e i <b>"Posti totali"</b> si aggiornano da soli; eventuali posti eccedenti verranno rimossi automaticamente.</p>
 
         <p>Se hai dubbi sulla differenza fra <b>File</b> e <b>Posti per fila</b>, clicca sul pulsante [[ICON:circle-help:17]] accanto a "Posti totali" per vedere uno schema dell'aula.</p>
 
         <p><b>3 ~ GESTIONE NUMERO DISPARI / GESTIONE DEL RESTO</b></p>
         <p>Questo box compare soltanto quando il numero degli studenti richiede un gruppo diverso da quello previsto dalla modalità scelta.</p>
 
-        <p><b>A coppie</b>, quando serve viene formato un trio. Puoi scegliere dove collocarlo tra le posizioni proposte dal programma: <b>Davanti</b>, <b>In mezzo</b> o <b>In fondo</b>.</p>
+        <p><b>A coppie</b>, quando serve viene formato un trio. Puoi scegliere dove collocarlo tra le posizioni "<b>Davanti</b>", "<b>In mezzo</b>" o "<b>In fondo</b>".</p>
 
         <p><b>A terzetti</b>, se non è possibile formare soltanto gruppi da tre, «PostiPerfetti» crea automaticamente il gruppo necessario: un <b>quartetto</b> oppure una <b>coppia</b>. In alcuni casi, al posto della coppia, puoi scegliere di formare <b>2 quartetti</b>.</p>
 
@@ -166,18 +167,18 @@ ISTRUZIONI_HTML_TEMPLATE = r"""
         <p>A coppie trovi l'opzione <b>"Preferisci coppie miste (M+F)"</b>; a terzetti diventa <b>"Preferisci vicinanze miste (M+F)"</b>. Se la attivi, il programma favorisce le combinazioni "maschio + femmina", ma <b>non le rende obbligatorie</b>.</p>
 
         <p><b>5 ~ MODALITÀ DI ASSEGNAZIONE</b></p>
-        <p>Il box mostra un riepilogo dello Storico e permette di scegliere:</p>
+        <p>Il box mostra un riepilogo delle assegnazioni eventualmente salvate nello Storico e permette di scegliere:</p>
         <p>• <b>Mensile (un mese)</b>: genera una sola disposizione;<br>
         • <b>Annuale (più mesi)</b>: genera da 1 a 10 disposizioni consecutive e le presenta insieme in un'anteprima.</p>
 
         <p class="riquadro riquadro-info">
         [[ICON:history:18]] <b>COME FUNZIONA LA ROTAZIONE</b><br><br>
         Lo Storico viene consultato automaticamente. Nei tentativi più restrittivi le vicinanze già utilizzate vengono escluse; se le combinazioni nuove non bastano più, possono essere riutilizzate con una forte penalità e vengono segnalate nel Report.<br><br>
-        Le rotazioni sono <b>separate per modalità</b>: le coppie influenzano le future assegnazioni a coppie; le adiacenze dei terzetti influenzano le future assegnazioni a terzetti. Un precedente nell'altra modalità può comparire nel Report come informazione, ma non penalizza la disposizione corrente.
+        Le rotazioni sono <b>separate per modalità</b>: le coppie influenzano le future assegnazioni a coppie; le adiacenze dei terzetti influenzano le future assegnazioni a terzetti. Un precedente nell'altra modalità può comparire nel Report come informazione, ma non influenza la disposizione corrente.
         </p>
 
         <hr>
-        <h3 class="sezione">[4] - GENERA: MENSILE O ANNUALE</h3>
+        <h3 class="sezione">[4] - GENERA CON "MENSILE" O "ANNUALE"</h3>
 
         <p><b>1 ~ Controlli prima dell'avvio</b></p>
         <p>Quando premi <b>"ASSEGNA I POSTI!"</b>, il programma controlla che:</p>
@@ -189,7 +190,7 @@ ISTRUZIONI_HTML_TEMPLATE = r"""
         <p>Se trova un problema, l'elaborazione non parte e un messaggio ti indica che cosa correggere.</p>
 
         <p><b>2 ~ Se non trova subito una soluzione</b></p>
-        <p>«PostiPerfetti» effettua automaticamente più tentativi. Parte cercando di rispettare tutti i criteri impostati e di non ripetere vicinanze già presenti nello Storico. Se non trova una soluzione, allenta progressivamente soltanto i criteri non assoluti: prima quelli di livello 1, poi quelli di livello 2 e la posizione ULTIMA. Solo nell'ultimo tentativo può mettere da parte anche le affinità di livello 3 e la preferenza per il genere misto, ammettendo se necessario alcune vicinanze già utilizzate, che vengono segnalate nel Report.</p>
+        <p>«PostiPerfetti» effettua automaticamente più tentativi. Parte cercando di rispettare tutti i criteri impostati e di non ripetere vicinanze già presenti nello Storico. Se non trova una soluzione, allenta progressivamente soltanto i criteri non assoluti: prima quelli di livello 1, poi quelli di livello 2 e la posizione ULTIMA. Solo nell'ultimo tentativo può mettere da parte anche le affinità di livello 3 e la preferenza per il genere misto, ammettendo se necessario alcune vicinanze già utilizzate (che vengono segnalate nel Report).</p>
 
         <p class="riquadro riquadro-info">[[ICON:shield-check:17]] <b>Restano sempre vincoli assoluti (= non vengono mai violati):</b> le incompatibilità di livello 3 e le posizioni PRIMA e FISSO.</p>
 
@@ -206,14 +207,14 @@ ISTRUZIONI_HTML_TEMPLATE = r"""
         <p>Se viene raggiunto il tempo massimo (ossia 10 minuti) prima di completare tutti i mesi richiesti, l'anteprima segnala chiaramente che l'annata è parziale. Puoi comunque valutarla e decidere se conservarla.</p>
 
         <hr>
-        <h3 class="sezione">[5] - AULA, REPORT, STORICO E STATISTICHE</h3>
+        <h3 class="sezione">[5] - GESTISCI I RISULTATI</h3>
 
         <p><b>[[ICON:school:18]] Scheda Aula</b></p>
         <p>Mostra la piantina della classe. Il fondo dell'aula è in alto; LIM, cattedra e lavagna sono in basso.</p>
-        <p>Nella modalità <b>Mensile</b>, se vuoi conservare la disposizione, usa <b>"Salva assegnazione"</b>: soltanto dopo il salvataggio entrerà nello Storico e sarà presa in considerazione nelle rotazioni future.</p>
+        <p>Nella modalità <b>Mensile</b>, per conservare la disposizione, usa "<b>Salva assegnazione</b>": soltanto dopo il salvataggio entrerà nello Storico e sarà presa in considerazione nelle rotazioni future.</p>
         <p>Puoi inoltre usare:<br>
-        • <b>"Esporta Excel"</b>: crea un file <code>.xlsx</code> modificabile e stampabile (con MS Excel oppure con LibreOffice Calc);<br>
-        • <b>"Esporta Report"</b>: salva in <code>.txt</code> il report completo.</p>
+        • "<b>Esporta Excel</b>": crea un file <code>.xlsx</code> modificabile e stampabile (con MS Excel oppure con LibreOffice Calc);<br>
+        • "<b>Esporta Report</b>": salva in <code>.txt</code> il report completo.</p>
         <p>Le esportazioni vengono abilitate dopo il salvataggio nello Storico.</p>
 
         <p><b>[[ICON:file-text:18]] Scheda Report</b></p>
@@ -235,9 +236,6 @@ ISTRUZIONI_HTML_TEMPLATE = r"""
         <hr>
         <h3 class="sezione">[6] - DURANTE L'ANNO</h3>
 
-        <p><b>[[ICON:history:18]] Mantieni coerente lo Storico</b></p>
-        <p>Conserva nello Storico soltanto le disposizioni effettivamente usate in classe. Se ne hai salvata una ma poi non l'hai applicata, eliminala prima di generarne di nuove. Le rotazioni vengono generate tenendo conto delle assegnazioni salvate.</p>
-
         <p><b>[[ICON:user-pen:18]] Modifica posizione o vincoli</b></p>
         <p>Se durante l'anno vuoi cambiare "posizione", "affinità" o "incompatibilità" per qualche allievo, seleziona di nuovo il file della classe nell'Editor, modifica le schede interessate e clicca su <b>"SALVA e CARICA"</b>. Le nuove impostazioni verranno usate a partire dalle assegnazioni successive.</p>
 
@@ -249,6 +247,9 @@ ISTRUZIONI_HTML_TEMPLATE = r"""
         «PostiPerfetti» può riconoscere la classe dai nomi degli studenti e proporti di ricollegarla allo Storico esistente, così da non perdere la memoria delle rotazioni precedenti.
         </p>
 
+        <p><b>[[ICON:history:18]] Mantieni coerente lo Storico</b></p>
+        <p>Conserva nello Storico soltanto le disposizioni effettivamente usate in classe. Se ne hai salvata una ma poi non l'hai applicata, eliminala prima di generarne di nuove. Le rotazioni vengono generate tenendo conto delle assegnazioni salvate.</p>
+
         <hr>
         <h3 class="sezione">[[ICON:triangle-alert:20]] RISOLUZIONE DEI PROBLEMI</h3>
 
@@ -256,15 +257,15 @@ ISTRUZIONI_HTML_TEMPLATE = r"""
         <tr class="intestazione-tabella"><td><b>Problema</b></td><td><b>Che cosa fare</b></td></tr>
         <tr><td>[[ICON:file-x:17]] Errore durante il caricamento del file della classe (.txt)</td><td>Un file BASE deve avere 2 o 3 campi per riga; un file COMPLETO deve averne esattamente 6. Leggi il dettaglio del popup, che indica la riga e il problema da correggere, quindi selezionalo di nuovo.</td></tr>
         <tr><td>[[ICON:triangle-alert:17]] Caratteri non ammessi nei nomi</td><td>Nei nomi e cognomi non usare underscore (<code>_</code>), punto e virgola (<code>;</code>), virgola (<code>,</code>), due punti (<code>:</code>) o cancelletto (<code>#</code>). Usa normalmente lettere, spazi, apostrofi o trattini.</td></tr>
-        <tr><td>[[ICON:file-x:17]] Problema di codifica del file</td><td>Se il popup segnala un problema di codifica, apri il file con un editor di testo, salvalo in codifica "UTF-8" e selezionalo di nuovo.</td></tr>
+        <tr><td>[[ICON:file-x:17]] Problema di codifica del file</td><td>Se il popup segnala un problema di codifica, apri il file con un editor di testo, salvalo con codifica "Unicode UTF-8" e selezionalo di nuovo.</td></tr>
         <tr><td>[[ICON:users:17]] Studenti Cognome e Nome identici</td><td>Aggiungi un nome o una sigla distintiva, ad es. "Giovanni Bianchi (biondo)" oppure "Giovanni Bianchi2".</td></tr>
-        <tr><td>[[ICON:triangle-alert:17]] Genere non impostato</td><td>Seleziona M o F per tutti gli studenti prima di cliccare su "SALVA e CARICA".</td></tr>
-        <tr><td>[[ICON:triangle-alert:17]] Relazione incompleta</td><td>Completa inserendo sia il compagno sia il livello di "incompatibilità"/"affinità", oppure cancella cliccando su "Rimuovi". Il salvataggio e l'assegnazione restano bloccati finché non completi l'impostazione del vincolo.</td></tr>
+        <tr><td>[[ICON:triangle-alert:17]] Genere non impostato</td><td>Seleziona "M" o "F" per tutti gli studenti prima di cliccare su "SALVA e CARICA".</td></tr>
+        <tr><td>[[ICON:triangle-alert:17]] Relazione di "incompatibilità"/"affinità" incompleta</td><td>Completala inserendo sia il compagno sia il livello di "incompatibilità"/"affinità", oppure cancellala cliccando su "Rimuovi". Il salvataggio e l'assegnazione restano bloccati finché non sistemi l'impostazione del vincolo.</td></tr>
         <tr><td>[[ICON:circle-x:17]] Relazioni contraddittorie o livelli diversi</td><td>Correggi le schede indicate: se ad es. "Rossi" ha affinità 1 con "Bianchi", ma "Bianchi" ha affinità 3 con "Rossi", il programma non può decidere quale delle due versioni sia quella giusta.</td></tr>
-        <tr><td>[[ICON:armchair:17]] Più di uno studente FISSO</td><td>Lascia FISSO a un solo studente e modifica la posizione degli altri.</td></tr>
+        <tr><td>[[ICON:armchair:17]] Più di uno studente FISSO</td><td>Lascia la posizione "FISSO" a un solo studente e modifica quella degli altri.</td></tr>
         <tr><td>[[ICON:circle-stop:17]] L'assegnazione fallisce</td><td>Controlla soprattutto la quantità delle incompatibilità di livello 3 e il numero di studenti con posizione PRIMA rispetto ai posti disponibili per fila. A terzetti prova, quando disponibile, l'alternativa fra una coppia e due quartetti.</td></tr>
         <tr><td>[[ICON:history:17]] Compaiono vicinanze già utilizzate</td><td>Dopo molte assegnazioni le combinazioni nuove possono esaurirsi. Il Report segnala chiaramente i riutilizzi: significa che, con la configurazione e i vincoli correnti, il programma ha dovuto ammettere alcune vicinanze già impiegate.</td></tr>
-        <tr><td>[[ICON:history:17]] L'Annuale produce meno mesi di quanti richiesti</td><td>È stata raggiunta la soglia massima di elaborazione prima di completare tutti i mesi richiesti. Puoi valutarla e accettarla oppure scartarla senza modificare lo Storico.</td></tr>
+        <tr><td>[[ICON:history:17]] L'Annuale produce meno mesi di quanti richiesti</td><td>È stata raggiunta la soglia massima di elaborazione (10 minuti) prima di completare tutti i mesi richiesti. Puoi valutarla e accettarla oppure scartarla senza modificare lo Storico.</td></tr>
         <tr><td>[[ICON:file-down:17]] Esportazioni disabilitate nella scheda Aula</td><td>Salva prima l'assegnazione nello Storico: le esportazioni dell'Excel e del Report vengono abilitate solo dopo il salvataggio.</td></tr>
         <tr><td>[[ICON:armchair:17]] Relazioni disabilitate nella scheda del FISSO</td><td>È normale: devi impostare le relazioni di "incompatibilità"/"affinità" nelle schede degli altri studenti.</td></tr>
         </table>
