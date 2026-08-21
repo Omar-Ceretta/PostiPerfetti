@@ -69,7 +69,7 @@ Durante la disinstallazione ti verrà chiesto se desideri eliminare anche i dati
 
 L'installazione su Linux è gestita da uno script Bash distribuito insieme alla Release ufficiale.
 
-«PostiPerfetti» supporta le principali distribuzioni delle famiglie **Debian/Ubuntu, Fedora, Arch Linux e openSUSE**. Il codice dell'installer viene verificato automaticamente su **Ubuntu 24.04, Fedora 44, Arch Linux e openSUSE Tumbleweed**.
+«PostiPerfetti» supporta le principali distribuzioni delle famiglie **Debian/Ubuntu, Fedora, Arch Linux e openSUSE**. È stato testato su Debian 13, Ubuntu 26.04 (e le sue derivate Linux Mint 22.3 e Zorin OS 18.1), Fedora 44, Arch Linux e openSUSE Leap 16. Il codice dell'installer viene verificato automaticamente su Ubuntu 24.04, Fedora 44, Arch Linux e openSUSE Tumbleweed.
 
 ### ✰ Requisiti
 
