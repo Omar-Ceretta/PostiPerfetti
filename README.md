@@ -46,7 +46,7 @@ Le assegnazioni possono essere conservate nello **Storico**, analizzate tramite 
 ## 🚀 Come funziona
 
 1. **Crea il file della classe** con cognome, nome e genere degli studenti.
-2. Nella scheda "**Editor studenti**", aggiungi tutte le indicazioni che ti servono: "posizione, affinità" e "incompatibilità".
+2. Nella scheda "**Editor studenti**", aggiungi tutte le indicazioni che ti servono: "posizione", "affinità" e "incompatibilità".
 3. Clicca su **"SALVA e CARICA"** e configura l'aula scegliendo "coppie" o "terzetti", il numero di posti per fila e l'eventuale preferenza per vicinanze di genere misto.
 4. Scegli **Mensile** per una singola disposizione oppure **Annuale** per generarne più di una.
 5. Controlla il risultato e salva nello **Storico** solo le disposizioni che userai realmente in classe. Potrai poi esportarle e stamparle. Tramite le "Statistiche" sarai in grado di analizzare nel tempo le caratteristiche delle diverse rotazioni.
