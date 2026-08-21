@@ -37,7 +37,7 @@ Scarica l'installer soltanto dalla **Release ufficiale di «PostiPerfetti»** su
 
 **Se un antivirus blocca o mette in quarantena il file**, non disattivare la protezione del sistema. 
 Verifica di aver scaricato l'installer dalla Release ufficiale e, per controllarne l'integrità, confronta il suo SHA-256 con quello pubblicato insieme all'installer. 
-Calcolando il checksum di un file e confrontandolo con quello originale è infatti possibile verificare che il software non sia stata manomesso o danneggiato.
+Calcolando il checksum di un file e confrontandolo con quello originale è infatti possibile verificare che il software non sia stato manomesso o danneggiato.
 Solo dopo questa verifica valuta se autorizzare il programma tramite le funzioni del tuo antivirus.
 
 ### ✰ Aggiornamento
