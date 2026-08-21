@@ -437,7 +437,7 @@ Scrivi-OK "Identità della Release letta dalla fonte unica"
 Scrivi-Passo "Controllo CHANGELOG"
 
 $ChangelogPath = Join-Path $Root "CHANGELOG.md"
-$Changelog = Get-Content $ChangelogPath -Raw
+$Changelog = Get-Content $ChangelogPath -Raw -Encoding UTF8
 
 $versioneRegex = [regex]::Escape($Versione)
 
