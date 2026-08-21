@@ -109,7 +109,7 @@ Il programma viene installato normalmente nella Home dell'utente, in:
 
 L'installer scarica automaticamente il pacchetto corrispondente alla propria Release (ad es. `PostiPerfetti-1.0-linux.tar.gz`), ne verifica l'integrità e la versione e prepara l'ambiente Python necessario. Al termine propone di avviare subito «PostiPerfetti».
 
-Una volta completata l'installazione, l'uso del programma non richiede una connessione a Internet.
+Una volta completata l'installazione, l'uso del programma non richiede una connessione a Internet e il file `install.sh` scaricato può essere eliminato.
 
 ### ✰ Aggiornamento
 
