@@ -54,8 +54,8 @@ ISTRUZIONI_HTML_TEMPLATE = r"""
         • <code>Classe-BASE_esempio.txt</code>, che mostra il semplice formato da usare per creare una nuova classe;<br>
         • <code>Classe-COMPLETO_esempio.txt</code>, che mostra come apparirà il file dopo aver aggiunto posizione e vincoli tramite l'Editor.<br><br>
         Per creare la tua classe, usa come modello il file <b>BASE</b>, oppure crea un nuovo file di testo con il nome che preferisci (ad es. "<code>Classe 1A.txt</code>" o "<code>Classe 1A - 2026-27.txt</code>").</p>
-        <p class="riquadro riquadro-info">[[ICON:info:17]] Nota per Windows: l'estensione ".txt" potrebbe essere nascosta, quindi è possibile che il file ti appaia semplicemente come "Classe 1A". È normale.<br>
-        Usa un normale editor di testo, non un programma di videoscrittura come Microsoft Word o LibreOffice Writer.</p>
+        <p class="riquadro riquadro-info">[[ICON:info:17]] Nota per Windows: l'estensione ".txt" potrebbe essere nascosta, quindi è possibile che il file ti appaia semplicemente come "Classe 1A". Va bene così.<br>
+        Usa un semplice editor di testo (come "Blocco note"), non un programma di videoscrittura come Microsoft Word o LibreOffice Writer.</p>
         <p>Inserisci uno studente per riga, nel formato:</p>
 
         <table cellpadding="6" cellspacing="0" class="tabella tabella-compatta">
@@ -68,7 +68,7 @@ ISTRUZIONI_HTML_TEMPLATE = r"""
         <p class="riquadro riquadro-info">[[ICON:info:17]] L'Editor accetta anche un file base con due soli campi, "<code>Cognome;Nome</code>", ma prima del salvataggio richiederà di selezionare "M" o "F" per ogni studente. Per il primo utilizzo conviene quindi compilare subito tutti e tre i campi.</p>
 
         <p><b>2 ~ Seleziona la classe</b></p>
-        <p>Clicca su "<b>Seleziona classe</b>" e scegli il file <code>.txt</code>.</p>
+        <p>Clicca su "<b>Seleziona classe</b>" e scegli il file che hai appena creato.</p>
         <p>Se carichi un file <b>BASE</b>, un messaggio ti ricorderà che, per ogni allievo, puoi modificare la "posizione" e impostare eventuali "affinità" e "incompatibilità" con altri compagni. Se invece riapri un file <b>COMPLETO</b> già salvato da «PostiPerfetti», ritroverai anche le impostazioni inserite in precedenza.</p>
         <p>Non devi compilare manualmente il formato COMPLETO: viene creato e aggiornato dal programma quando premerai su <b>"SALVA e CARICA"</b>.</p>
 
@@ -76,7 +76,7 @@ ISTRUZIONI_HTML_TEMPLATE = r"""
         <p>Quando selezioni una classe, l'Editor controlla che il file sia leggibile e coerente. Le piccole irregolarità che possono essere sistemate senza ambiguità vengono gestite automaticamente; se invece trova un problema che richiede una tua scelta, ti indica che cosa va corretto prima di caricare il file.</p>
 
         <hr>
-        <h3 class="sezione">[2] - IMPOSTA GLI STUDENTI E I VINCOLI</h3>
+        <h3 class="sezione">[2] - IMPOSTA LA POSIZIONE E I VINCOLI</h3>
 
         <p><b>1 ~ Posizione</b></p>
         <p>Per ogni studente puoi scegliere una delle seguenti voci:</p>
@@ -89,7 +89,7 @@ ISTRUZIONI_HTML_TEMPLATE = r"""
 
         <p class="riquadro riquadro-info">
         <b>[[ICON:armchair:18]] LO STUDENTE FISSO</b><br><br>
-        La posizione <b>FISSO</b> è pensata soprattutto per un allievo che abbia bisogno di mantenere un posto stabile nel tempo.<br><br>
+        La posizione <b>FISSO</b> è pensata soprattutto per allievi con Bisogni Educativi Speciali o altre esigenze che richiedono una collocazione stabile, vicina alla cattedra e costante nel tempo.<br><br>
         • Può esserci <b>al massimo un FISSO</b> per classe.<br>
         • Occupa sempre il <b>primo posto a sinistra della prima fila</b>.<br>
         • Il compagno vicino può cambiare nelle diverse assegnazioni: il programma lo sceglie tenendo conto dei vincoli e delle vicinanze già sperimentate. In tutte le disposizioni il vicino diretto del FISSO avrà a sua volta un altro compagno al banco adiacente, in modo da non restare isolato se l'allievo FISSO dovesse temporaneamente uscire dall'aula.<br>
@@ -121,7 +121,7 @@ ISTRUZIONI_HTML_TEMPLATE = r"""
         <p><b>4 ~ Modifica e rimozione dei vincoli</b></p>
         <p>Ogni relazione è <b>bidirezionale</b>: quando aggiungi o modifichi un vincolo, l'Editor aggiorna automaticamente anche la scheda dell'altro studente. Non devi quindi inserirlo due volte. Per eliminarlo, clicca su "<b>Rimuovi</b>" in una delle due schede: verrà rimosso automaticamente anche dall'altra.</p>
 
-        <p class="riquadro riquadro-info">[[ICON:info:17]] <b>Nei terzetti e nei quartetti il programma considera vicini soltanto gli studenti seduti uno accanto all'altro.</b> Ad esempio, in "<code>Anna — Luca — Marco</code>", Anna è vicina a Luca e Luca è vicino a Marco; Anna e Marco, invece, non sono considerati vicini.</p>
+        <p class="riquadro riquadro-info">[[ICON:info:17]] <b>Nei terzetti e nei quartetti il programma considera vicini soltanto gli studenti seduti uno accanto all'altro.</b> Ad esempio, in "<code>Anna + Luca + Marco</code>", Anna è vicina a Luca e Luca è vicino a Marco; Anna e Marco, invece, non sono considerati vicini.</p>
 
         <p><b>5 ~ Strumenti dell'Editor</b></p>
         <p>Puoi usare alcuni strumenti facoltativi per controllare più facilmente il lavoro svolto:<br>
@@ -240,7 +240,7 @@ ISTRUZIONI_HTML_TEMPLATE = r"""
         <p>Se durante l'anno vuoi cambiare "posizione", "affinità" o "incompatibilità" per qualche allievo, seleziona di nuovo il file della classe nell'Editor, modifica le schede interessate e clicca su <b>"SALVA e CARICA"</b>. Le nuove impostazioni verranno usate a partire dalle assegnazioni successive.</p>
 
         <p><b>[[ICON:user-cog:18]] Aggiungi o rimuovi uno studente</b></p>
-        <p>Apri manualmente il file di testo della classe, aggiungi o elimina la riga dello studente e seleziona di nuovo il file nell'Editor. Se aggiungi uno studente, completa poi nell'Editor eventuali posizione e vincoli e clicca su <b>"SALVA e CARICA"</b>.</p>
+        <p>Apri manualmente il file di testo della classe, aggiungi o elimina la riga dello studente e seleziona di nuovo il file nell'Editor. Se aggiungi uno studente, completa poi nell'Editor la posizione e gli eventuali vincoli, quindi clicca su <b>"SALVA e CARICA"</b>.</p>
 
         <p class="riquadro riquadro-info">
         [[ICON:history:18]] <b>Se rinomini il file della classe</b><br><br>
