@@ -3,7 +3,7 @@
 Questo documento raccoglie le modifiche rilevanti delle versioni pubbliche di «PostiPerfetti».
 Il progetto entra nella propria storia di Release a partire dalla versione 1.0.
 
-## 1.0 — in preparazione
+## 1.0 — 2026-08-21
 
 ### Affidabilità
 
