@@ -3,7 +3,7 @@
 
 # 🖥️ «PostiPerfetti» — Installazione e avvio
 
-Le istruzioni complete di installazione — per **Windows** e **Linux** — si trovano nella guida dedicata, dove troverai tutti i dettagli necessari: requisiti, primo avvio, aggiornamenti, risoluzione dei problemi più comuni e disinstallazione.
+Le istruzioni complete di installazione — per **Windows** e **GNU/Linux** — si trovano nella guida dedicata, dove troverai tutti i dettagli necessari: requisiti, primo avvio, aggiornamenti, risoluzione dei problemi più comuni e disinstallazione.
 
 ### 👉 [Vai alla guida di installazione](documentazione/INSTALLAZIONE_AVVIO_E_DISINSTALLAZIONE.md)
 
