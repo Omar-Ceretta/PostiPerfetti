@@ -13,7 +13,7 @@ from __future__ import annotations
 import re
 
 
-VERSIONE = "1.0"
+VERSIONE = "2.0"
 
 _PATTERN_VERSIONE = re.compile(
     r"^(0|[1-9]\d*)\.(0|[1-9]\d*)$"
