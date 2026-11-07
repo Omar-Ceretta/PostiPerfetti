@@ -1,7 +1,7 @@
 # Classe: Classe-COMPLETO_esempio (24 studenti)
 # Formato: Cognome;Nome;Genere;Posizione;Incompatibilità;Affinità
 # Genere: M/F (se il flag "Genere misto" è attivo, l'abbinamento [maschio][femmina] riceve un BONUS forte, non obbligatorio)
-# Vincoli di posizione: NORMALE (= neutro) / PRIMA (= OBBLIGATORIO: prima fila) / ULTIMA (= preferenza per ultima fila) / FISSO (= OBBLIGATORIO: primo banco a sinistra della prima fila)
+# Vincoli di posizione: NORMALE (= neutro) / PRIMA (= OBBLIGATORIO: zona davanti) / ULTIMA (= preferenza per zona in fondo) / FISSO (= OBBLIGATORIO: posto stabile individuato nel Layout dell’aula, scelto nell’editor)
 # Vincoli di "Incompatibilità": Cognome Nome:livello (1-3, dove 1 = Leggera, 2 = Media, 3 = ASSOLUTA [= mai insieme])
 # Vincoli di "Affinità": Cognome Nome:livello (1-3, dove 1 = Leggera, 2 = Buona, 3 = Forte)
 
