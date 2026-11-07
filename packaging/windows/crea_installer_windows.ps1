@@ -4,7 +4,10 @@ param(
     [switch]$MantieniAmbienteBuild,
 
     # Se specificato, non apre dist-installer al termine.
-    [switch]$NonAprireCartella
+    [switch]$NonAprireCartella,
+
+    # Usato dalla pipeline ufficiale: esegue le verifiche statiche pubbliche.
+    [switch]$EseguiTest
 )
 
 $ErrorActionPreference = "Stop"
@@ -78,7 +81,6 @@ $fileNecessari = @(
     "requirements.txt",
     "LICENSE",
     "moduli\versione.py",
-    "documentazione\sviluppo\requirements-dev.txt",
     "packaging\windows\requirements-build-windows.txt",
     "classi\Classe-BASE_esempio.txt",
     "classi\Classe-COMPLETO_esempio.txt",
@@ -90,9 +92,15 @@ $fileNecessari = @(
     "packaging\windows\info_dopo_installazione.txt"
 )
 
+# La Release deve potersi costruire da un normale ZIP del repository.
+if ($EseguiTest) {
+    $fileNecessari += "packaging\windows\verifica_sorgenti_release.py"
+}
+
 $mancanti = @(
     $fileNecessari | Where-Object {
-        -not (Test-Path (Join-Path $Root $_) -PathType Leaf)
+        $percorso = Join-Path $Root $_
+        -not (Test-Path $percorso -PathType Leaf)
     }
 )
 
@@ -183,7 +191,13 @@ $BuildScript = Join-Path $PackagingDir "build_windows.ps1"
 
 # Lo script già collaudato rimane l'unica fonte della logica di packaging.
 # L'orchestratore si limita a preparare l'ambiente e verificarne il risultato.
-& $BuildScript
+if ($EseguiTest) {
+    Write-Host "Build Release: verifiche statiche integrate nel repository." -ForegroundColor Cyan
+    & $BuildScript
+} else {
+    Write-Host "Build rapida di prova: verifiche statiche di Release saltate." -ForegroundColor Yellow
+    & $BuildScript -SaltaControlli
+}
 
 if ($LASTEXITCODE -ne 0) {
     throw "build_windows.ps1 è terminato con codice $LASTEXITCODE."
@@ -267,6 +281,11 @@ $dimensioneMB = [Math]::Round((Get-Item $Setup).Length / 1MB, 2)
 Write-Host ""
 Write-Host "============================================================" -ForegroundColor Green
 Write-Host " BUILD WINDOWS COMPLETATA CON SUCCESSO" -ForegroundColor Green
+if (-not $EseguiTest) {
+    Write-Host " SOLO INSTALLER DI PROVA: verifiche di Release non eseguite." -ForegroundColor Yellow
+} else {
+    Write-Host " Controlli statici completati; la suite funzionale pytest NON e' inclusa." -ForegroundColor Yellow
+}
 Write-Host "============================================================" -ForegroundColor Green
 Write-Host ""
 Write-Host "EXE:"

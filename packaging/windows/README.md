@@ -57,5 +57,32 @@ La versione effettiva di Python, PyInstaller e Inno Setup usata per una
 Release ufficiale viene controllata e registrata dalla procedura
 `CREA_RELEASE.cmd`.
 
-`CREA_INSTALLER.cmd` resta invece il percorso rapido destinato alle build
-iterative e ai collaudi durante lo sviluppo.
+### Repository autosufficiente
+
+**Basta scaricare lo ZIP del repository pubblico su un PC Windows** con Python
+3 a 64 bit e Inno Setup 6.6+ installati. Non è necessario copiare alcun
+archivio, `tests/`, `strumenti/` o `requirements-dev.txt` da altri computer.
+Le dipendenze Python vengono installate automaticamente da pip; è richiesta
+una connessione Internet al primo allestimento dell'ambiente di build.
+
+- `CREA_INSTALLER.cmd` costruisce EXE e Setup per le **prove pratiche**.
+- `CREA_RELEASE.cmd COLLAUDO` verifica la pipeline di pubblicazione con
+  artefatti espressamente contrassegnati come NON pubblicabili.
+- `CREA_RELEASE.cmd` prepara gli artefatti della Release ufficiale quando
+  il CHANGELOG contiene la data della versione e tutti i controlli passano.
+
+La procedura Release verifica: presenza dei file pubblici essenziali,
+compilabilità di tutti i sorgenti Python, versione e tag, Ruff (versione
+congelata in `requirements-build-windows.txt`), versione Python/Inno Setup,
+pulizia delle build precedenti, metadati EXE e Setup, SHA-256 e asset Linux.
+Il controllo `verifica_sorgenti_release.py` è incluso in questa stessa cartella.
+
+**Limite esplicito:** i controlli statici NON sostituiscono la suite completa
+`pytest` dell'audit e non la eseguono. La Release non è certificata dal solo
+superamento di questi controlli: vanno svolte le prove funzionali di
+installazione, generazione, esportazione, aggiornamento e disinstallazione
+previste per Windows e Linux. La suite completa rimane uno strumento di
+sviluppo, non una dipendenza della distribuzione.
+
+Non caricare su GitHub neppure gli ambienti virtuali o le cartelle `build/`,
+`dist/`, `dist-installer/`, `dist-linux/` e `dist-release/`.
