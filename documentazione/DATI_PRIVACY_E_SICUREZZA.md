@@ -26,7 +26,7 @@ In particolare:
 
 - `classi/` contiene i file `.txt` delle classi creati o modificati dal docente;
 - `stato/` contiene la configurazione persistente, lo Storico delle
-  assegnazioni e il relativo backup;
+  assegnazioni, il relativo backup e le bozze del Layout;
 - `log/` può contenere diagnostica tecnica relativa a errori o problemi dell'applicazione.
 
 Le esportazioni Excel (`.xlsx`) e i Report (`.txt`) vengono salvati nel percorso scelto dal docente e possono a loro volta contenere nomi degli studenti, disposizioni e informazioni sui relativi abbinamenti.

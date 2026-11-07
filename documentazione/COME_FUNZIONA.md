@@ -1,6 +1,6 @@
 # ⚙️ Come funziona «PostiPerfetti»
 
-> **Versione di riferimento:** 1.0.
+> **Versione di riferimento:** 2.0 (base di sviluppo con Layout unico).
 > 
 > Questo documento spiega che cosa succede **dietro le quinte** quando «PostiPerfetti» calcola una disposizione.  
 > L'obiettivo è mostrare, con un linguaggio accessibile, **quale percorso seguono i dati, quali regole vengono applicate e come il programma sceglie fra più soluzioni possibili**.
@@ -19,7 +19,7 @@ Quando viene richiesta un'assegnazione, il programma tiene insieme informazioni 
 - se è richiesta una preferenza per gruppi di genere misto;
 - quali vicinanze sono già state utilizzate in passato;
 - quanti posti offre l'aula e come sono organizzati;
-- se si stanno formando **coppie** oppure **terzetti**;
+- come convivono i **banchi da due e da tre nel Layout unico**;
 - se si sta generando un solo mese oppure un'intera annata.
 
 Il percorso generale è questo:
@@ -84,13 +84,13 @@ Prima di iniziare la ricerca, i dati vengono inoltre portati in un ordine stabil
 
 Da queste ricava una **memoria delle vicinanze precedenti**, utilizzata per favorire la rotazione e limitare il più possibile il ritorno degli stessi abbinamenti.
 
-Le modalità **coppie** e **terzetti** possiedono memorie separate, perché una vicinanza nata in una modalità non deve modificare il comportamento dell'altra.
+I banchi da due e da tre del **Layout unico** condividono la memoria delle adiacenze reali. I vecchi formati **coppie** e **terzetti** conservano invece memorie separate: le assegnazioni precedenti restano consultabili, senza trasferirne automaticamente le vicinanze alla generazione del Layout unico.
 
 > Nel codice questa memoria delle vicinanze già usate viene indicata con il termine tecnico *blacklist*, interpretabile come una **memoria dei riusi**.
 
 ### L'aula
 
-Il programma costruisce anche la geometria fisica dell'aula: file, banchi disponibili, prima fila e spazio necessario per gli eventuali gruppi speciali.
+Il docente costruisce la geometria fisica dell'aula nella scheda **Layout**: banchi da due e da tre, spazi liberi, zone davanti e in fondo ed eventuale posto FISSO. Il programma ne ricava lo schema esatto di posti e gruppi richiesti.
 
 Il motore deve quindi trovare non soltanto gruppi socialmente accettabili, ma anche una disposizione che possa essere realmente collocata nell'aula scelta.
 
@@ -123,8 +123,8 @@ Non esiste perciò un unico “lancio casuale” che decide tutto in modo random
 Durante tutti i tentativi restano NON negoziabili:
 
 - incompatibilità di **livello 3** fra studenti adiacenti;
-- posizione **PRIMA**;
-- posizione **FISSO**, gestita con una logica dedicata;
+- posizione **PRIMA** nei banchi marcati come zona davanti;
+- posizione **FISSO** nel posto-ancora scelto nel Layout, anche al centro di un terzetto;
 - capienza e possibilità fisica di collocare i gruppi nell'aula.
 
 Un'incompatibilità di livello 3 è quindi un vero veto: quella vicinanza non entra nella soluzione neppure nel tentativo più permissivo.
@@ -139,7 +139,7 @@ Possono invece contribuire alla qualità della soluzione, senza essere per quest
 - preferenza per gruppi di genere misto;
 - desiderio di non riutilizzare vicinanze già viste.
 
-È proprio su queste componenti che agiscono i quattro tentativi.
+È proprio su queste componenti che agiscono i quattro tentativi. Una preferenza attiva influisce sul punteggio e sull’ordine della ricerca: non diventa per questo un divieto. Un’incompatibilità di livello 1 o 2 può quindi comparire già in T1, mentre L3 resta sempre esclusa.
 
 ---
 
@@ -152,8 +152,8 @@ Sono **quattro configurazioni progressive dello stesso sistema di ricerca**.
 |---|---|---|
 | **T1 — Tentativo 1** | Tiene conto di tutte le preferenze disponibili. | Escluse. |
 | **T2 — Tentativo 2** | Rinuncia alle preferenze più deboli di livello 1. | Escluse. |
-| **T3 — Tentativo 3** | Rinuncia anche alle preferenze intermedie (di livello 2); conserva ancora le più forti. | Escluse. |
-| **T4 — Tentativo 4** | Mantiene soltanto i vincoli assoluti e fisici. | Ammesse solo se necessarie, ma fortemente penalizzate. |
+| **T3 — Tentativo 3** | Disattiva anche incompatibilità e affinità di livello 2 e il contributo ULTIMA nel punteggio di base; conserva affinità 3 e preferenza M/F. | Escluse. |
+| **T4 — Tentativo 4** | Disattiva i contributi soft di base; mantiene vincoli assoluti e fisici e cerca con ripartenze differenti. | Ammesse e fortemente penalizzate secondo gli usi precedenti. |
 
 In forma intuitiva:
 
@@ -171,7 +171,7 @@ T4  cerca una soluzione possibile senza violare i vincoli assoluti
 ```
 
 T4 **non significa “vale tutto”**.  
-Incompatibilità di livello 3, posizione PRIMA, FISSO e geometria dell'aula sono rigorosamente mantenuti.
+Incompatibilità di livello 3, posizione PRIMA, FISSO e geometria dell'aula sono rigorosamente mantenuti. Le preferenze disattivate nel punteggio di costruzione non vengono cancellate dai dati: la collocazione nei banchi e il confronto finale tornano a misurare ULTIMA, affinità, incompatibilità e vicinanze miste. Se un Tentativo trova una soluzione completa, quella cascata termina; il confronto fra ulteriori proposte è un livello distinto.
 
 ---
 
@@ -188,7 +188,7 @@ Perciò, se T1 ha esplorato **completamente** tutte le combinazioni consentite e
 
 In quel caso il programma passa direttamente a T4, dove cambia davvero la regola sui riusi.
 
-Se, invece, T1 si è fermato perché ha raggiunto un limite protettivo della ricerca (ad esempio perché è scaduto il budget temporale a disposizione), non esiste una dimostrazione di impossibilità: T2 e T3 vengono pertanto ancora provati.
+Se, invece, T1 si è fermato perché ha raggiunto il limite protettivo di nodi della ricerca, non esiste una dimostrazione di impossibilità: T2 e T3 vengono pertanto ancora provati. Il limite temporale dell’intera elaborazione è un controllo distinto.
 
 ---
 
@@ -283,7 +283,7 @@ per distinguere, ad esempio, un conflitto fra richieste di fila, una situazione 
 
 Questi valori **guidano l'ordine della ricerca**, ma non trasformano un divieto assoluto in una possibilità. Se esiste un'incompatibilità di livello 3, la vicinanza viene scartata indipendentemente dal punteggio.
 
-Nei primi tre Tentativi, inoltre, una vicinanza già usata viene esclusa. Nel quarto diventa nuovamente disponibile ma resta penalizzata. Nella modalità a coppie T4 aggiunge anche un'ulteriore penalità proporzionale al numero dei riusi.
+Nei primi tre Tentativi, inoltre, una vicinanza già usata viene esclusa. Nel quarto diventa nuovamente disponibile ma resta penalizzata. Il motore del Layout unico applica la penalità storica di $`500\,r(a,b)`$ mostrata nella formula; il precedente doppio strato della modalità a coppie non è il percorso operativo della 2.0.
 
 ---
 
@@ -357,29 +357,29 @@ stessa situazione iniziale
 scegli la migliore soluzione trovata
 ```
 
-La casualità serve quindi a esplorare strade diverse, non a rendere il programma imprevedibile: a parità di dati e seme numerico, il percorso può essere sempre riprodotto.
+La casualità serve quindi a esplorare strade diverse, non a rendere il programma imprevedibile: a parità di dati e seme numerico, il percorso di una stessa ricerca candidata può essere riprodotto. Il numero di proposte complete esplorate entro un budget di tempo può invece dipendere dalla macchina e dal carico; per confronti identici occorre fissare anche il campione di candidate.
 
 ---
 
-## 12. Abbinamenti "a coppie": che cosa succede concretamente
+## 12. Abbinamenti in banchi da due: che cosa succede concretamente
 
-Nella modalità a coppie il percorso, semplificato, è questo:
+Nel Layout unico, quando prevalgono i banchi da due, il percorso semplificato è questo:
 
-1. se esiste un FISSO, viene collocato nel posto previsto e tolto dagli studenti da raggruppare;
-2. viene verificata la capienza;
-3. se il numero degli studenti rimanenti è dispari, viene individuato un trio;
-4. il motore cerca tutte le coppie necessarie;
-5. la disposizione sociale viene tradotta in banchi reali;
-6. vengono ricontrollate le condizioni fisiche, in particolare PRIMA;
+1. se esiste un FISSO, il suo posto-ancora resta parte dello schema e lo studente partecipa alla formazione dei gruppi;
+2. viene verificata la corrispondenza fra numero degli studenti e posti disegnati;
+3. lo schema stabilisce quante coppie e quanti terzetti devono essere formati;
+4. il motore cerca tutti i gruppi necessari con la cascata T1–T4;
+5. la disposizione sociale viene tradotta nei banchi reali del Layout;
+6. vengono ricontrollate le condizioni fisiche, in particolare PRIMA e FISSO;
 7. vengono calcolate le informazioni statistiche del risultato.
 
-Quindi la modalità “a coppie” può contenere **un trio di compensazione** quando il numero degli studenti da raggruppare è dispari.
+Un Layout prevalentemente a coppie può quindi contenere **un terzetto**, per esempio sette banchi da due e uno da tre per 17 studenti. Non è più un trio inserito automaticamente dal vecchio assegnatore: è un banco previsto nella geometria del docente.
 
 ---
 
-## 13. Abbinamenti "a terzetti": gruppi ordinati, non semplici insiemi
+## 13. Abbinamenti in banchi da tre: gruppi ordinati, non semplici insiemi
 
-Nella modalità a terzetti gli studenti di un gruppo sono disposti in fila.
+Nei banchi da tre del Layout unico gli studenti di un gruppo sono disposti in fila.
 
 Per esempio:
 
@@ -396,14 +396,15 @@ B — C
 
 poiché **A e C non sono considerati vicini**.
 
-Per questo anche l'ordine interno di un terzetto o di un quartetto fa parte della soluzione.
+Per questo anche l'ordine interno di un terzetto fa parte della soluzione. Un FISSO centrale ha due vicini diretti; un FISSO a un estremo ne ha uno.
 
-A seconda del numero totale di studenti e delle opzioni scelte, il programma può costruire:
+A seconda del Layout disegnato dal docente, il programma costruisce:
 
-- terzetti;
-- un'eventuale coppia finale;
-- un quartetto;
-- in alcuni casi, due quartetti (solo quando rendono la distribuzione delle file più equilibrata).
+- tanti terzetti quanti sono i banchi da tre;
+- tante coppie quanti sono i banchi da due;
+- combinazioni di entrambi nello stesso schema.
+
+Il nuovo editor non prevede quartetti né blocchi finali automatici. Le disposizioni storiche che li contengono restano leggibili ed esportabili.
 
 Gli stessi quattro Tentativi vengono applicati alle adiacenze che compongono questi gruppi.
 
@@ -415,7 +416,7 @@ Il punteggio locale serve soprattutto a **guidare la ricerca**.
 
 Quando invece esistono più disposizioni complete, «PostiPerfetti» usa una seconda valutazione, più importante, che stabilisce quale soluzione preferire.
 
-Per una disposizione completa $`A`$, la chiave di confronto è:
+Per una disposizione completa $`A`$, la chiave del **confronto preliminare C1** è:
 
 ```math
 K(A)=
@@ -434,7 +435,7 @@ dove:
 
 La chiave viene confrontata **da sinistra verso destra** e si cerca il valore più piccolo.
 
-Questo produce una gerarchia molto precisa:
+In questo confronto preliminare si ottiene una gerarchia molto precisa:
 
 1. prima di tutto, **meno riusi**;
 2. a parità di riusi, **meno incompatibilità**, con il livello 2 che pesa dieci volte il livello 1;
@@ -443,9 +444,9 @@ Questo produce una gerarchia molto precisa:
 
 Il segno meno davanti a $`F(A)`$ serve proprio a trasformare “più affinità” in un valore matematicamente più piccolo.
 
-In altre parole, molte affinità **non possono compensare** un numero maggiore di riusi o una situazione peggiore sul piano delle incompatibilità.
+In altre parole, **nel confronto preliminare C1** molte affinità non possono compensare un numero maggiore di riusi o una situazione peggiore sul piano delle incompatibilità.
 
-La stessa struttura viene usata per coppie e terzetti.
+La stessa struttura viene usata per i banchi da due e da tre. **La scelta finale della 2.0 non si esaurisce però in questa chiave**: il confronto protetto S1/R12 e le successive rifiniture sono descritti nelle sezioni 18 e 19.
 
 ---
 
@@ -455,10 +456,9 @@ In alcune situazioni «PostiPerfetti» costruisce più soluzioni candidate e le 
 
 Nel codice questa tecnica è indicata come *best-of-N*: in termini semplici significa soltanto **“genera fino a N possibilità e scegli la migliore secondo la metrica”**.
 
-Per il Mensile a coppie possono essere confrontate fino a **10 soluzioni candidate**.  
-Per il Mensile a terzetti il valore predefinito è **3**.
+Nel generatore di un mese del Layout unico il valore predefinito è **3 candidate interne**, indipendentemente dalla prevalenza di banchi da due o da tre. Questo non significa che l’intera elaborazione Mensile si limiti a tre proposte: Q21 può richiamare più volte il generatore e confrontare numerose disposizioni complete.
 
-Se una soluzione riesce entro T1, T2 o T3, la ricerca è deterministica e ulteriori candidati non aggiungerebbero nuove possibilità significative.
+Se una soluzione riesce entro T1, T2 o T3, il generatore interno termina senza ripetere la cascata per le altre candidate. Nelle successive proposte di Q21, la diversificazione Q2 può variare l’ordine fra gruppi a pari punteggio, senza cambiare punteggi o vincoli.
 
 Quando invece si arriva a T4, le ripartenze a semi diversi possono esplorare strade differenti: in quel caso confrontare più candidati diventa utile.
 
@@ -466,16 +466,16 @@ Quando invece si arriva a T4, le ripartenze a semi diversi possono esplorare str
 
 ## 16. Mensile: il percorso completo
 
-### Mensile a coppie
+### Preparazione e processo di calcolo
 
 ```text
 interfaccia grafica
  ↓
 fotografia di studenti, aula e configurazione
  ↓
-componente di calcolo dedicato
+processo di calcolo separato Q21
  ↓
-ricerca delle coppie
+ricerca dei gruppi da due e da tre
  ↓
 T1–T4
  ↓
@@ -492,29 +492,27 @@ eventuale salvataggio nello Storico
 
 Il calcolo lavora su copie indipendenti degli input, così non modifica direttamente la sessione grafica mentre è in corso.
 
-### Mensile a terzetti
+### Rientro all’interfaccia e adozione
 
 ```text
-interfaccia grafica
+risultato completo e verificato
  ↓
-fotografia degli input
+controllo della fotografia di classe e Layout
  ↓
-processo di calcolo separato
+Disposizione, Report e statistiche della proposta
  ↓
-motore dei terzetti
+adozione esplicita del docente
  ↓
-T1–T4 + confronto fra più candidati
- ↓
-risultato trasferito all'interfaccia
+salvataggio nello Storico
 ```
 
-Il calcolo delle combinazioni viene quindi tenuto separato dalla finestra che l'utente sta utilizzando.
+Il calcolo delle combinazioni viene quindi tenuto separato dalla finestra che l'utente sta utilizzando. I risultati tardivi o alterati vengono rifiutati: non devono essere applicati a una classe o a un Layout diversi da quelli fotografati all’avvio.
 
 ---
 
 ## 17. Annuale: un livello sopra il Mensile
 
-L'Annuale non usa un algoritmo completamente diverso: costruisce una **sequenza di Mensili**.
+L'Annuale non usa un algoritmo completamente diverso: costruisce una **sequenza di Mensili**. Nella 2.0 entrambi usano la stessa pipeline Q21; il Mensile è il caso di un solo mese e l’Annuale ne richiede da uno a dieci.
 
 Per ogni annata candidata:
 
@@ -549,7 +547,7 @@ La configurazione reale dell'utente non viene modificata durante questa ricerca.
 
 Il programma può generare molte annate candidate.
 
-La loro valutazione complessiva deriva dalla somma, componente per componente, delle chiavi dei singoli mesi:
+La loro valutazione preliminare C1 deriva dalla somma, componente per componente, delle chiavi dei singoli mesi:
 
 ```math
 K_{\text{anno}}
@@ -569,7 +567,7 @@ K_{\text{anno}}
 \right)
 ```
 
-Anche qui la priorità resta la stessa:
+Anche qui, nel confronto preliminare, la priorità resta la stessa:
 
 ```text
 riusi complessivi
@@ -580,6 +578,10 @@ affinità complessive
 ```
 
 La ricerca può arrestarsi quando viene raggiunto un limite di tempo, un numero massimo di annate, una situazione di convergenza oppure quando l'utente annulla l'operazione.
+
+Il budget predefinito è **600 secondi complessivi**, con **60 secondi riservati alle fasi finali**, sia per Mensile sia per Annuale: non è un tempo da consumare obbligatoriamente. La ricerca ordinaria ha inoltre un tetto di 5.000 proposte e può arrestarsi dopo 300 proposte senza miglioramento del riferimento preliminare. Un budget esaurito prima di ottenere un risultato completo e verificato può produrre un errore senza proposta: non esiste un recupero finale garantito di una candidata intermedia.
+
+Dalla ricerca Q21 conserva una scelta di riferimento e poche alternative fisiche già costruite. Le rifiniture **Q5** cercano di ridurre i riusi; **Q12** cerca di migliorare ULTIMA; **Q15** prova a recuperare alternative interessanti entro le protezioni previste. La selezione **Q19** sceglie fra queste proposte, mentre **Q20** cerca ulteriori affinità senza perdere le qualità protette. Queste operazioni possono modificare i gruppi, a differenza del solo riordino temporale della sezione 20.
 
 ---
 
@@ -597,11 +599,23 @@ Fra gli aspetti controllati rientrano:
 
 - incompatibilità per livello;
 - concentrazione dei riusi sugli stessi studenti;
-- qualità delle affinità;
+- qualità delle affinità, comprese quelle di livello 3;
 - momento in cui compare il primo riuso;
-- distanza temporale fra riusi troppo ravvicinati.
+- distanza temporale fra riusi troppo ravvicinati;
+- profilo mensile delle incompatibilità e massimo dei riusi in un mese;
+- soddisfazioni ULTIMA e, se richiesta, preferenza per vicinanze miste.
 
-Solo le annate che superano queste guardie vengono confrontate con criteri di dettaglio ulteriori.
+Solo le annate che superano queste guardie vengono confrontate con criteri di dettaglio ulteriori. Nella 2.0 gli stessi controlli contestuali si applicano anche al Mensile e possono partire da uno Storico già popolato.
+
+Il primo componente del confronto R12 è:
+
+```math
+R12(A)=12R(A)+10I_2(A)+2I_1(A)-A_p(A)
+```
+
+dove $`A_p= A_1+2A_2+3A_3`$ è la somma ponderata delle affinità soddisfatte. Si cerca un valore più basso; a parità si confrontano ulteriori aspetti, fra cui L2, massimo individuale dei riusi e qualità temporale. Questa formula non autorizza a ignorare le guardie: una candidata viene confrontata solo se è ammissibile rispetto al riferimento.
+
+La politica Q19 contiene una deroga precisa: può ammettere **una sola soddisfazione ULTIMA in meno**, soltanto se questo è l’unico peggioramento delle guardie, se il punteggio R12 migliora strettamente e se diminuisce almeno una fra incompatibilità L1 e L2. Le altre protezioni restano valide e il riferimento non cambia durante la selezione: la deroga non può essere concatenata per perdere più soddisfazioni ULTIMA.
 
 In termini semplici:
 
@@ -626,7 +640,7 @@ soluzione di riferimento
 
 ## 20. Il riordino dei mesi non cambia i posti
 
-Una volta scelta l'annata, «PostiPerfetti» può migliorare **l'ordine temporale** dei mesi già generati.
+Durante la valutazione e, con un ultimo controllo, una volta scelta l'annata, «PostiPerfetti» può migliorare **l'ordine temporale** dei mesi già generati.
 
 Quando alcuni riusi o alcune incompatibilità non assolute sono inevitabili, il programma prova (entro precise guardie di sicurezza) a **collocare più avanti nel calendario i mesi che contengono questi compromessi**, mantenendo il più possibile favorevole la parte iniziale dell'anno scolastico.
 
@@ -640,7 +654,7 @@ Questa operazione è prudente, in quanto:
 - non può peggiorare la massima concentrazione dei riusi in un singolo mese;
 - non può anticipare un mese con un profilo peggiore di incompatibilità.
 
-Cambia quindi **quando** compare un mese già generato, non **come** quel mese è composto.
+Cambia quindi **quando** compare un mese già generato, non **come** quel mese è composto. Il riordino finale di presentazione I2g ammette inoltre soltanto scambi che conservano tutte le metriche temporali e complessive già ottenute, migliorando la successione della gravità mensile.
 
 ---
 
@@ -648,12 +662,12 @@ Cambia quindi **quando** compare un mese già generato, non **come** quel mese �
 
 L'interfaccia grafica e il motore di calcolo sono stati intenzionalmente tenuti separati.
 
-Le elaborazioni più pesanti, in questo modo, non incidono nella reponsività di pulsanti, pannelli o altri elementi grafici della finestra mentre stanno calcolando:
+Le elaborazioni più pesanti vengono eseguite fuori dal processo della GUI, per preservare la responsività di pulsanti, pannelli o altri elementi grafici della finestra:
 
-- il Mensile a coppie usa un componente di calcolo dedicato e una copia degli input;
-- il Mensile a terzetti usa un processo Python separato;
-- entrambi gli Annuali usano processi Python separati;
-- un'infrastruttura specifica gestisce lo scambio dei risultati e la chiusura corretta dei processi.
+- il Mensile del Layout unico usa un processo Python separato;
+- l’Annuale usa lo stesso motore Q21 in un processo separato;
+- i ponti Qt inoltrano i messaggi alla finestra senza eseguire lì la ricerca;
+- un'infrastruttura specifica gestisce lo scambio dei risultati e la chiusura corretta dei processi, anche dopo una richiesta di annullamento cui il figlio non risponde.
 
 Il motore riceve quindi una **fotografia** dei dati, lavora su quella e restituisce alla fine un risultato.
 
@@ -671,7 +685,7 @@ L'utente vede la disposizione e può salvarla. Solo in quel momento l'assegnazio
 
 L'intera annata viene prima preparata e poi mostrata "in anteprima".
 
-Se viene accettata, tutti i mesi vengono preparati e salvati come un unico blocco.
+Se viene accettata, tutti i mesi vengono preparati e salvati come un unico blocco. Se una registrazione o la scrittura finale fallisce, il batch viene annullato; il salvataggio mensile protegge allo stesso modo la memoria dalle registrazioni parziali.
 
 Lo Storico diventa a sua volta una delle fonti utilizzate dalle assegnazioni successive.
 
@@ -704,8 +718,8 @@ Questo "decalogo" descrive, in modo essenziale ma completo, come funziona «Post
 5. Esegue fino a quattro Tentativi progressivi senza mai violare i vincoli assoluti.
 6. Usa una ricerca con ritorno indietro per costruire una disposizione completa.
 7. Nel quarto Tentativo esplora più ripartenze controllate e riproducibili.
-8. Confronta le soluzioni complete secondo una gerarchia: riusi, incompatibilità, affinità.
-9. Nell'Annuale ripete il processo mese dopo mese e applica ulteriori guardie di qualità.
+8. Confronta le soluzioni complete con un riferimento preliminare e con selezione e rifiniture protette che misurano riusi, incompatibilità, affinità e preferenze.
+9. Nell'Annuale ripete il processo mese dopo mese e controlla anche la distribuzione temporale; le guardie contestuali valgono anche per il Mensile.
 10. Solo dopo l'accettazione dell'utente aggiorna lo Storico reale.
 
 Il principio di fondo è che «PostiPerfetti» non cerca semplicemente una disposizione **possibile**: prova a trovare quelle che conservano meglio rotazione, compatibilità e preferenze, allentando le richieste non assolute solo quando è necessario.
