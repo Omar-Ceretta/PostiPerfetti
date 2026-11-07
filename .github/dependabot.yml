@@ -36,21 +36,6 @@ updates:
     # I salti di versione MAGGIORE restano PR separate: PySide6 ha già
     # cambiato comportamento fra major, e vanno provati a mano sulla GUI.
 
-  # ── Dipendenze di sviluppo ───────────────────────────────────────────
-  - package-ecosystem: pip
-    directory: "/documentazione/sviluppo"
-    schedule:
-      interval: monthly
-      day: monday
-      time: "06:00"
-      timezone: Europe/Rome
-    open-pull-requests-limit: 3
-    commit-message:
-      prefix: "deps-dev"
-    labels:
-      - dipendenze
-      - sviluppo
-
   # ── Azioni usate nei workflow GitHub ─────────────────────────────────
   # Sono codice di terze parti che gira con i permessi del repository:
   # tenerle aggiornate conta quanto tenere aggiornate le librerie.

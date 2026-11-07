@@ -12,6 +12,13 @@ on:
       - "moduli/versione.py"
       - ".github/workflows/installer-linux.yml"
 
+  pull_request:
+    paths:
+      - "packaging/linux/**"
+      - "requirements.txt"
+      - "moduli/versione.py"
+      - ".github/workflows/installer-linux.yml"
+
 permissions:
   contents: read
 
