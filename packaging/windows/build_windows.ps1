@@ -1,6 +1,6 @@
 ﻿param(
     [switch]$SoloExe,
-    [switch]$SaltaTest
+    [switch]$SaltaControlli
 )
 
 $ErrorActionPreference = "Stop"
@@ -75,21 +75,25 @@ if ($LASTEXITCODE -ne 0) {
     throw "Installazione delle dipendenze di build non riuscita."
 }
 
-if (-not $SaltaTest) {
+if ($SaltaControlli) {
     Write-Host ""
-    Write-Host "Esecuzione suite pubblica..." -ForegroundColor Cyan
-
-    & $PythonVenv -m pytest `
-        (Join-Path $Root "documentazione\sviluppo\test") `
-        -q
-
+    Write-Host "Build di prova: verifiche statiche di Release non eseguite." -ForegroundColor Yellow
+} else {
+    Write-Host ""
+    Write-Host "Verifica integrità e sintassi dei sorgenti pubblici..." -ForegroundColor Cyan
+    & $PythonVenv (Join-Path $PackagingDir "verifica_sorgenti_release.py")
     if ($LASTEXITCODE -ne 0) {
-        throw "La suite pytest non è completamente verde."
+        throw "La verifica dei sorgenti della Release non è riuscita."
     }
 }
 
 Write-Host ""
 Write-Host "Creazione bundle PyInstaller onedir..." -ForegroundColor Cyan
+# Un artefatto precedente non puo' dimostrare il successo della nuova build.
+$Exe = Join-Path $Root "dist\PostiPerfetti\PostiPerfetti.exe"
+if (Test-Path $Exe -PathType Leaf) {
+    Remove-Item -LiteralPath $Exe -Force
+}
 & $PythonVenv -m PyInstaller `
     --clean `
     --noconfirm `
@@ -97,8 +101,10 @@ Write-Host "Creazione bundle PyInstaller onedir..." -ForegroundColor Cyan
     --workpath (Join-Path $Root "build\pyinstaller") `
     (Join-Path $PackagingDir "PostiPerfetti.spec")
 
-$Exe = Join-Path $Root "dist\PostiPerfetti\PostiPerfetti.exe"
-if (-not (Test-Path $Exe)) {
+if ($LASTEXITCODE -ne 0) {
+    throw "PyInstaller non ha completato la build (codice $LASTEXITCODE)."
+}
+if (-not (Test-Path $Exe -PathType Leaf)) {
     throw "Build PyInstaller terminata senza trovare $Exe"
 }
 
@@ -146,13 +152,20 @@ Write-Host "Compilazione installer con Inno Setup..." -ForegroundColor Cyan
 $DefVersione = "/DMyAppVersion=`"$Versione`""
 $DefVersioneWindows = "/DMyAppVersionQuad=`"$VersioneWindows`""
 
+$Setup = Join-Path $Root "dist-installer\PostiPerfetti-$Versione-setup.exe"
+if (Test-Path $Setup -PathType Leaf) {
+    Remove-Item -LiteralPath $Setup -Force
+}
+
 & $ISCC `
     $DefVersione `
     $DefVersioneWindows `
     (Join-Path $PackagingDir "postiperfetti_setup.iss")
 
-$Setup = Join-Path $Root "dist-installer\PostiPerfetti-$Versione-setup.exe"
-if (Test-Path $Setup) {
+if ($LASTEXITCODE -ne 0) {
+    throw "Inno Setup non ha completato la build (codice $LASTEXITCODE)."
+}
+if (Test-Path $Setup -PathType Leaf) {
     Write-Host ""
     Write-Host "Installer creato: $Setup" -ForegroundColor Green
 } else {

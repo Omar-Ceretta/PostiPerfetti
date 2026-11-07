@@ -65,7 +65,7 @@ Questi **non** vengono distribuiti con il programma, ma vengono elencati per com
 
 | Componente | Versione | Licenza | Ruolo |
 |---|---|---|---|
-| [pytest](https://pytest.org/) | 9.1.1 | MIT | Esegue la suite di collaudo. |
+| [pytest](https://pytest.org/) | 9.1.1 | MIT | Strumento dei test di sviluppo (non richiesto dalla build pubblica). |
 | [Ruff](https://docs.astral.sh/ruff/) | 0.16.2 | MIT | Analisi statica del codice. |
 | [PyInstaller](https://pyinstaller.org/) | vedi `packaging/windows/requirements-build-windows.txt` | GPLv2+ con eccezione per i file generati | Costruisce l'eseguibile Windows. |
 | [Inno Setup](https://jrsoftware.org/isinfo.php) | — | Licenza Inno Setup (gratuita, permette la distribuzione degli installer prodotti) | Costruisce l'installer Windows. |

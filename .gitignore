@@ -14,6 +14,7 @@ htmlcov/
 # Backup e residui di editing/patch
 *.bak
 *.bak-*
+*.~*~
 *.orig
 *.rej
 *~
@@ -32,6 +33,12 @@ htmlcov/
 /*.xlsx
 /*.txt
 !/requirements.txt
+# Materiali di sviluppo e regressione esclusi dal repository pubblico.
+# Non sono necessari per avviare le procedure di creazione Release.
+/requirements-dev.txt
+/tests/
+/strumenti/
+/corpus-classi-test/
 
 # IDE / sistema operativo
 .idea/
@@ -47,3 +54,9 @@ htmlcov/
 /dist-installer/
 /dist-linux/
 /dist-release/
+
+# Fotografie e campagne non appartengono al repository pubblico
+*.pkl
+*.pickle
+/archivio-sviluppo/
+/risultati_*/

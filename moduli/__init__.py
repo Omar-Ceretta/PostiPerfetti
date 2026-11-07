@@ -1,1 +1,1 @@
-# Parte di «PostiPerfetti». Autore: prof. Omar Ceretta. Licenza: GNU GPLv3.
+"""Componenti di PostiPerfetti. Licenza GPLv3."""

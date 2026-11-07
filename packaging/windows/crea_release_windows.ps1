@@ -300,8 +300,7 @@ $fileNecessari = @(
     "SECURITY.md",
     "moduli\versione.py",
     "documentazione\DATI_PRIVACY_E_SICUREZZA.md",
-    "documentazione\sviluppo\requirements-dev.txt",
-    "documentazione\sviluppo\test",
+    "packaging\windows\verifica_sorgenti_release.py",
     "packaging\linux\install.sh",
     "packaging\linux\uninstall.sh",
     "packaging\linux\crea_release_linux.py",
@@ -543,7 +542,9 @@ $CreaInstaller = Join-Path `
     "crea_installer_windows.ps1"
 
 # INTENZIONALMENTE non passiamo -MantieniAmbienteBuild.
-& $CreaInstaller -NonAprireCartella
+# La build parte dai soli file pubblici e include i controlli statici
+# distribuiti in packaging/windows, senza archivi privati.
+& $CreaInstaller -NonAprireCartella -EseguiTest
 
 if ($LASTEXITCODE -ne 0) {
     throw (
@@ -583,13 +584,6 @@ $PyInstallerVersion = (
     )
 ).Trim()
 
-$PytestVersion = (
-    & $PythonBuild -c (
-        "from importlib.metadata import version; " +
-        "print(version('pytest'))"
-    )
-).Trim()
-
 $RuffVersioneCompleta = (
     & $PythonBuild -m ruff --version
 ).Trim()
@@ -622,7 +616,7 @@ if ($PyInstallerVersion -ne $PyInstallerAtteso) {
 
 Write-Host "Python build : $PythonBuildVersion"
 Write-Host "PyInstaller  : $PyInstallerVersion"
-Write-Host "pytest       : $PytestVersion"
+Write-Host "Sorgenti     : verifica sintassi e struttura OK (passo build)"
 Write-Host "Ruff         : $RuffVersioneCompleta"
 
 Scrivi-OK "Toolchain Python conforme ai requisiti congelati"
@@ -889,7 +883,8 @@ $righeManifest = @(
     "-----------------"
     "Python: $PythonBuildVersion - 64 bit"
     "PyInstaller: $PyInstallerVersion"
-    "pytest: $PytestVersion"
+    "Verifica statica sorgenti pubblici: OK"
+    "Suite pytest funzionale: NON ESEGUITA (non distribuita nel repository)"
     "Ruff: $RuffVersioneCompleta"
     "Inno Setup: $InnoVersionText"
     "ISCC: $ISCC"
@@ -955,8 +950,10 @@ if ($Collaudo) {
         ""
         "1. Carica sul repository GitHub tutti i sorgenti aggiornati."
         ""
-        "2. Verifica nella scheda Actions che la matrice di test"
-        "   Python 3.10-3.14 sia completamente verde."
+        "2. Verifica nella scheda Actions il contratto dell'installer Linux."
+        "   Il repository non ospita la suite pytest: i controlli di Release"
+        "   includono analisi statica, toolchain, artefatti e hash;"
+        "   esegui anche i collaudi funzionali manuali Windows/Linux."
         ""
         "3. In GitHub apri Releases e crea una nuova Release."
         ""
@@ -1045,6 +1042,8 @@ if ($Collaudo) {
         "La cartella DA_CARICARE contiene " +
         "gli asset della Release ufficiale."
     ) -ForegroundColor Yellow
+    Write-Host "Ricorda: i test funzionali pytest non vengono eseguiti;" -ForegroundColor Yellow
+    Write-Host "prima della pubblicazione sono necessari anche i collaudi manuali." -ForegroundColor Yellow
 }
 
 Write-Host ""

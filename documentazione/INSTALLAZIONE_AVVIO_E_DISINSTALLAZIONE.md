@@ -1,5 +1,7 @@
 # 🖥️ «PostiPerfetti» — Installazione e avvio
 
+> **Riferimento: versione 2.0 in sviluppo.** I comandi per scaricare la Release più recente installano la versione effettivamente pubblicata, che può essere precedente. Gli esempi di nomi file qui sotto mostrano la numerazione 2.0; non ne attestano la pubblicazione.
+
 ---
 
 <table border="0"><tr><td>
@@ -17,7 +19,7 @@
 
 ### ✰ Installazione
 
-1. Vai alla **[Release più recente](https://github.com/Omar-Ceretta/PostiPerfetti/releases/latest)** e, nella sezione *Assets*, scarica il file **`PostiPerfetti-<versione>-setup.exe`** (ad es. `PostiPerfetti-1.0-setup.exe`).
+1. Vai alla **[Release più recente](https://github.com/Omar-Ceretta/PostiPerfetti/releases/latest)** e, nella sezione *Assets*, scarica il file **`PostiPerfetti-<versione>-setup.exe`** (ad es. `PostiPerfetti-2.0-setup.exe`).
 2. Fai doppio clic sul file scaricato.
 3. Segui le istruzioni del programma di installazione.
 
@@ -69,7 +71,7 @@ Durante la disinstallazione ti verrà chiesto se desideri eliminare anche i dati
 
 L'installazione su Linux è gestita da uno script Bash distribuito insieme alla Release ufficiale.
 
-«PostiPerfetti» supporta le principali distribuzioni delle famiglie **Debian/Ubuntu, Fedora, Arch Linux e openSUSE**. È stato testato su Debian 13.6 (e le sue derivate LMDE 6 e MX Linux 25.2), Ubuntu 26.04 (e le sue derivate Linux Mint 22.3, Zorin OS 18.1 e POP!_OS 22.04), Fedora 44, Arch Linux e openSUSE Leap 16. Il codice dell'installer viene verificato automaticamente su Ubuntu 24.04, Fedora 44, Arch Linux e openSUSE Tumbleweed.
+«PostiPerfetti» supporta le principali distribuzioni delle famiglie **Debian/Ubuntu, Fedora, Arch Linux e openSUSE**. Per la versione 1.0 è stato testato su Debian 13.6 (e le sue derivate LMDE 6 e MX Linux 25.2), Ubuntu 26.04 (e le sue derivate Linux Mint 22.3, Zorin OS 18.1 e POP!_OS 22.04), Fedora 44, Arch Linux e openSUSE Leap 16. Il workflow di controllo dell'installer prevede verifiche su Ubuntu 24.04, Fedora 44, Arch Linux e openSUSE Tumbleweed. I collaudi di rilascio della 2.0 devono essere completati sulla nuova base.
 
 ### ✰ Requisiti
 
@@ -107,7 +109,7 @@ Il programma viene installato normalmente nella Home dell'utente, in:
 ~/PostiPerfetti
 ```
 
-L'installer scarica automaticamente il pacchetto corrispondente alla propria Release (ad es. `PostiPerfetti-1.0-linux.tar.gz`), ne verifica l'integrità e la versione e prepara l'ambiente Python necessario. Al termine propone di avviare subito «PostiPerfetti».
+L'installer scarica automaticamente il pacchetto corrispondente alla propria Release (ad es. `PostiPerfetti-2.0-linux.tar.gz`), ne verifica l'integrità e la versione e prepara l'ambiente Python necessario. Al termine propone di avviare subito «PostiPerfetti».
 
 Una volta completata l'installazione, l'uso del programma non richiede una connessione a Internet e il file `install.sh` scaricato può essere eliminato.
 
