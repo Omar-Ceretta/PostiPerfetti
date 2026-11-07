@@ -2,8 +2,8 @@
 
 """Interfaccia principale e coordinamento dei flussi di «PostiPerfetti».
 
-Gestisce assegnazioni mensili e annuali, modalità a coppie e terzetti,
-anteprime, salvataggio e integrazione dei moduli dell’applicazione.
+Gestisce assegnazioni mensili e annuali sul Layout unico, anteprime,
+salvataggio e integrazione dei moduli dell’applicazione.
 
 Autore: prof. Omar Ceretta — I.C. di Tombolo e Galliera Veneta (PD).
 Licenza: GNU GPLv3."""
@@ -139,33 +139,33 @@ from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox
 from PySide6.QtCore import QLockFile, QTimer
 from PySide6.QtGui import QIcon, QFontDatabase
 
-from moduli.stato_sessione import StatoSessione
+from moduli.dominio.stato_sessione import StatoSessione
 
-from moduli.tema import imposta_tema
+from moduli.interfaccia.tema import imposta_tema
 from moduli.percorsi import get_resource_path, get_state_path
-from moduli.watchdog_gui import avvia_watchdog_gui_da_ambiente
+from moduli.processi.watchdog_gui import avvia_watchdog_gui_da_ambiente
 
-from moduli.utilita import (
+from moduli.interfaccia.utilita import (
     FiltroCursoreManina,
     adatta_finestra_allo_schermo,
 )
-from moduli.configurazione import ConfigurazioneApp
+from moduli.persistenza.configurazione import ConfigurazioneApp
 
-from moduli.statistiche import StatisticheMixin
+from moduli.interfaccia.statistiche import StatisticheMixin
 
-from moduli.stili import StiliMixin
-from moduli.pannelli_principali import PannelliPrincipaliMixin
-from moduli.configurazione_aula_ui import ConfigurazioneAulaUIMixin
-from moduli.risultato_corrente_ui import RisultatoCorrenteUIMixin
-from moduli.sessione_classe_ui import SessioneClasseUIMixin
-from moduli.flusso_mensile_ui import FlussoMensileUIMixin
-from moduli.flusso_annuale_ui import FlussoAnnualeUIMixin
-from moduli.salvataggio_mensile_ui import SalvataggioMensileUIMixin
-from moduli.ciclo_vita_ui import CicloVitaUIMixin
+from moduli.interfaccia.stili import StiliMixin
+from moduli.interfaccia.pannelli_principali import PannelliPrincipaliMixin
+from moduli.interfaccia.configurazione_aula_ui import ConfigurazioneAulaUIMixin
+from moduli.interfaccia.risultato_corrente_ui import RisultatoCorrenteUIMixin
+from moduli.interfaccia.sessione_classe_ui import SessioneClasseUIMixin
+from moduli.interfaccia.flusso_mensile_ui import FlussoMensileUIMixin
+from moduli.interfaccia.flusso_annuale_ui import FlussoAnnualeUIMixin
+from moduli.interfaccia.salvataggio_mensile_ui import SalvataggioMensileUIMixin
+from moduli.interfaccia.ciclo_vita_ui import CicloVitaUIMixin
 
-from moduli.esportazione import EsportazioneMixin
+from moduli.interfaccia.esportazione import EsportazioneMixin
 
-from moduli.storico_ui import StoricoUIMixin
+from moduli.interfaccia.storico_ui import StoricoUIMixin
 
 
 def _acquisisci_lock_istanza():
@@ -267,18 +267,6 @@ def carica_font_emoji():
     return False
 
 
-
-
-# Generazione mensile e annuale
-
-
-# Worker di calcolo
-
-
-
-# Anteprima e accettazione delle stagioni
-
-
 # Interfaccia principale
 
 class FinestraPostiPerfetti(
@@ -291,13 +279,6 @@ class FinestraPostiPerfetti(
     """Coordina l’interfaccia principale e i flussi dell’applicazione."""
 
     DEFAULT_MESI_ANNUALE = 10
-    DEFAULT_POSTI_PER_FILA_COPPIE = 6
-    DEFAULT_NUM_FILE_SENZA_CLASSE = 4
-    DEFAULT_POSIZIONE_RESTO = {
-        'coppie': 'centro',
-        'terzetti': 'ultima',
-    }
-
     def closeEvent(self, event):
         """Inoltra la chiusura al gestore protettivo del mixin.
 
@@ -325,7 +306,7 @@ class FinestraPostiPerfetti(
         self.indice_messaggio = 0
         self.messaggi_elaborazione = [
             "Elaborazione in corso...",
-            "Calcolo coppie ottimali...",
+            "Calcolo disposizione ottimale...",
             "Verifica vincoli...",
             "Ottimizzazione assegnazione...",
             "Ricerca soluzione migliore...",
@@ -364,41 +345,6 @@ class FinestraPostiPerfetti(
                 0,
                 self._mostra_avviso_recupero_json
             )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 # Avvio dell’applicazione

@@ -76,28 +76,32 @@ ignore = [
 # Perimetro attorno a un'azione dell'utente: l'errore finisce sempre in una
 # finestra di dialogo con un messaggio in italiano.
 "postiperfetti.py" = ["BLE001"]
-"moduli/esportazione.py" = ["BLE001"]
-"moduli/storico_ui.py" = ["BLE001"]
-"moduli/flusso_mensile_ui.py" = ["BLE001"]
-"moduli/flusso_annuale_ui.py" = ["BLE001"]
-"moduli/editor_studenti.py" = ["BLE001"]
-"moduli/sessione_classe_ui.py" = ["BLE001"]
-"moduli/statistiche.py" = ["BLE001"]
-"moduli/utilita.py" = ["BLE001"]
+"moduli/interfaccia/esportazione.py" = ["BLE001"]
+"moduli/interfaccia/storico_ui.py" = ["BLE001"]
+"moduli/interfaccia/flusso_mensile_ui.py" = ["BLE001"]
+"moduli/interfaccia/flusso_annuale_ui.py" = ["BLE001"]
+"moduli/interfaccia/editor_studenti.py" = ["BLE001"]
+"moduli/interfaccia/sessione_classe_ui.py" = ["BLE001"]
+"moduli/interfaccia/statistiche.py" = ["BLE001"]
+"moduli/interfaccia/utilita.py" = ["BLE001"]
 
 # Persistenza: conservare una copia di un file danneggiato è un tentativo
 # "best effort". Se fallisce anche quello, l'errore vero è già stato
 # catturato ed è comunque riportato all'utente.
-"moduli/configurazione.py" = ["BLE001", "S110"]
+"moduli/persistenza/configurazione.py" = ["BLE001", "S110"]
 
 # Avvio, chiusura e sorveglianza dei processi figli: durante il teardown
 # un'eccezione non ha più nessuna destinazione utile.
-"moduli/ponte_processo.py" = ["BLE001", "S110"]
-"moduli/supervisione_processi.py" = ["BLE001", "S110"]
+"moduli/processi/ponte_processo.py" = ["BLE001", "S110"]
+"moduli/processi/supervisione_processi.py" = ["BLE001", "S110"]
 "moduli/processo_mensile.py" = ["BLE001", "S110"]
 "moduli/processo_annuale.py" = ["BLE001", "S110"]
-"moduli/watchdog_gui.py" = ["BLE001", "S110"]
+"moduli/processi/watchdog_gui.py" = ["BLE001", "S110"]
 "moduli/postiperfetti_launcher.py" = ["BLE001", "S110"]
 
 # I test usano asserzioni e costrutti che altrove sarebbero rumore.
-"documentazione/sviluppo/test/**" = ["S101", "BLE001"]
+"tests/**" = ["S101", "BLE001"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

@@ -1,3 +1,18 @@
+# Registro delle modifiche
+
+## 2.0 — In sviluppo
+
+- Un’unica geometria per banchi da due e tre, con zone e posto FISSO.
+- Mensile e Annuale sul motore operativo Q21.
+- Separazione fra interfaccia, dominio, calcolo, processi e persistenza.
+- Rimozione dei vecchi generatori e dei rami sperimentali dal codice pubblico.
+- Archivio di sviluppo separato; test correnti e fixture sintetiche nel repository.
+- Arresto controllato anche dei processi non cooperativi e rollback della registrazione mensile in caso di eccezione.
+
+Il numero di versione è 2.0; la pubblicazione della Release avverrà dopo le verifiche di rilascio.
+
+---
+
 # ↻ Changelog di «PostiPerfetti»
 
 Questo documento raccoglie le modifiche rilevanti delle versioni pubbliche di «PostiPerfetti».
